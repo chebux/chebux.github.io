@@ -2,42 +2,49 @@
 <html lang="ru">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-<title>Saturn System — Mobile Optimized</title>
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no" />
+<title>Saturn System — Mobile v2</title>
 <style>
 :root {
-  --bg:#050608; --panel:rgba(8,10,14,.84); --text:#f2f2f2; --muted:#aeb4be;
-  --yellow:#f3d36a; --light-orbit:rgba(200,205,210,.26);
-  --big-orbit:rgba(243,211,106,.28); --purple:#9f7dff;
+  --bg:#050608; --panel:rgba(8,10,14,.88); --text:#f2f2f2; --muted:#aeb4be;
+  --yellow:#f3d36a; --light-orbit:rgba(200,205,210,.30);
+  --big-orbit:rgba(243,211,106,.33); --purple:#9f7dff;
 }
 *{box-sizing:border-box; -webkit-tap-highlight-color: transparent;}
-html,body{margin:0;padding:0;height:100%;overflow:hidden;background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;}
-body{position:fixed; inset:0; width:100%; height:100%;}
-#app{position:fixed; inset:0; z-index:1;}
-canvas{display:block; width:100%; height:100%; position:absolute; inset:0;}
+html,body{margin:0;padding:0;background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;height:100%;overflow:hidden}
+#app{position:fixed;inset:0}
+canvas{width:100%;height:100%;display:block;touch-action:none}
 
 .topbar {
-  position: fixed; top: max(8px, env(safe-area-inset-top)); right: 8px; z-index: 20;
-}
-.iconBtn, .control {
-  -webkit-appearance:none; appearance:none;
-  border:1px solid rgba(255,255,255,.14);
-  background:rgba(8,10,14,.82);
-  color:var(--text);
-  border-radius:12px;
-  font-family:inherit;
-  cursor:pointer;
-  user-select:none;
-  -webkit-user-select:none;
+  position: fixed;
+  top: max(8px, env(safe-area-inset-top));
+  right: 8px;
+  z-index: 30;
 }
 .iconBtn {
-  width:38px; height:38px; font-size:18px; font-weight:700;
+  width: 36px; height: 36px; border-radius: 999px;
+  display:flex; align-items:center; justify-content:center;
+  border:1px solid rgba(255,255,255,.14);
+  background: rgba(8,10,14,.78); color: var(--text);
+  font-size: 18px; font-weight: 700;
+  backdrop-filter: blur(8px);
+  touch-action: manipulation;
 }
+
 .infoSheet {
-  position: fixed; top: max(52px, calc(env(safe-area-inset-top) + 52px)); right: 8px;
-  width:min(88vw,320px); max-height:min(62vh,520px); overflow:auto;
-  background:rgba(8,10,14,.92); border:1px solid rgba(255,255,255,.08); border-radius:14px;
-  padding:12px; display:none; z-index:21;
+  position: fixed;
+  top: max(50px, calc(env(safe-area-inset-top) + 50px));
+  right: 8px;
+  width: min(88vw, 320px);
+  max-height: min(62vh, 520px);
+  overflow: auto;
+  background: var(--panel);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 14px;
+  padding: 12px;
+  display: none;
+  z-index: 35;
+  backdrop-filter: blur(10px);
 }
 .infoSheet.open{display:block}
 .title{font-size:14px;font-weight:700;margin-bottom:8px}
@@ -45,38 +52,92 @@ canvas{display:block; width:100%; height:100%; position:absolute; inset:0;}
 .legend{display:grid;gap:5px;font-size:11px;color:var(--muted);margin-top:10px}
 
 .controls {
-  position: fixed; left: 8px; right: 8px; bottom: max(8px, env(safe-area-inset-bottom)); z-index: 20;
+  position: fixed;
+  left: 8px; right: 8px;
+  bottom: max(8px, env(safe-area-inset-bottom));
+  z-index: 25;
 }
 .panel {
-  background:rgba(8,10,14,.82); border:1px solid rgba(255,255,255,.08); border-radius:14px;
-  padding:8px;
+  background: rgba(8,10,14,.78);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 14px;
+  padding: 8px;
 }
-.grid { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:6px; }
-.grid.secondary { grid-template-columns:repeat(5,minmax(0,1fr)); margin-top:6px; }
-.control {
-  min-height:42px; padding:8px 6px; font-size:11px; line-height:1.15; font-weight:700; text-align:center;
+.grid {
+  display:grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 6px;
 }
-.control.active { background:rgba(243,211,106,.16); border-color:rgba(243,211,106,.45); color:var(--yellow); }
+.grid.secondary {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  margin-top: 6px;
+}
+.grid.oneRow {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+button.control {
+  appearance:none;
+  min-height: 42px;
+  border:1px solid rgba(255,255,255,.12);
+  background: rgba(255,255,255,.06);
+  color: var(--text);
+  border-radius: 10px;
+  padding: 8px 6px;
+  font-size: 11px;
+  line-height: 1.15;
+  font-weight: 700;
+  text-align: center;
+  touch-action: manipulation;
+}
+button.control.active {
+  background: rgba(243,211,106,.16);
+  border-color: rgba(243,211,106,.45);
+  color: var(--yellow);
+}
 
 .infoBox {
-  position: fixed; left: 8px; right: 8px; bottom: max(118px, calc(env(safe-area-inset-bottom) + 118px));
-  margin: 0 auto; width:min(92vw,340px); background:rgba(8,10,14,.92); border:1px solid rgba(255,255,255,.08);
-  border-radius:12px; padding:10px 12px; font-size:12px; line-height:1.35; display:none; z-index:19;
+  position: fixed;
+  left: 8px;
+  right: 8px;
+  bottom: max(66px, calc(env(safe-area-inset-bottom) + 66px));
+  margin: 0 auto;
+  width: min(92vw, 340px);
+  background: var(--panel);
+  border: 1px solid rgba(255,255,255,.08);
+  border-radius: 12px;
+  padding: 10px 12px;
+  font-size: 12px;
+  line-height: 1.35;
+  display: none;
+  z-index: 28;
 }
 
-@media (max-width:390px) {
-  .controls{left:6px; right:6px;}
-  .grid,.grid.secondary{gap:5px;}
-  .control{min-height:40px; font-size:10px; padding:7px 4px;}
-  .infoBox{bottom:max(112px, calc(env(safe-area-inset-bottom) + 112px));}
+@media (max-width: 390px) {
+  .controls { left: 6px; right: 6px; }
+  .grid { gap: 5px; }
+  .grid.oneRow { gap: 5px; }
+  button.control { min-height: 40px; font-size: 10px; padding: 7px 4px; }
+  .infoBox { bottom: max(70px, calc(env(safe-area-inset-bottom) + 70px)); }
 }
+
+@media (min-width: 700px) {
+  .controls{left:10px; right:10px; max-width: 640px; margin: 0 auto;}
+  button.control{font-size:12px; min-height:44px;}
+}
+
+.controls, .controls *, .topbar, .topbar *, .infoSheet, .infoSheet * {
+  touch-action: manipulation;
+}
+
 </style>
 </head>
 <body>
-<div id="app"><canvas id="staticCanvas"></canvas><canvas id="dynamicCanvas"></canvas></div>
+<div id="app"><canvas id="c"></canvas></div>
 
 <div class="topbar">
-  <button type="button" id="infoBtn" class="iconBtn" aria-label="Информация">i</button>
+  <button id="infoBtn" type="button" class="iconBtn" aria-label="Информация">i</button>
 </div>
 
 <div id="infoSheet" class="infoSheet">
@@ -88,23 +149,17 @@ canvas{display:block; width:100%; height:100%; position:absolute; inset:0;}
     <div>Спутники &gt; 1000 км — фиолетовые</div>
     <div>Точки спутников: 1×1 … 8×8 px</div>
     <div>Круговая обводка: отступ 6 px, толщина 1 px</div>
-    <div>Подписи отключены по умолчанию для ускорения на телефоне</div>
+    <div>Жесты: перетаскивание — панорама, щипок — масштаб</div>
   </div>
 </div>
 
-<div class="controls" id="controls">
+<div class="controls">
   <div class="panel">
-    <div class="grid">
+    <div class="grid oneRow">
       <button type="button" id="pauseBtn" class="control active">Пауза</button>
       <button type="button" id="realBtn" class="control">1 сек / сек</button>
       <button type="button" id="hourBtn" class="control">1 час / сек</button>
-    </div>
-    <div class="grid secondary">
-      <button type="button" id="fitAllBtn" class="control">Вся система</button>
-      <button type="button" id="fitRingsBtn" class="control">Кольца</button>
-      <button type="button" id="zoomInBtn" class="control">+</button>
-      <button type="button" id="zoomOutBtn" class="control">−</button>
-      <button type="button" id="labelsBtn" class="control">Подписи</button>
+      <button type="button" id="labelsBtn" class="control active">Подписи</button>
     </div>
   </div>
 </div>
@@ -143,42 +198,29 @@ for (const m of moons) {
   m.periodSec = Math.abs(m.period_d) * 86400;
 }
 
-const staticCanvas = document.getElementById('staticCanvas');
-const dynamicCanvas = document.getElementById('dynamicCanvas');
-const sctx = staticCanvas.getContext('2d');
-const dctx = dynamicCanvas.getContext('2d');
+const canvas = document.getElementById('c');
+const ctx = canvas.getContext('2d');
 const infoBox = document.getElementById('infoBox');
 const infoSheet = document.getElementById('infoSheet');
 const scaleInfo = document.getElementById('scaleInfo');
 
 const state = {
-  w:0,h:0,centerX:0,centerY:0,offsetX:0,offsetY:0,kmPerPx:1,baseKmPerPx:1,
-  speedMode:0,showLabels:false,simSeconds:0,lastTs:performance.now(),
-  touches: new Map(), pinchBaseDistance:null, pinchBaseKmPerPx:null, moved:false, tapStart:0,
-  dpr:1, needsStaticRedraw:true, rafId:0
+  w:0,h:0,centerX:0,centerY:0,offsetX:0,offsetY:0,
+  kmPerPx:1,baseKmPerPx:1,speedMode:0,showLabels:true,simSeconds:0,lastTs:performance.now(),
+  pointers:new Map(),pinchBaseKmPerPx:null,pinchBaseDistance:null,moved:false,downAt:0
 };
 
 function resize() {
-  const rawDpr = window.devicePixelRatio || 1;
-  const cappedDpr = Math.min(rawDpr, 1.5);
-  state.dpr = cappedDpr;
-  [staticCanvas, dynamicCanvas].forEach(c => {
-    c.width = Math.floor(window.innerWidth * cappedDpr);
-    c.height = Math.floor(window.innerHeight * cappedDpr);
-    c.style.width = window.innerWidth + 'px';
-    c.style.height = window.innerHeight + 'px';
-  });
-  sctx.setTransform(cappedDpr,0,0,cappedDpr,0,0);
-  dctx.setTransform(cappedDpr,0,0,cappedDpr,0,0);
-
-  state.w = window.innerWidth;
-  state.h = window.innerHeight;
-  state.centerX = state.w / 2;
-  state.centerY = state.h / 2;
+  const dpr = Math.max(1, window.devicePixelRatio || 1);
+  canvas.width = Math.floor(innerWidth * dpr);
+  canvas.height = Math.floor(innerHeight * dpr);
+  canvas.style.width = innerWidth + 'px';
+  canvas.style.height = innerHeight + 'px';
+  ctx.setTransform(dpr,0,0,dpr,0,0);
+  state.w = innerWidth; state.h = innerHeight;
+  state.centerX = innerWidth / 2; state.centerY = innerHeight / 2;
   if (!state.baseKmPerPx || !isFinite(state.baseKmPerPx)) fitAll();
-  state.needsStaticRedraw = true;
   updateScaleInfo();
-  renderOnce();
 }
 
 function fitAll() {
@@ -190,9 +232,7 @@ function fitAll() {
   state.kmPerPx = state.baseKmPerPx;
   state.offsetX = 0;
   state.offsetY = -22;
-  state.needsStaticRedraw = true;
   updateScaleInfo();
-  renderOnce();
 }
 
 function fitRings() {
@@ -202,9 +242,7 @@ function fitRings() {
   state.kmPerPx = outer / usable;
   state.offsetX = 0;
   state.offsetY = -22;
-  state.needsStaticRedraw = true;
   updateScaleInfo();
-  renderOnce();
 }
 
 function worldToScreen(xKm, yKm) {
@@ -227,109 +265,103 @@ function ringAlphaByDistance(outerKm) {
   return outerKm <= 480000 ? 0.50 : 0.10;
 }
 
-function drawStatic() {
-  sctx.clearRect(0,0,state.w,state.h);
+function drawRings() {
   const center = worldToScreen(0,0);
-
   for (const r of rings) {
     const inner = kmRadiusToPx(r.inner_km);
     const outer = kmRadiusToPx(r.outer_km);
     const width = Math.max(outer - inner, 1);
     const alpha = ringAlphaByDistance(r.outer_km);
-    sctx.beginPath();
-    sctx.arc(center.x, center.y, (inner + outer) / 2, 0, Math.PI * 2);
-    sctx.strokeStyle = 'rgba(143,148,154,' + alpha + ')';
-    sctx.lineWidth = width;
-    sctx.stroke();
-  }
-
-  for (const m of moons) {
-    const r = kmRadiusToPx(m.sma_km);
-    if (r < 0.7) continue;
-    if (r < 8 && m.diameter_km < 100) continue;
-    sctx.beginPath();
-    sctx.arc(center.x, center.y, r, 0, Math.PI * 2);
-    sctx.strokeStyle = orbitColor(m);
-    sctx.lineWidth = 1;
-    sctx.stroke();
-  }
-
-  const sr = Math.max(0.5, kmRadiusToPx(SATURN_RADIUS_KM));
-  sctx.beginPath();
-  sctx.arc(center.x, center.y, sr, 0, Math.PI * 2);
-  sctx.fillStyle = getCSS('--yellow');
-  sctx.fill();
-
-  state.needsStaticRedraw = false;
-}
-
-function drawDynamic() {
-  dctx.clearRect(0,0,state.w,state.h);
-  const showLabelsNow = state.showLabels && state.kmPerPx < 120000;
-
-  for (const m of moons) {
-    const theta = m.phase0 + m.direction * (state.simSeconds / m.periodSec) * Math.PI * 2;
-    const x = Math.cos(theta) * m.sma_km;
-    const y = Math.sin(theta) * m.sma_km;
-    const p = worldToScreen(x, y);
-    m.screenX = p.x; m.screenY = p.y;
-
-    const s = m.sizePx;
-    const outlineR = Math.sqrt(2) * s / 2 + 6;
-
-    dctx.beginPath();
-    dctx.arc(p.x, p.y, outlineR, 0, Math.PI * 2);
-    dctx.strokeStyle = 'rgba(255,255,255,0.55)';
-    dctx.lineWidth = 1;
-    dctx.stroke();
-
-    dctx.fillStyle = moonColor(m);
-    dctx.fillRect(Math.round(p.x - s / 2), Math.round(p.y - s / 2), s, s);
-
-    if (showLabelsNow) {
-      const labelAlpha = Math.max(0.12, Math.min(1, 140000 / state.kmPerPx));
-      dctx.globalAlpha = labelAlpha;
-      dctx.textAlign = 'center';
-      dctx.fillStyle = '#ffffff';
-      dctx.font = '10px system-ui,-apple-system,Segoe UI,Roboto,sans-serif';
-      dctx.fillText(m.name, p.x, p.y - outlineR - 10);
-      dctx.font = '6px system-ui,-apple-system,Segoe UI,Roboto,sans-serif';
-      dctx.fillStyle = '#c7cbd1';
-      dctx.fillText(m.diameter_km + ' км', p.x, p.y - outlineR - 2);
-      dctx.globalAlpha = 1;
-    }
+    ctx.beginPath();
+    ctx.arc(center.x, center.y, (inner + outer) / 2, 0, Math.PI * 2);
+    ctx.strokeStyle = 'rgba(143,148,154,' + alpha + ')';
+    ctx.lineWidth = width;
+    ctx.stroke();
   }
 }
 
-function renderOnce() {
-  if (state.needsStaticRedraw) drawStatic();
-  drawDynamic();
+function drawSaturn() {
+  const center = worldToScreen(0,0);
+  const r = Math.max(0.5, kmRadiusToPx(SATURN_RADIUS_KM));
+  ctx.beginPath();
+  ctx.arc(center.x, center.y, r, 0, Math.PI * 2);
+  ctx.fillStyle = getCSS('--yellow');
+  ctx.fill();
 }
 
-function animate(ts) {
+function drawOrbit(m) {
+  const center = worldToScreen(0,0);
+  const r = kmRadiusToPx(m.sma_km);
+  if (r < 0.7) return;
+
+  const thetaNow = m.phase0 + m.direction * (state.simSeconds / m.periodSec) * Math.PI * 2;
+  const segments = 96;
+  const tailSpan = Math.PI * 2;
+
+  for (let i = 0; i < segments; i++) {
+    const t0 = i / segments;
+    const t1 = (i + 1) / segments;
+
+    const a0 = thetaNow - m.direction * (t0 * tailSpan);
+    const a1 = thetaNow - m.direction * (t1 * tailSpan);
+
+    const fade = 1 - t0;
+    const alpha = fade;
+    if (alpha <= 0.01) continue;
+
+    ctx.beginPath();
+    ctx.arc(center.x, center.y, r, a1, a0, m.direction < 0);
+    const base = m.diameter_km < 100 ? [200,205,210] : [243,211,106];
+    ctx.strokeStyle = 'rgba(' + base[0] + ',' + base[1] + ',' + base[2] + ',' + alpha.toFixed(3) + ')';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+  }
+}
+
+function drawMoon(m) {
+  const theta = m.phase0 + m.direction * (state.simSeconds / m.periodSec) * Math.PI * 2;
+  const x = Math.cos(theta) * m.sma_km;
+  const y = Math.sin(theta) * m.sma_km;
+  const p = worldToScreen(x, y);
+  m.screenX = p.x; m.screenY = p.y;
+
+  const s = m.sizePx;
+  const outlineR = Math.sqrt(2) * s / 2 + 6;
+
+  ctx.beginPath();
+  ctx.arc(p.x, p.y, outlineR, 0, Math.PI * 2);
+  ctx.strokeStyle = 'rgba(255,255,255,0.55)';
+  ctx.lineWidth = 1;
+  ctx.stroke();
+
+  ctx.fillStyle = moonColor(m);
+  ctx.fillRect(Math.round(p.x - s / 2), Math.round(p.y - s / 2), s, s);
+
+  if (state.showLabels) {
+    const labelAlpha = Math.max(0.12, Math.min(1, 140000 / state.kmPerPx));
+    ctx.globalAlpha = labelAlpha;
+    ctx.textAlign = 'center';
+    ctx.fillStyle = '#ffffff';
+    ctx.font = '10px system-ui,-apple-system,Segoe UI,Roboto,sans-serif';
+    ctx.fillText(m.name, p.x, p.y - outlineR - 10);
+    ctx.font = '6px system-ui,-apple-system,Segoe UI,Roboto,sans-serif';
+    ctx.fillStyle = '#c7cbd1';
+    ctx.fillText(m.diameter_km + ' км', p.x, p.y - outlineR - 2);
+    ctx.globalAlpha = 1;
+  }
+}
+
+function render(ts) {
   const dt = Math.min(0.05, (ts - state.lastTs) / 1000);
   state.lastTs = ts;
   if (state.speedMode === 1) state.simSeconds += dt;
   if (state.speedMode === 3600) state.simSeconds += dt * 3600;
-  renderOnce();
-  if (state.speedMode !== 0) {
-    state.rafId = requestAnimationFrame(animate);
-  } else {
-    state.rafId = 0;
-  }
-}
-
-function ensureAnimationState() {
-  if (state.speedMode === 0) {
-    if (state.rafId) {
-      cancelAnimationFrame(state.rafId);
-      state.rafId = 0;
-    }
-    renderOnce();
-  } else if (!state.rafId) {
-    state.lastTs = performance.now();
-    state.rafId = requestAnimationFrame(animate);
-  }
+  ctx.clearRect(0,0,state.w,state.h);
+  drawRings();
+  for (const m of moons) drawOrbit(m);
+  drawSaturn();
+  for (const m of moons) drawMoon(m);
+  requestAnimationFrame(render);
 }
 
 function setSpeed(mode) {
@@ -337,7 +369,6 @@ function setSpeed(mode) {
   document.getElementById('pauseBtn').classList.toggle('active', mode === 0);
   document.getElementById('realBtn').classList.toggle('active', mode === 1);
   document.getElementById('hourBtn').classList.toggle('active', mode === 3600);
-  ensureAnimationState();
 }
 
 function zoomAt(factor, clientX = state.centerX, clientY = state.centerY) {
@@ -346,9 +377,7 @@ function zoomAt(factor, clientX = state.centerX, clientY = state.centerY) {
   state.kmPerPx = Math.max(100, Math.min(maxStructureKm, state.kmPerPx * factor));
   state.offsetX = clientX - state.centerX - beforeX / state.kmPerPx;
   state.offsetY = clientY - state.centerY - beforeY / state.kmPerPx;
-  state.needsStaticRedraw = true;
   updateScaleInfo();
-  renderOnce();
 }
 
 function hitTest(x, y) {
@@ -374,112 +403,89 @@ function showInfo(m) {
   infoBox.style.display = 'block';
 }
 
-function onClick(id, fn) {
-  document.getElementById(id).addEventListener('click', function(e) {
+function bindTap(id, fn) {
+  const el = document.getElementById(id);
+  el.addEventListener('click', (e) => {
     e.preventDefault();
     e.stopPropagation();
     fn();
   }, false);
 }
-onClick('pauseBtn', function(){ setSpeed(0); });
-onClick('realBtn', function(){ setSpeed(1); });
-onClick('hourBtn', function(){ setSpeed(3600); });
-onClick('fitAllBtn', function(){ fitAll(); });
-onClick('fitRingsBtn', function(){ fitRings(); });
-onClick('zoomInBtn', function(){ zoomAt(0.8); });
-onClick('zoomOutBtn', function(){ zoomAt(1.25); });
-onClick('labelsBtn', function() {
+
+bindTap('pauseBtn', () => setSpeed(0));
+bindTap('realBtn', () => setSpeed(1));
+bindTap('hourBtn', () => setSpeed(3600));
+bindTap('labelsBtn', () => {
   state.showLabels = !state.showLabels;
   document.getElementById('labelsBtn').classList.toggle('active', state.showLabels);
-  renderOnce();
 });
-onClick('infoBtn', function(){ infoSheet.classList.toggle('open'); });
+bindTap('infoBtn', () => infoSheet.classList.toggle('open'));
 
-function getTouchDistance(t1, t2) {
-  const dx = t1.clientX - t2.clientX;
-  const dy = t1.clientY - t2.clientY;
-  return Math.hypot(dx, dy);
-}
-
-dynamicCanvas.addEventListener('touchstart', function(e) {
-  if (e.touches.length >= 1) {
-    state.moved = false;
-    state.tapStart = performance.now();
-  }
-  if (e.touches.length === 1) {
-    const t = e.touches[0];
-    state.touches.set('a', {x:t.clientX, y:t.clientY});
-  } else if (e.touches.length >= 2) {
-    const t1 = e.touches[0], t2 = e.touches[1];
-    state.touches.set('a', {x:t1.clientX, y:t1.clientY});
-    state.touches.set('b', {x:t2.clientX, y:t2.clientY});
-    state.pinchBaseDistance = getTouchDistance(t1, t2);
-    state.pinchBaseKmPerPx = state.kmPerPx;
-  }
+canvas.addEventListener('wheel', (e) => {
   e.preventDefault();
-}, {passive:false});
+  zoomAt(e.deltaY > 0 ? 1.12 : 0.9, e.clientX, e.clientY);
+}, { passive:false });
 
-dynamicCanvas.addEventListener('touchmove', function(e) {
-  if (e.touches.length === 1 && state.touches.has('a')) {
-    const prev = state.touches.get('a');
-    const t = e.touches[0];
-    const dx = t.clientX - prev.x;
-    const dy = t.clientY - prev.y;
+canvas.addEventListener('pointerdown', (e) => {
+  canvas.setPointerCapture(e.pointerId);
+  state.pointers.set(e.pointerId, {x:e.clientX, y:e.clientY});
+  state.moved = false;
+  state.downAt = performance.now();
+});
+
+canvas.addEventListener('pointermove', (e) => {
+  if (!state.pointers.has(e.pointerId)) return;
+  const prev = state.pointers.get(e.pointerId);
+  state.pointers.set(e.pointerId, {x:e.clientX, y:e.clientY});
+  if (state.pointers.size === 1) {
+    const dx = e.clientX - prev.x;
+    const dy = e.clientY - prev.y;
     if (Math.abs(dx) + Math.abs(dy) > 2) state.moved = true;
     state.offsetX += dx;
     state.offsetY += dy;
-    state.touches.set('a', {x:t.clientX, y:t.clientY});
-    state.needsStaticRedraw = true;
-    renderOnce();
-  } else if (e.touches.length >= 2) {
-    const t1 = e.touches[0], t2 = e.touches[1];
-    const d = getTouchDistance(t1, t2);
-    if (state.pinchBaseDistance && state.pinchBaseKmPerPx) {
-      state.kmPerPx = Math.max(100, Math.min(maxStructureKm, state.pinchBaseKmPerPx * (state.pinchBaseDistance / d)));
-      updateScaleInfo();
-      state.moved = true;
-      state.needsStaticRedraw = true;
-      renderOnce();
-    } else {
+  } else if (state.pointers.size === 2) {
+    state.moved = true;
+    const pts = [...state.pointers.values()];
+    const d = Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y);
+    if (!state.pinchBaseDistance) {
       state.pinchBaseDistance = d;
       state.pinchBaseKmPerPx = state.kmPerPx;
+    } else if (d > 0) {
+      state.kmPerPx = Math.max(100, Math.min(maxStructureKm, state.pinchBaseKmPerPx * (state.pinchBaseDistance / d)));
+      updateScaleInfo();
     }
-    state.touches.set('a', {x:t1.clientX, y:t1.clientY});
-    state.touches.set('b', {x:t2.clientX, y:t2.clientY});
   }
-  e.preventDefault();
-}, {passive:false});
+});
 
-dynamicCanvas.addEventListener('touchend', function(e) {
-  if (e.touches.length === 0) {
-    const changed = e.changedTouches && e.changedTouches[0];
-    const wasTap = !state.moved && (performance.now() - state.tapStart < 250);
-    if (wasTap && changed) {
-      const hit = hitTest(changed.clientX, changed.clientY);
-      if (hit) showInfo(hit); else infoBox.style.display = 'none';
-    }
-    state.touches.clear();
-    state.pinchBaseDistance = null;
-    state.pinchBaseKmPerPx = null;
-  } else if (e.touches.length === 1) {
-    const t = e.touches[0];
-    state.touches.clear();
-    state.touches.set('a', {x:t.clientX, y:t.clientY});
+function clearPointer(e) {
+  state.pointers.delete(e.pointerId);
+  if (state.pointers.size < 2) {
     state.pinchBaseDistance = null;
     state.pinchBaseKmPerPx = null;
   }
-  e.preventDefault();
-}, {passive:false});
+}
 
-dynamicCanvas.addEventListener('wheel', function(e) {
-  e.preventDefault();
-  zoomAt(e.deltaY > 0 ? 1.12 : 0.9, e.clientX, e.clientY);
-}, {passive:false});
+canvas.addEventListener('pointerup', (e) => {
+  const wasTap = !state.moved && (performance.now() - state.downAt < 250);
+  if (wasTap) {
+    const hit = hitTest(e.clientX, e.clientY);
+    if (hit) showInfo(hit); else infoBox.style.display = 'none';
+  }
+  clearPointer(e);
+});
+canvas.addEventListener('pointercancel', clearPointer);
+canvas.addEventListener('click', (e) => {
+  const hit = hitTest(e.clientX, e.clientY);
+  if (hit) showInfo(hit);
+  else infoBox.style.display = 'none';
+});
+
 
 window.addEventListener('resize', resize);
 resize();
 fitAll();
 setSpeed(0);
+requestAnimationFrame(render);
 </script>
 </body>
 </html>
