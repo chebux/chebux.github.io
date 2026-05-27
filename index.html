@@ -294,9 +294,25 @@ function drawOrbit(m) {
   const r = kmRadiusToPx(m.sma_km);
   if (r < 0.7) return;
 
+  const isLarge = m.diameter_km >= 1000;
+  const isMedium = m.diameter_km >= 100;
+  const isSmall = m.diameter_km < 100;
+
+  // Tiny / distant orbits: cheap faint full circle to reduce load.
+  if (isSmall) {
+    ctx.beginPath();
+    ctx.arc(center.x, center.y, r, 0, Math.PI * 2);
+    ctx.strokeStyle = 'rgba(200,205,210,0.06)';
+    ctx.lineWidth = 1;
+    ctx.stroke();
+    return;
+  }
+
   const thetaNow = m.phase0 + m.direction * (state.simSeconds / m.periodSec) * Math.PI * 2;
-  const segments = 96;
-  const tailSpan = Math.PI * 2;
+
+  // Medium moons get shorter and simpler tails.
+  const segments = isLarge ? 28 : 12;
+  const tailSpan = isLarge ? Math.PI * 2 : Math.PI * 0.65;
 
   for (let i = 0; i < segments; i++) {
     const t0 = i / segments;
@@ -306,12 +322,12 @@ function drawOrbit(m) {
     const a1 = thetaNow - m.direction * (t1 * tailSpan);
 
     const fade = 1 - t0;
-    const alpha = fade;
+    const alpha = isLarge ? (fade * 0.95) : (fade * 0.45);
     if (alpha <= 0.01) continue;
 
     ctx.beginPath();
     ctx.arc(center.x, center.y, r, a1, a0, m.direction < 0);
-    const base = m.diameter_km < 100 ? [200,205,210] : [243,211,106];
+    const base = isMedium ? [243,211,106] : [200,205,210];
     ctx.strokeStyle = 'rgba(' + base[0] + ',' + base[1] + ',' + base[2] + ',' + alpha.toFixed(3) + ')';
     ctx.lineWidth = 1;
     ctx.stroke();
@@ -338,7 +354,7 @@ function drawMoon(m) {
   ctx.fillRect(Math.round(p.x - s / 2), Math.round(p.y - s / 2), s, s);
 
   if (state.showLabels) {
-    const labelAlpha = Math.max(0.12, Math.min(1, 140000 / state.kmPerPx));
+    const labelAlpha = Math.max(0.10, Math.min(1, 90000 / state.kmPerPx));
     ctx.globalAlpha = labelAlpha;
     ctx.textAlign = 'center';
     ctx.fillStyle = '#ffffff';
