@@ -348,7 +348,6 @@ function drawTailOrbit(m, thetaNow){
 function drawMoon(m, detail){
   if (isMobile) {
     if (detail !== 'close' && m.diameter_km < 100) return;
-    if (detail === 'close' && m.diameter_km < 10 && ((state.frameCount + m.renderIndex) % 3 !== 0)) return;
   }
   const theta = m.phase0 + m.direction * (state.simSeconds / m.periodSec) * Math.PI * 2;
   const x = Math.cos(theta) * m.sma_km;
@@ -365,7 +364,7 @@ function drawMoon(m, detail){
 
   dctx.beginPath();
   dctx.arc(p.x, p.y, outlineR, 0, Math.PI * 2);
-  dctx.strokeStyle = 'rgba(255,255,255,0.55)';
+  dctx.strokeStyle = s <= 2 ? 'rgba(255,255,255,0.35)' : 'rgba(255,255,255,0.55)';
   dctx.lineWidth = 1;
   dctx.stroke();
 
