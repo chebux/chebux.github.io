@@ -257,7 +257,7 @@ button.control.active{
   <div class="title">Система Сатурна — полная визуальная версия</div>
   <div class="meta" id="scaleInfo"></div>
   <div class="legend">
-    <div>Сатурн и иконки спутников выполнены в пиксельной графике.</div>
+    <div>Сатурн показан как простой объёмный шар без текстуры.</div>
     <div>Орбиты и кольца проецируются как эллипсы.</div>
     <div>Информационная панель находится по центру над управлением.</div>
     <div>Названия спутников даны как русский + английский вариант.</div>
@@ -482,7 +482,6 @@ async function loadMoonsFromWikipedia(){
     name = name.replace(/^Label\s*/i, '').trim();
     if (!name) continue;
 
-    // Отсекаем явный мусор
     const lowerName = name.toLowerCase();
     if (
       lowerName.includes('moonlet') ||
@@ -491,7 +490,6 @@ async function loadMoonsFromWikipedia(){
       lowerName.includes('key')
     ) continue;
 
-    // Иногда в ячейке имя может идти с переносами
     name = name.split('\n')[0].trim();
 
     const diameter = parseNumber(cells[diameterIdx]?.textContent || '');
@@ -511,12 +509,10 @@ async function loadMoonsFromWikipedia(){
     });
   }
 
-  // Удаление дублей по имени, сохраняем последнюю запись
   const uniq = new Map();
   for (const m of parsed) uniq.set(m.name, m);
   const list = [...uniq.values()];
 
-  // Если что-то пошло не так и таблица распарсилась плохо, даём аварийный фолбэк
   if (list.length < 50) {
     throw new Error('Таблица распарсилась неполно: ' + list.length + ' объектов');
   }
@@ -712,49 +708,45 @@ function drawRingsHalf(detail, front){
 function drawPixelSaturn(){
   const center = worldToScreen(0,0);
   const r = Math.max(4, kmRadiusToPx(SATURN_RADIUS_KM));
-  const px = Math.max(12, Math.round(r * 2));
 
-  const off = document.createElement('canvas');
-  off.width = px;
-  off.height = px;
-  const o = off.getContext('2d');
+  const grad = sctx.createRadialGradient(
+    center.x - r * 0.28,
+    center.y - r * 0.30,
+    r * 0.10,
+    center.x,
+    center.y,
+    r * 1.05
+  );
+  grad.addColorStop(0, '#fff7df');
+  grad.addColorStop(0.28, '#f1dfb5');
+  grad.addColorStop(0.68, '#d9ba82');
+  grad.addColorStop(1, '#9e7a4f');
 
-  for (let y = 0; y < px; y++){
-    for (let x = 0; x < px; x++){
-      const nx = (x + 0.5 - px / 2) / (px / 2);
-      const ny = (y + 0.5 - px / 2) / (px / 2);
-      const rr = nx * nx + ny * ny;
-      if (rr > 1) continue;
+  sctx.beginPath();
+  sctx.arc(center.x, center.y, r, 0, Math.PI * 2);
+  sctx.fillStyle = grad;
+  sctx.fill();
 
-      const nz = Math.sqrt(Math.max(0, 1 - rr));
-      const light = Math.max(0, nx * -0.55 + ny * -0.35 + nz * 0.95);
-      const lat = ny;
+  const shadow = sctx.createRadialGradient(
+    center.x + r * 0.26,
+    center.y + r * 0.20,
+    r * 0.10,
+    center.x,
+    center.y,
+    r
+  );
+  shadow.addColorStop(0.68, 'rgba(0,0,0,0)');
+  shadow.addColorStop(1, 'rgba(0,0,0,0.28)');
+  sctx.beginPath();
+  sctx.arc(center.x, center.y, r, 0, Math.PI * 2);
+  sctx.fillStyle = shadow;
+  sctx.fill();
 
-      let col;
-      if (lat < -0.70) col = [124,92,61];
-      else if (lat < -0.52) col = [182,136,88];
-      else if (lat < -0.34) col = [231,202,143];
-      else if (lat < -0.14) col = [170,121,76];
-      else if (lat <  0.06) col = [241,217,164];
-      else if (lat <  0.24) col = [168,118,74];
-      else if (lat <  0.46) col = [233,205,155];
-      else if (lat <  0.68) col = [156,113,72];
-      else col = [122,89,59];
-
-      const shade = 0.45 + light * 0.75;
-      const r0 = Math.min(255, Math.round(col[0] * shade));
-      const g0 = Math.min(255, Math.round(col[1] * shade));
-      const b0 = Math.min(255, Math.round(col[2] * shade));
-
-      o.fillStyle = 'rgb(' + r0 + ',' + g0 + ',' + b0 + ')';
-      o.fillRect(x, y, 1, 1);
-    }
-  }
-
-  sctx.save();
-  sctx.imageSmoothingEnabled = false;
-  sctx.drawImage(off, Math.round(center.x - px / 2), Math.round(center.y - px / 2), px, px);
-  sctx.restore();
+  sctx.beginPath();
+  sctx.arc(center.x, center.y, r, 0, Math.PI * 2);
+  sctx.strokeStyle = 'rgba(255,245,220,0.20)';
+  sctx.lineWidth = 1;
+  sctx.stroke();
 }
 
 function drawStaticOrbits(visible, detail){
@@ -765,13 +757,13 @@ function drawStaticOrbits(visible, detail){
     const pxR = kmRadiusToPx(m.sma_km);
     if (pxR < 0.7) continue;
 
-    const segments = detail === 'close' ? 48 : 28;
+    const segments = detail === 'close' ? 36 : 24;
     const pts = buildProjectedOrbitPoints(m.sma_km, m.incRad, m.nodeRad, segments);
 
     let alpha;
-    if (m.diameter_km < 100) alpha = 0.03;
-    else if (m.diameter_km < 1000) alpha = detail === 'close' ? 0.08 : 0.06;
-    else alpha = detail === 'close' ? 0.14 : 0.09;
+    if (m.diameter_km < 100) alpha = 0.025;
+    else if (m.diameter_km < 1000) alpha = detail === 'close' ? 0.06 : 0.045;
+    else alpha = detail === 'close' ? 0.11 : 0.075;
 
     const base = m.diameter_km < 100 ? [200,205,210] : [243,211,106];
     drawProjectedPath(
@@ -798,8 +790,8 @@ function drawStaticScene(){
 }
 
 function drawTailOrbit(m, thetaNow){
-  const segments = isMobile ? 12 : 18;
-  const tailSpan = Math.PI * 0.75;
+  const segments = isMobile ? 8 : 12;
+  const tailSpan = Math.PI * 0.60;
   const pts = [];
 
   for (let i = 0; i <= segments; i++){
@@ -812,7 +804,7 @@ function drawTailOrbit(m, thetaNow){
 
   const base = m.diameter_km < 100 ? [200,205,210] : [243,211,106];
   for (let i = 0; i < segments; i++){
-    const alpha = (1 - (i / segments)) * 0.70;
+    const alpha = (1 - (i / segments)) * 0.62;
     dctx.beginPath();
     dctx.moveTo(pts[i].x, pts[i].y);
     dctx.lineTo(pts[i + 1].x, pts[i + 1].y);
@@ -1094,7 +1086,8 @@ async function init(){
     requestAnimationFrame(render);
   }catch(err){
     console.error(err);
-    loadingBox.innerHTML = 'Ошибка загрузки списка спутников.<br><br>' +
+    loadingBox.innerHTML =
+      'Ошибка загрузки списка спутников.<br><br>' +
       'Проверьте интернет и откройте файл в обычном браузере, а не во встроенном предпросмотре.';
   }
 }
