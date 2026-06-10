@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no" />
-<title>Saturn System Visual</title>
+<title>Saturn System Full Visual</title>
 <style>
 :root{
   --bg:#040507;
@@ -140,9 +140,10 @@ button.control.active{
 
 .infoBox{
   position:fixed;
-  left:8px;
+  left:50%;
+  transform:translateX(-50%);
   bottom:max(66px, calc(env(safe-area-inset-bottom) + 66px));
-  width:min(94vw, 390px);
+  width:min(94vw, 420px);
   background:var(--panel);
   border:1px solid rgba(255,255,255,.08);
   border-radius:12px;
@@ -180,6 +181,22 @@ button.control.active{
 .infoText b{
   display:block;
   margin-bottom:2px;
+}
+
+.loadingBox{
+  position:fixed;
+  left:50%;
+  top:50%;
+  transform:translate(-50%,-50%);
+  width:min(92vw, 360px);
+  background:rgba(8,10,14,.88);
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:12px;
+  padding:14px 16px;
+  text-align:center;
+  z-index:40;
+  font-size:13px;
+  line-height:1.4;
 }
 
 .controls, .controls *, .topbar, .topbar *, .infoSheet, .infoSheet *{
@@ -237,13 +254,14 @@ button.control.active{
 </div>
 
 <div id="infoSheet" class="infoSheet">
-  <div class="title">Система Сатурна — визуальная версия</div>
+  <div class="title">Система Сатурна — полная визуальная версия</div>
   <div class="meta" id="scaleInfo"></div>
   <div class="legend">
-    <div>Сатурн показан как шар с полосами и полярным затемнением.</div>
+    <div>Сатурн и иконки спутников выполнены в пиксельной графике.</div>
     <div>Орбиты и кольца проецируются как эллипсы.</div>
-    <div>Наклон сцены зафиксирован для объёмного вида.</div>
-    <div>У выбранного спутника слева показывается пиксельная иконка.</div>
+    <div>Информационная панель находится по центру над управлением.</div>
+    <div>Названия спутников даны как русский + английский вариант.</div>
+    <div>Если у объекта нет устойчивого русского имени, остаётся только латиница.</div>
   </div>
 </div>
 
@@ -267,26 +285,9 @@ button.control.active{
   </div>
 </div>
 
-<script>
-// ===============================
-// ВСТАВЬТЕ СЮДА ВАШ ТЕКУЩИЙ МАССИВ moons
-// из рабочей версии HTML.
-// Формат элемента:
-// {name:"Titan", diameter_km:5149.46, sma_km:1221900, period_d:15.9454, ...}
-// ===============================
-const moons = [
-  // ПРИМЕРЫ. ЗАМЕНИТЕ НА ВАШ ПОЛНЫЙ МАССИВ.
-  {name:"Mimas", diameter_km:396.4, sma_km:186000, period_d:0.94242},
-  {name:"Enceladus", diameter_km:504.2, sma_km:238400, period_d:1.37022},
-  {name:"Tethys", diameter_km:1062.2, sma_km:295000, period_d:1.8878},
-  {name:"Dione", diameter_km:1122.8, sma_km:377700, period_d:2.73692},
-  {name:"Rhea", diameter_km:1527.6, sma_km:527200, period_d:4.5175},
-  {name:"Titan", diameter_km:5149.46, sma_km:1221900, period_d:15.9454},
-  {name:"Hyperion", diameter_km:270.0, sma_km:1481500, period_d:21.2767},
-  {name:"Iapetus", diameter_km:1468.6, sma_km:3561700, period_d:79.331},
-  {name:"Phoebe", diameter_km:213.0, sma_km:12929400, period_d:-550.3}
-];
+<div class="loadingBox" id="loadingBox">Загрузка списка спутников Сатурна…</div>
 
+<script>
 const rings = [
   {name:"D Ring", inner_km:66900, outer_km:74491},
   {name:"C Ring", inner_km:74491, outer_km:91975},
@@ -303,18 +304,69 @@ const rings = [
 
 const SATURN_RADIUS_KM = 58232;
 const SATURN_DIAMETER_KM = SATURN_RADIUS_KM * 2;
-const maxMoonRadiusKm = Math.max(...moons.map(m => m.sma_km));
-const maxStructureKm = Math.max(maxMoonRadiusKm, ...rings.map(r => r.outer_km));
-const allMoonCount = moons.length;
-const majorTailNames = new Set(['Titan','Rhea','Iapetus','Dione','Tethys','Enceladus','Mimas']);
+const VIEW_TILT_DEG = 60;
+const VIEW_TILT_RAD = VIEW_TILT_DEG * Math.PI / 180;
 const coarsePointer = window.matchMedia('(pointer: coarse)').matches;
 const isMobile = coarsePointer || /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 const targetFPS = isMobile ? 30 : 60;
+const majorTailNames = new Set(['Titan','Rhea','Iapetus','Dione','Tethys','Enceladus','Mimas']);
 
-// Здесь подобран наклон, чтобы орбиты выглядели как эллипсы.
-// Если захотите сильнее "сплюснуть" орбиты, увеличьте VIEW_TILT_DEG.
-const VIEW_TILT_DEG = 60;
-const VIEW_TILT_RAD = VIEW_TILT_DEG * Math.PI / 180;
+const ruMap = {
+  "Mimas":"Мимас","Enceladus":"Энцелад","Tethys":"Тефия","Dione":"Диона","Rhea":"Рея",
+  "Titan":"Титан","Hyperion":"Гиперион","Iapetus":"Япет","Phoebe":"Феба","Janus":"Янус",
+  "Epimetheus":"Эпиметей","Prometheus":"Прометей","Pandora":"Пандора","Atlas":"Атлас",
+  "Pan":"Пан","Daphnis":"Дафнис","Aegaeon":"Эгеон","Methone":"Метона","Anthe":"Анте",
+  "Pallene":"Паллена","Telesto":"Телесто","Calypso":"Калипсо","Helene":"Елена",
+  "Polydeuces":"Полидевк","Kiviuq":"Кивиук","Ijiraq":"Иджирак","Paaliaq":"Паалияк",
+  "Skathi":"Скади","Albiorix":"Альбиорикс","Bebhionn":"Бебхионн","Erriapus":"Эрриап",
+  "Skoll":"Сколль","Siarnaq":"Сиарнак","Tarqeq":"Таркек","Tarvos":"Тарвос","Hyrrokkin":"Хюрроккин",
+  "Greip":"Грейп","Mundilfari":"Мундильфари","Narvi":"Нарви","Farbauti":"Фарбаути","Thrymr":"Трюм",
+  "Bestla":"Бестла","Angrboda":"Ангрбода","Aegir":"Эгир","Beli":"Бели","Gerd":"Герд",
+  "Gunnlod":"Гуннлёд","Skrymir":"Скримир","Alvaldi":"Альвальди","Kari":"Кари","Geirrod":"Гейррёд",
+  "Fenrir":"Фенрир","Surtur":"Суртур","Loge":"Логе","Ymir":"Имир","Thiazzi":"Тьяцци","Fornjot":"Форньот"
+};
+
+let moons = [];
+let maxMoonRadiusKm = 1;
+let maxStructureKm = 1;
+
+const staticCanvas = document.getElementById('staticCanvas');
+const dynamicCanvas = document.getElementById('dynamicCanvas');
+const sctx = staticCanvas.getContext('2d');
+const dctx = dynamicCanvas.getContext('2d');
+const infoBox = document.getElementById('infoBox');
+const infoSheet = document.getElementById('infoSheet');
+const infoText = document.getElementById('infoText');
+const scaleInfo = document.getElementById('scaleInfo');
+const iconCanvas = document.getElementById('moonIconCanvas');
+const ictx = iconCanvas.getContext('2d');
+const loadingBox = document.getElementById('loadingBox');
+
+const state = {
+  w:0,
+  h:0,
+  dpr:1,
+  centerX:0,
+  centerY:0,
+  offsetX:0,
+  offsetY:0,
+  kmPerPx:1,
+  baseKmPerPx:1,
+  speedMode:0,
+  showLabels:true,
+  simSeconds:0,
+  lastRenderTs:0,
+  frameCount:0,
+  pointers:new Map(),
+  pinchBaseKmPerPx:null,
+  pinchBaseDistance:null,
+  moved:false,
+  downAt:0,
+  selectedMoon:null,
+  staticDirty:true,
+  lastDetailLevel:'',
+  visibleMoons:[]
+};
 
 function pxBucket(d){
   if (d < 10) return 1;
@@ -343,86 +395,149 @@ function hash01(str){
 function hashPhase(name){
   return hash01(name) * Math.PI * 2;
 }
-
-// Приближённые наклоны.
-// Для крупных известных спутников вручную.
-// Для остальных — правдоподобная аппроксимация по группам.
+function cleanText(s){
+  return (s || '')
+    .replace(/\[\d+\]/g, '')
+    .replace(/\s+/g, ' ')
+    .replace(/^\s+|\s+$/g, '');
+}
+function parseNumber(text){
+  const t = cleanText(text).replace(/[−–—]/g, '-').replace(/,/g, '');
+  const m = t.match(/[-+]?\d+(?:\.\d+)?/);
+  return m ? parseFloat(m[0]) : null;
+}
 function approxOrbitalElements(m){
   const manual = {
-    'Mimas':[1.57,0],
-    'Enceladus':[0.0,0],
-    'Tethys':[1.09,0],
-    'Dione':[0.02,0],
-    'Rhea':[0.35,0],
-    'Titan':[0.35,0],
-    'Hyperion':[0.43,0],
-    'Iapetus':[15.47,0],
+    'Mimas':[1.57,0],'Enceladus':[0.0,0],'Tethys':[1.09,0],'Dione':[0.02,0],
+    'Rhea':[0.35,0],'Titan':[0.35,0],'Hyperion':[0.43,0],'Iapetus':[15.47,0],
     'Phoebe':[175.3,255]
   };
-  if (manual[m.name]){
-    return {inc: manual[m.name][0], node: manual[m.name][1]};
-  }
-  if (m.sma_km < 4000000){
-    return {inc: hash01(m.name) * 0.8, node: hash01(m.name + 'node') * 360};
-  }
-  if (m.period_d < 0){
-    return {inc: 145 + hash01(m.name) * 25, node: hash01(m.name + 'node') * 360};
-  }
-  return {inc: 30 + hash01(m.name) * 20, node: hash01(m.name + 'node') * 360};
+  if (manual[m.name]) return {inc:manual[m.name][0], node:manual[m.name][1]};
+  if (m.sma_km < 4000000) return {inc:hash01(m.name)*0.8, node:hash01(m.name+'node')*360};
+  if (m.period_d < 0) return {inc:145 + hash01(m.name)*25, node:hash01(m.name+'node')*360};
+  return {inc:30 + hash01(m.name)*20, node:hash01(m.name+'node')*360};
+}
+function makeBilingualLabel(en){
+  return ruMap[en] ? `${ruMap[en]} - ${en}` : en;
 }
 
-for (let i = 0; i < moons.length; i++){
-  const m = moons[i];
-  m.sizePx = pxBucket(m.diameter_km);
-  m.phase0 = hashPhase(m.name);
-  m.direction = m.period_d < 0 ? -1 : 1;
-  m.periodSec = Math.abs(m.period_d) * 86400;
-  m.renderIndex = i;
+async function loadMoonsFromWikipedia(){
+  const url = 'https://en.wikipedia.org/w/api.php?action=parse&page=Moons_of_Saturn&prop=text&formatversion=2&format=json&origin=*';
+  const res = await fetch(url);
+  if (!res.ok) throw new Error('Не удалось загрузить таблицу спутников');
+  const data = await res.json();
+  const pageHtml = data?.parse?.text;
+  if (!pageHtml) throw new Error('Пустой ответ Wikipedia API');
 
-  const el = approxOrbitalElements(m);
-  m.incDeg = el.inc;
-  m.nodeDeg = el.node;
-  m.incRad = m.incDeg * Math.PI / 180;
-  m.nodeRad = m.nodeDeg * Math.PI / 180;
+  const doc = new DOMParser().parseFromString(pageHtml, 'text/html');
+  const tables = [...doc.querySelectorAll('table.wikitable')];
+
+  let targetTable = null;
+  let headerRow = null;
+
+  for (const table of tables){
+    const rows = [...table.querySelectorAll('tr')];
+    for (const row of rows){
+      const headers = [...row.querySelectorAll('th')].map(th => cleanText(th.textContent).toLowerCase());
+      const joined = headers.join(' | ');
+      if (
+        joined.includes('name') &&
+        joined.includes('diameter') &&
+        (joined.includes('semi-major') || joined.includes('semi major')) &&
+        joined.includes('period')
+      ){
+        targetTable = table;
+        headerRow = row;
+        break;
+      }
+    }
+    if (targetTable) break;
+  }
+
+  if (!targetTable || !headerRow) throw new Error('Не найдена таблица спутников');
+
+  const headerCells = [...headerRow.children];
+  const headerTexts = headerCells.map(cell => cleanText(cell.textContent).toLowerCase());
+
+  const nameIdx = Math.max(0, headerTexts.findIndex(t => t.includes('name')));
+  const diameterIdx = headerTexts.findIndex(t => t.includes('diameter'));
+  const smaIdx = headerTexts.findIndex(t => t.includes('semi-major') || t.includes('semi major'));
+  const periodIdx = headerTexts.findIndex(t => t.includes('period'));
+  const inclIdx = headerTexts.findIndex(t => t.includes('inclination'));
+
+  if (diameterIdx < 0 || smaIdx < 0 || periodIdx < 0) {
+    throw new Error('Не удалось определить колонки таблицы');
+  }
+
+  const rows = [...targetTable.querySelectorAll('tr')];
+  const startIndex = rows.indexOf(headerRow) + 1;
+  const parsed = [];
+
+  for (let i = startIndex; i < rows.length; i++){
+    const tr = rows[i];
+    const cells = [...tr.querySelectorAll('th, td')];
+    if (cells.length < Math.max(nameIdx, diameterIdx, smaIdx, periodIdx) + 1) continue;
+
+    let name = cleanText(cells[nameIdx]?.textContent || '');
+    name = name.replace(/^Label\s*/i, '').trim();
+    if (!name) continue;
+
+    // Отсекаем явный мусор
+    const lowerName = name.toLowerCase();
+    if (
+      lowerName.includes('moonlet') ||
+      lowerName.includes('a ring moonlets') ||
+      lowerName.includes('s/2004 s 3 and s 4') ||
+      lowerName.includes('key')
+    ) continue;
+
+    // Иногда в ячейке имя может идти с переносами
+    name = name.split('\n')[0].trim();
+
+    const diameter = parseNumber(cells[diameterIdx]?.textContent || '');
+    const sma = parseNumber(cells[smaIdx]?.textContent || '');
+    const period = parseNumber(cells[periodIdx]?.textContent || '');
+    const incl = inclIdx >= 0 ? parseNumber(cells[inclIdx]?.textContent || '') : null;
+
+    if (diameter == null || sma == null || period == null) continue;
+
+    parsed.push({
+      name,
+      label: makeBilingualLabel(name),
+      diameter_km: diameter,
+      sma_km: sma,
+      period_d: period,
+      incDegSource: incl
+    });
+  }
+
+  // Удаление дублей по имени, сохраняем последнюю запись
+  const uniq = new Map();
+  for (const m of parsed) uniq.set(m.name, m);
+  const list = [...uniq.values()];
+
+  // Если что-то пошло не так и таблица распарсилась плохо, даём аварийный фолбэк
+  if (list.length < 50) {
+    throw new Error('Таблица распарсилась неполно: ' + list.length + ' объектов');
+  }
+
+  for (let i = 0; i < list.length; i++){
+    const m = list[i];
+    m.sizePx = pxBucket(m.diameter_km);
+    m.phase0 = hashPhase(m.name);
+    m.direction = m.period_d < 0 ? -1 : 1;
+    m.periodSec = Math.abs(m.period_d) * 86400;
+    m.renderIndex = i;
+
+    const el = approxOrbitalElements(m);
+    m.incDeg = m.incDegSource != null ? m.incDegSource : el.inc;
+    m.nodeDeg = el.node;
+    m.incRad = m.incDeg * Math.PI / 180;
+    m.nodeRad = m.nodeDeg * Math.PI / 180;
+  }
+
+  return list;
 }
-
-const staticCanvas = document.getElementById('staticCanvas');
-const dynamicCanvas = document.getElementById('dynamicCanvas');
-const sctx = staticCanvas.getContext('2d');
-const dctx = dynamicCanvas.getContext('2d');
-
-const infoBox = document.getElementById('infoBox');
-const infoSheet = document.getElementById('infoSheet');
-const infoText = document.getElementById('infoText');
-const scaleInfo = document.getElementById('scaleInfo');
-const iconCanvas = document.getElementById('moonIconCanvas');
-const ictx = iconCanvas.getContext('2d');
-
-const state = {
-  w:0,
-  h:0,
-  dpr:1,
-  centerX:0,
-  centerY:0,
-  offsetX:0,
-  offsetY:0,
-  kmPerPx:1,
-  baseKmPerPx:1,
-  speedMode:0,
-  showLabels:true,
-  simSeconds:0,
-  lastRenderTs:0,
-  frameCount:0,
-  pointers:new Map(),
-  pinchBaseKmPerPx:null,
-  pinchBaseDistance:null,
-  moved:false,
-  downAt:0,
-  selectedMoon:null,
-  staticDirty:true,
-  lastDetailLevel:'',
-  visibleMoons:[]
-};
 
 function setCanvasSize(canvas, ctx){
   canvas.width = Math.floor(innerWidth * state.dpr);
@@ -468,7 +583,6 @@ function kmRadiusToPx(km){
   return km / state.kmPerPx;
 }
 
-// 3D-подобная проекция орбит
 function projectOrbitPoint(rKm, theta, incRad, nodeRad){
   const cu = Math.cos(theta);
   const su = Math.sin(theta);
@@ -498,10 +612,9 @@ function updateScaleInfo(){
   scaleInfo.innerHTML =
     'Масштаб: <b>1 px = ' + Math.round(state.kmPerPx).toLocaleString('ru-RU') + ' км</b><br>' +
     'Сатурн: <b>' + saturnPx.toFixed(2) + ' px</b> по диаметру<br>' +
-    'Объектов в базе: <b>' + allMoonCount + '</b><br>' +
+    'Спутников: <b>' + moons.length + '</b><br>' +
     'Уровень детализации: <b>' + detail + '</b>' +
-    (isMobile ? ' · 30 FPS' : ' · 60 FPS') + '<br>' +
-    'Наклон сцены: <b>30°</b>';
+    (isMobile ? ' · 30 FPS' : ' · 60 FPS');
 }
 
 function getDetailLevel(){
@@ -524,13 +637,11 @@ function ringAlphaByDistance(outerKm){
   return outerKm <= 480000 ? 0.50 : 0.10;
 }
 
-function drawProjectedPath(ctx, points, strokeStyle, lineWidth = 1){
+function drawProjectedPath(ctx, points, strokeStyle, lineWidth=1){
   if (points.length < 2) return;
   ctx.beginPath();
   ctx.moveTo(points[0].x, points[0].y);
-  for (let i = 1; i < points.length; i++){
-    ctx.lineTo(points[i].x, points[i].y);
-  }
+  for (let i = 1; i < points.length; i++) ctx.lineTo(points[i].x, points[i].y);
   ctx.closePath();
   ctx.strokeStyle = strokeStyle;
   ctx.lineWidth = lineWidth;
@@ -548,33 +659,37 @@ function buildProjectedOrbitPoints(rKm, incRad, nodeRad, segments){
   return pts;
 }
 
-function drawRings(detail){
+function ringSetFor(detail){
   const ringColorNear = ['214,199,165','201,188,156','191,179,150','173,165,143'];
   const ringColorFar = '171,170,168';
 
-  const ringSet = detail === 'far'
-    ? [
-        {inner:66900, outer:173200, color:ringColorNear[1], alpha:0.50},
-        {inner:7720000, outer:12500000, color:ringColorFar, alpha:0.10}
-      ]
-    : detail === 'medium'
-    ? [
-        {inner:66900, outer:173200, color:ringColorNear[1], alpha:0.50},
-        {inner:180000, outer:480000, color:ringColorNear[3], alpha:0.16},
-        {inner:7720000, outer:12500000, color:ringColorFar, alpha:0.10}
-      ]
-    : rings.map((r, i) => ({
-        inner:r.inner_km,
-        outer:r.outer_km,
-        color:r.outer_km <= 480000 ? ringColorNear[Math.min(i,3)] : ringColorFar,
-        alpha:ringAlphaByDistance(r.outer_km)
-      }));
+  if (detail === 'far'){
+    return [
+      {inner:66900, outer:173200, color:ringColorNear[1], alpha:0.50},
+      {inner:7720000, outer:12500000, color:ringColorFar, alpha:0.10}
+    ];
+  }
+  if (detail === 'medium'){
+    return [
+      {inner:66900, outer:173200, color:ringColorNear[1], alpha:0.50},
+      {inner:180000, outer:480000, color:ringColorNear[3], alpha:0.16},
+      {inner:7720000, outer:12500000, color:ringColorFar, alpha:0.10}
+    ];
+  }
+  return rings.map((r, i) => ({
+    inner:r.inner_km,
+    outer:r.outer_km,
+    color:r.outer_km <= 480000 ? ringColorNear[Math.min(i,3)] : ringColorFar,
+    alpha:ringAlphaByDistance(r.outer_km)
+  }));
+}
 
+function drawRingsHalf(detail, front){
+  const ringSet = ringSetFor(detail);
   const cx = state.centerX + state.offsetX;
   const cy = state.centerY + state.offsetY;
   const yScale = Math.cos(VIEW_TILT_RAD);
 
-  // задняя половина
   for (const r of ringSet){
     const inner = kmRadiusToPx(r.inner);
     const outer = kmRadiusToPx(r.outer);
@@ -585,7 +700,8 @@ function drawRings(detail){
     sctx.translate(cx, cy);
     sctx.scale(1, yScale);
     sctx.beginPath();
-    sctx.arc(0, 0, mid, Math.PI, 0, false);
+    if (front) sctx.arc(0, 0, mid, 0, Math.PI, false);
+    else sctx.arc(0, 0, mid, Math.PI, 0, false);
     sctx.strokeStyle = 'rgba(' + r.color + ',' + r.alpha + ')';
     sctx.lineWidth = width;
     sctx.stroke();
@@ -593,117 +709,52 @@ function drawRings(detail){
   }
 }
 
-function drawRingsFront(detail){
-  const ringColorNear = ['214,199,165','201,188,156','191,179,150','173,165,143'];
-  const ringColorFar = '171,170,168';
-
-  const ringSet = detail === 'far'
-    ? [
-        {inner:66900, outer:173200, color:ringColorNear[1], alpha:0.50},
-        {inner:7720000, outer:12500000, color:ringColorFar, alpha:0.10}
-      ]
-    : detail === 'medium'
-    ? [
-        {inner:66900, outer:173200, color:ringColorNear[1], alpha:0.50},
-        {inner:180000, outer:480000, color:ringColorNear[3], alpha:0.16},
-        {inner:7720000, outer:12500000, color:ringColorFar, alpha:0.10}
-      ]
-    : rings.map((r, i) => ({
-        inner:r.inner_km,
-        outer:r.outer_km,
-        color:r.outer_km <= 480000 ? ringColorNear[Math.min(i,3)] : ringColorFar,
-        alpha:ringAlphaByDistance(r.outer_km)
-      }));
-
-  const cx = state.centerX + state.offsetX;
-  const cy = state.centerY + state.offsetY;
-  const yScale = Math.cos(VIEW_TILT_RAD);
-
-  // передняя половина
-  for (const r of ringSet){
-    const inner = kmRadiusToPx(r.inner);
-    const outer = kmRadiusToPx(r.outer);
-    const mid = (inner + outer) / 2;
-    const width = Math.max(outer - inner, 1);
-
-    sctx.save();
-    sctx.translate(cx, cy);
-    sctx.scale(1, yScale);
-    sctx.beginPath();
-    sctx.arc(0, 0, mid, 0, Math.PI, false);
-    sctx.strokeStyle = 'rgba(' + r.color + ',' + r.alpha + ')';
-    sctx.lineWidth = width;
-    sctx.stroke();
-    sctx.restore();
-  }
-}
-
-function drawSaturnSphere(){
+function drawPixelSaturn(){
   const center = worldToScreen(0,0);
-  const r = Math.max(0.5, kmRadiusToPx(SATURN_RADIUS_KM));
+  const r = Math.max(4, kmRadiusToPx(SATURN_RADIUS_KM));
+  const px = Math.max(12, Math.round(r * 2));
+
+  const off = document.createElement('canvas');
+  off.width = px;
+  off.height = px;
+  const o = off.getContext('2d');
+
+  for (let y = 0; y < px; y++){
+    for (let x = 0; x < px; x++){
+      const nx = (x + 0.5 - px / 2) / (px / 2);
+      const ny = (y + 0.5 - px / 2) / (px / 2);
+      const rr = nx * nx + ny * ny;
+      if (rr > 1) continue;
+
+      const nz = Math.sqrt(Math.max(0, 1 - rr));
+      const light = Math.max(0, nx * -0.55 + ny * -0.35 + nz * 0.95);
+      const lat = ny;
+
+      let col;
+      if (lat < -0.70) col = [124,92,61];
+      else if (lat < -0.52) col = [182,136,88];
+      else if (lat < -0.34) col = [231,202,143];
+      else if (lat < -0.14) col = [170,121,76];
+      else if (lat <  0.06) col = [241,217,164];
+      else if (lat <  0.24) col = [168,118,74];
+      else if (lat <  0.46) col = [233,205,155];
+      else if (lat <  0.68) col = [156,113,72];
+      else col = [122,89,59];
+
+      const shade = 0.45 + light * 0.75;
+      const r0 = Math.min(255, Math.round(col[0] * shade));
+      const g0 = Math.min(255, Math.round(col[1] * shade));
+      const b0 = Math.min(255, Math.round(col[2] * shade));
+
+      o.fillStyle = 'rgb(' + r0 + ',' + g0 + ',' + b0 + ')';
+      o.fillRect(x, y, 1, 1);
+    }
+  }
 
   sctx.save();
-  sctx.beginPath();
-  sctx.arc(center.x, center.y, r, 0, Math.PI * 2);
-  sctx.clip();
-
-  const baseGrad = sctx.createRadialGradient(
-    center.x - r * 0.28,
-    center.y - r * 0.30,
-    r * 0.08,
-    center.x,
-    center.y,
-    r * 1.05
-  );
-  baseGrad.addColorStop(0, '#f8e7b8');
-  baseGrad.addColorStop(0.36, '#ead39a');
-  baseGrad.addColorStop(0.74, '#c8a96f');
-  baseGrad.addColorStop(1, '#98764d');
-  sctx.fillStyle = baseGrad;
-  sctx.fillRect(center.x - r, center.y - r, r * 2, r * 2);
-
-  const bands = [
-    [-0.72, 0.13, 'rgba(181,135,88,0.34)'],
-    [-0.50, 0.10, 'rgba(227,198,141,0.25)'],
-    [-0.28, 0.14, 'rgba(170,121,76,0.28)'],
-    [-0.05, 0.18, 'rgba(239,214,161,0.20)'],
-    [ 0.20, 0.12, 'rgba(166,118,74,0.24)'],
-    [ 0.42, 0.15, 'rgba(232,205,156,0.16)'],
-    [ 0.66, 0.12, 'rgba(156,113,72,0.18)']
-  ];
-
-  for (const [yy, hh, col] of bands){
-    sctx.fillStyle = col;
-    sctx.beginPath();
-    sctx.ellipse(center.x, center.y + r * yy, r * 0.98, r * hh, 0, 0, Math.PI * 2);
-    sctx.fill();
-  }
-
-  const polarGradTop = sctx.createLinearGradient(center.x, center.y - r, center.x, center.y - r * 0.2);
-  polarGradTop.addColorStop(0, 'rgba(110,81,54,0.48)');
-  polarGradTop.addColorStop(1, 'rgba(110,81,54,0.00)');
-  sctx.fillStyle = polarGradTop;
-  sctx.fillRect(center.x - r, center.y - r, r * 2, r * 0.8);
-
-  const polarGradBottom = sctx.createLinearGradient(center.x, center.y + r, center.x, center.y + r * 0.15);
-  polarGradBottom.addColorStop(0, 'rgba(120,87,58,0.44)');
-  polarGradBottom.addColorStop(1, 'rgba(120,87,58,0.00)');
-  sctx.fillStyle = polarGradBottom;
-  sctx.fillRect(center.x - r, center.y + r * 0.15, r * 2, r * 0.85);
-
-  const limb = sctx.createRadialGradient(center.x, center.y, r * 0.2, center.x, center.y, r);
-  limb.addColorStop(0.72, 'rgba(0,0,0,0)');
-  limb.addColorStop(1, 'rgba(0,0,0,0.22)');
-  sctx.fillStyle = limb;
-  sctx.fillRect(center.x - r, center.y - r, r * 2, r * 2);
-
+  sctx.imageSmoothingEnabled = false;
+  sctx.drawImage(off, Math.round(center.x - px / 2), Math.round(center.y - px / 2), px, px);
   sctx.restore();
-
-  sctx.beginPath();
-  sctx.arc(center.x, center.y, r, 0, Math.PI * 2);
-  sctx.strokeStyle = 'rgba(255,240,200,0.18)';
-  sctx.lineWidth = 1;
-  sctx.stroke();
 }
 
 function drawStaticOrbits(visible, detail){
@@ -736,10 +787,12 @@ function drawStaticScene(){
   sctx.clearRect(0, 0, state.w, state.h);
   const detail = getDetailLevel();
   const visible = getVisibleMoons();
-  drawRings(detail);
+
+  drawRingsHalf(detail, false);
   drawStaticOrbits(visible, detail);
-  drawSaturnSphere();
-  drawRingsFront(detail);
+  drawPixelSaturn();
+  drawRingsHalf(detail, true);
+
   state.lastDetailLevel = detail;
   state.staticDirty = false;
 }
@@ -748,6 +801,7 @@ function drawTailOrbit(m, thetaNow){
   const segments = isMobile ? 12 : 18;
   const tailSpan = Math.PI * 0.75;
   const pts = [];
+
   for (let i = 0; i <= segments; i++){
     const t = i / segments;
     const theta = thetaNow - m.direction * (t * tailSpan);
@@ -774,6 +828,7 @@ function drawMoon(m, detail){
   const theta = m.phase0 + m.direction * (state.simSeconds / m.periodSec) * Math.PI * 2;
   const p3 = projectOrbitPoint(m.sma_km, theta, m.incRad, m.nodeRad);
   const p = worldToScreen(p3.x, p3.y);
+
   m.screenX = p.x;
   m.screenY = p.y;
 
@@ -798,7 +853,7 @@ function drawMoon(m, detail){
     dctx.textAlign = 'center';
     dctx.fillStyle = '#ffffff';
     dctx.font = '10px system-ui,-apple-system,Segoe UI,Roboto,sans-serif';
-    dctx.fillText(m.name, p.x, p.y - outlineR - 10);
+    dctx.fillText(m.label || m.name, p.x, p.y - outlineR - 10);
     dctx.font = '6px system-ui,-apple-system,Segoe UI,Roboto,sans-serif';
     dctx.fillStyle = '#c7cbd1';
     dctx.fillText(m.diameter_km + ' км', p.x, p.y - outlineR - 2);
@@ -864,11 +919,11 @@ function showInfo(m){
 
   drawPixelMoonIcon(m);
   infoText.innerHTML =
-    '<b>' + m.name + '</b>' +
+    '<b>' + (m.label || m.name) + '</b>' +
     'Диаметр: ' + m.diameter_km + ' км<br>' +
     'Большая полуось: ' + Math.round(m.sma_km).toLocaleString('ru-RU') + ' км<br>' +
     'Период: ' + Math.abs(m.period_d).toLocaleString('ru-RU') + ' суток<br>' +
-    'Наклон орбиты: ' + m.incDeg.toFixed(1) + '°<br>' +
+    'Наклон орбиты: ' + (m.incDeg != null ? m.incDeg.toFixed(1) : '—') + '°<br>' +
     'Направление: ' + (m.period_d < 0 ? 'ретроградное' : 'прямое');
 
   infoBox.style.display = 'block';
@@ -1026,12 +1081,26 @@ dynamicCanvas.addEventListener('click', (e) => {
   else showInfo(null);
 });
 
-window.addEventListener('resize', resize);
+async function init(){
+  try{
+    moons = await loadMoonsFromWikipedia();
+    maxMoonRadiusKm = Math.max(...moons.map(m => m.sma_km));
+    maxStructureKm = Math.max(maxMoonRadiusKm, ...rings.map(r => r.outer_km));
 
-resize();
-fitAll();
-setSpeed(0);
-requestAnimationFrame(render);
+    resize();
+    fitAll();
+    setSpeed(0);
+    loadingBox.style.display = 'none';
+    requestAnimationFrame(render);
+  }catch(err){
+    console.error(err);
+    loadingBox.innerHTML = 'Ошибка загрузки списка спутников.<br><br>' +
+      'Проверьте интернет и откройте файл в обычном браузере, а не во встроенном предпросмотре.';
+  }
+}
+
+window.addEventListener('resize', resize);
+init();
 </script>
 </body>
 </html>
