@@ -3,17 +3,20 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no" />
-<title>Saturn System — Tilted 3D</title>
+<title>Saturn System Visual</title>
 <style>
 :root{
-  --bg:#050608;
-  --panel:rgba(8,10,14,.88);
+  --bg:#040507;
+  --panel:rgba(8,10,14,.90);
   --text:#f2f2f2;
   --muted:#aeb4be;
   --yellow:#f3d36a;
   --purple:#9f7dff;
 }
-*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+*{
+  box-sizing:border-box;
+  -webkit-tap-highlight-color:transparent;
+}
 html,body{
   margin:0;
   padding:0;
@@ -23,9 +26,20 @@ html,body{
   height:100%;
   overflow:hidden;
 }
-#app{position:fixed;inset:0}
-.layerCanvas{position:absolute;inset:0;width:100%;height:100%;display:block}
-#dynamicCanvas{touch-action:none}
+#app{
+  position:fixed;
+  inset:0;
+}
+.layerCanvas{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  display:block;
+}
+#dynamicCanvas{
+  touch-action:none;
+}
 
 .topbar{
   position:fixed;
@@ -53,8 +67,8 @@ html,body{
   position:fixed;
   top:max(50px, calc(env(safe-area-inset-top) + 50px));
   right:8px;
-  width:min(88vw, 320px);
-  max-height:min(62vh, 520px);
+  width:min(88vw, 340px);
+  max-height:min(68vh, 560px);
   overflow:auto;
   background:var(--panel);
   border:1px solid rgba(255,255,255,.08);
@@ -64,10 +78,26 @@ html,body{
   z-index:35;
   backdrop-filter:blur(10px);
 }
-.infoSheet.open{display:block}
-.title{font-size:14px;font-weight:700;margin-bottom:8px}
-.meta{font-size:11px;color:var(--muted);line-height:1.4}
-.legend{display:grid;gap:5px;font-size:11px;color:var(--muted);margin-top:10px}
+.infoSheet.open{
+  display:block;
+}
+.title{
+  font-size:14px;
+  font-weight:700;
+  margin-bottom:8px;
+}
+.meta{
+  font-size:11px;
+  color:var(--muted);
+  line-height:1.4;
+}
+.legend{
+  display:grid;
+  gap:5px;
+  font-size:11px;
+  color:var(--muted);
+  margin-top:10px;
+}
 
 .controls{
   position:fixed;
@@ -85,7 +115,7 @@ html,body{
 }
 .grid.oneRow{
   display:grid;
-  grid-template-columns:repeat(4, minmax(0,1fr));
+  grid-template-columns:repeat(4,minmax(0,1fr));
   gap:6px;
 }
 button.control{
@@ -111,10 +141,8 @@ button.control.active{
 .infoBox{
   position:fixed;
   left:8px;
-  right:8px;
   bottom:max(66px, calc(env(safe-area-inset-bottom) + 66px));
-  margin:0 auto;
-  width:min(92vw, 340px);
+  width:min(94vw, 390px);
   background:var(--panel);
   border:1px solid rgba(255,255,255,.08);
   border-radius:12px;
@@ -124,19 +152,77 @@ button.control.active{
   display:none;
   z-index:28;
 }
+.infoWrap{
+  display:flex;
+  gap:10px;
+  align-items:stretch;
+}
+.iconSlot{
+  width:74px;
+  min-width:74px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:10px;
+  background:rgba(255,255,255,.03);
+  border:1px solid rgba(255,255,255,.06);
+}
+#moonIconCanvas{
+  width:64px;
+  height:64px;
+  image-rendering:pixelated;
+  image-rendering:crisp-edges;
+  display:block;
+}
+.infoText{
+  flex:1 1 auto;
+}
+.infoText b{
+  display:block;
+  margin-bottom:2px;
+}
 
-.controls,.controls *,.topbar,.topbar *,.infoSheet,.infoSheet *{touch-action:manipulation}
+.controls, .controls *, .topbar, .topbar *, .infoSheet, .infoSheet *{
+  touch-action:manipulation;
+}
 
 @media (max-width:390px){
-  .controls{left:6px;right:6px}
-  .grid.oneRow{gap:5px}
-  button.control{min-height:40px;font-size:10px;padding:7px 4px}
-  .infoBox{bottom:max(70px, calc(env(safe-area-inset-bottom) + 70px))}
+  .controls{
+    left:6px;
+    right:6px;
+  }
+  .grid.oneRow{
+    gap:5px;
+  }
+  button.control{
+    min-height:40px;
+    font-size:10px;
+    padding:7px 4px;
+  }
+  .infoBox{
+    bottom:max(70px, calc(env(safe-area-inset-bottom) + 70px));
+    width:min(96vw, 360px);
+  }
+  .iconSlot{
+    width:68px;
+    min-width:68px;
+  }
+  #moonIconCanvas{
+    width:58px;
+    height:58px;
+  }
 }
 @media (min-width:700px){
-  .controls{left:10px;right:10px;max-width:640px;margin:0 auto}
-  .grid.oneRow{grid-template-columns:repeat(4, minmax(0,1fr))}
-  button.control{font-size:12px;min-height:44px}
+  .controls{
+    left:10px;
+    right:10px;
+    max-width:640px;
+    margin:0 auto;
+  }
+  button.control{
+    font-size:12px;
+    min-height:44px;
+  }
 }
 </style>
 </head>
@@ -151,14 +237,13 @@ button.control.active{
 </div>
 
 <div id="infoSheet" class="infoSheet">
-  <div class="title">Система Сатурна — объёмный вид</div>
+  <div class="title">Система Сатурна — визуальная версия</div>
   <div class="meta" id="scaleInfo"></div>
   <div class="legend">
-    <div>Плоскость колец и орбит показана под углом 30°.</div>
-    <div>Орбиты выглядят эллипсами за счёт проекции.</div>
-    <div>Сатурн изображён как шар с полосами и полярным затемнением.</div>
-    <div>Кольца имеют естественный бежево-золотистый оттенок.</div>
-    <div>Подписи показываются у выбранного спутника.</div>
+    <div>Сатурн показан как шар с полосами и полярным затемнением.</div>
+    <div>Орбиты и кольца проецируются как эллипсы.</div>
+    <div>Наклон сцены зафиксирован для объёмного вида.</div>
+    <div>У выбранного спутника слева показывается пиксельная иконка.</div>
   </div>
 </div>
 
@@ -173,41 +258,46 @@ button.control.active{
   </div>
 </div>
 
-<div class="infoBox" id="infoBox"></div>
+<div class="infoBox" id="infoBox">
+  <div class="infoWrap">
+    <div class="iconSlot">
+      <canvas id="moonIconCanvas" width="16" height="16"></canvas>
+    </div>
+    <div class="infoText" id="infoText"></div>
+  </div>
+</div>
 
 <script>
-/*
-  ВАЖНО:
-  Ниже сейчас стоит укороченный пример данных.
-  Чтобы вернуть полную систему, замените массив moons
-  на ваш полный массив из рабочей версии v6.
-  Формат объекта:
-  { name, diameter_km, sma_km, period_d }
-*/
-
+// ===============================
+// ВСТАВЬТЕ СЮДА ВАШ ТЕКУЩИЙ МАССИВ moons
+// из рабочей версии HTML.
+// Формат элемента:
+// {name:"Titan", diameter_km:5149.46, sma_km:1221900, period_d:15.9454, ...}
+// ===============================
 const moons = [
-  { name:"Mimas",     diameter_km:396.4,  sma_km:186000,  period_d:0.94242 },
-  { name:"Enceladus", diameter_km:504.2,  sma_km:238400,  period_d:1.37022 },
-  { name:"Tethys",    diameter_km:1062.2, sma_km:295000,  period_d:1.88780 },
-  { name:"Dione",     diameter_km:1122.8, sma_km:377700,  period_d:2.73692 },
-  { name:"Rhea",      diameter_km:1527.6, sma_km:527200,  period_d:4.51750 },
-  { name:"Titan",     diameter_km:5149.46,sma_km:1221900, period_d:15.94540 },
-  { name:"Hyperion",  diameter_km:270.0,  sma_km:1481500, period_d:21.2767 },
-  { name:"Iapetus",   diameter_km:1468.6, sma_km:3561700, period_d:79.3310 },
-  { name:"Phoebe",    diameter_km:213.0,  sma_km:12929400,period_d:-550.30 }
+  // ПРИМЕРЫ. ЗАМЕНИТЕ НА ВАШ ПОЛНЫЙ МАССИВ.
+  {name:"Mimas", diameter_km:396.4, sma_km:186000, period_d:0.94242},
+  {name:"Enceladus", diameter_km:504.2, sma_km:238400, period_d:1.37022},
+  {name:"Tethys", diameter_km:1062.2, sma_km:295000, period_d:1.8878},
+  {name:"Dione", diameter_km:1122.8, sma_km:377700, period_d:2.73692},
+  {name:"Rhea", diameter_km:1527.6, sma_km:527200, period_d:4.5175},
+  {name:"Titan", diameter_km:5149.46, sma_km:1221900, period_d:15.9454},
+  {name:"Hyperion", diameter_km:270.0, sma_km:1481500, period_d:21.2767},
+  {name:"Iapetus", diameter_km:1468.6, sma_km:3561700, period_d:79.331},
+  {name:"Phoebe", diameter_km:213.0, sma_km:12929400, period_d:-550.3}
 ];
 
 const rings = [
-  {name:"D Ring", inner_km:66900,   outer_km:74491},
-  {name:"C Ring", inner_km:74491,   outer_km:91975},
-  {name:"B Ring", inner_km:91975,   outer_km:117570},
+  {name:"D Ring", inner_km:66900, outer_km:74491},
+  {name:"C Ring", inner_km:74491, outer_km:91975},
+  {name:"B Ring", inner_km:91975, outer_km:117570},
   {name:"Cassini Division", inner_km:117500, outer_km:122050},
-  {name:"A Ring", inner_km:122050,  outer_km:136770},
+  {name:"A Ring", inner_km:122050, outer_km:136770},
   {name:"Roche Division", inner_km:136770, outer_km:139380},
-  {name:"F Ring", inner_km:139826,  outer_km:140612},
+  {name:"F Ring", inner_km:139826, outer_km:140612},
   {name:"Janus/Epimetheus Ring", inner_km:149000, outer_km:154000},
-  {name:"G Ring", inner_km:166000,  outer_km:173200},
-  {name:"E Ring", inner_km:180000,  outer_km:480000},
+  {name:"G Ring", inner_km:166000, outer_km:173200},
+  {name:"E Ring", inner_km:180000, outer_km:480000},
   {name:"Phoebe Ring", inner_km:7720000, outer_km:12500000}
 ];
 
@@ -221,9 +311,10 @@ const coarsePointer = window.matchMedia('(pointer: coarse)').matches;
 const isMobile = coarsePointer || /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 const targetFPS = isMobile ? 30 : 60;
 
-const TILT_DEG = 30;
-const TILT = TILT_DEG * Math.PI / 180;
-const YSCALE = Math.cos(TILT);
+// Здесь подобран наклон, чтобы орбиты выглядели как эллипсы.
+// Если захотите сильнее "сплюснуть" орбиты, увеличьте VIEW_TILT_DEG.
+const VIEW_TILT_DEG = 60;
+const VIEW_TILT_RAD = VIEW_TILT_DEG * Math.PI / 180;
 
 function pxBucket(d){
   if (d < 10) return 1;
@@ -241,40 +332,96 @@ function getCSS(name){
 function moonColor(m){
   return m.diameter_km > 1000 ? getCSS('--purple') : getCSS('--text');
 }
-function hashPhase(name){
+function hash01(str){
   let h = 2166136261 >>> 0;
-  for(let i=0;i<name.length;i++){
-    h ^= name.charCodeAt(i);
-    h = Math.imul(h,16777619);
+  for(let i = 0; i < str.length; i++){
+    h ^= str.charCodeAt(i);
+    h = Math.imul(h, 16777619);
   }
-  return (h>>>0)/4294967295*Math.PI*2;
+  return (h >>> 0) / 4294967295;
+}
+function hashPhase(name){
+  return hash01(name) * Math.PI * 2;
 }
 
-for (let i = 0; i < moons.length; i++) {
+// Приближённые наклоны.
+// Для крупных известных спутников вручную.
+// Для остальных — правдоподобная аппроксимация по группам.
+function approxOrbitalElements(m){
+  const manual = {
+    'Mimas':[1.57,0],
+    'Enceladus':[0.0,0],
+    'Tethys':[1.09,0],
+    'Dione':[0.02,0],
+    'Rhea':[0.35,0],
+    'Titan':[0.35,0],
+    'Hyperion':[0.43,0],
+    'Iapetus':[15.47,0],
+    'Phoebe':[175.3,255]
+  };
+  if (manual[m.name]){
+    return {inc: manual[m.name][0], node: manual[m.name][1]};
+  }
+  if (m.sma_km < 4000000){
+    return {inc: hash01(m.name) * 0.8, node: hash01(m.name + 'node') * 360};
+  }
+  if (m.period_d < 0){
+    return {inc: 145 + hash01(m.name) * 25, node: hash01(m.name + 'node') * 360};
+  }
+  return {inc: 30 + hash01(m.name) * 20, node: hash01(m.name + 'node') * 360};
+}
+
+for (let i = 0; i < moons.length; i++){
   const m = moons[i];
   m.sizePx = pxBucket(m.diameter_km);
   m.phase0 = hashPhase(m.name);
   m.direction = m.period_d < 0 ? -1 : 1;
   m.periodSec = Math.abs(m.period_d) * 86400;
   m.renderIndex = i;
+
+  const el = approxOrbitalElements(m);
+  m.incDeg = el.inc;
+  m.nodeDeg = el.node;
+  m.incRad = m.incDeg * Math.PI / 180;
+  m.nodeRad = m.nodeDeg * Math.PI / 180;
 }
 
 const staticCanvas = document.getElementById('staticCanvas');
 const dynamicCanvas = document.getElementById('dynamicCanvas');
 const sctx = staticCanvas.getContext('2d');
 const dctx = dynamicCanvas.getContext('2d');
+
 const infoBox = document.getElementById('infoBox');
 const infoSheet = document.getElementById('infoSheet');
+const infoText = document.getElementById('infoText');
 const scaleInfo = document.getElementById('scaleInfo');
+const iconCanvas = document.getElementById('moonIconCanvas');
+const ictx = iconCanvas.getContext('2d');
 
 const state = {
-  w:0, h:0, dpr:1,
-  centerX:0, centerY:0, offsetX:0, offsetY:0,
-  kmPerPx:1, baseKmPerPx:1,
-  speedMode:0, showLabels:true,
-  simSeconds:0, lastRenderTs:0,
-  pointers:new Map(), pinchBaseKmPerPx:null, pinchBaseDistance:null, moved:false, downAt:0,
-  selectedMoon:null, staticDirty:true, visibleMoons:[]
+  w:0,
+  h:0,
+  dpr:1,
+  centerX:0,
+  centerY:0,
+  offsetX:0,
+  offsetY:0,
+  kmPerPx:1,
+  baseKmPerPx:1,
+  speedMode:0,
+  showLabels:true,
+  simSeconds:0,
+  lastRenderTs:0,
+  frameCount:0,
+  pointers:new Map(),
+  pinchBaseKmPerPx:null,
+  pinchBaseDistance:null,
+  moved:false,
+  downAt:0,
+  selectedMoon:null,
+  staticDirty:true,
+  lastDetailLevel:'',
+  visibleMoons:[]
 };
 
 function setCanvasSize(canvas, ctx){
@@ -282,7 +429,7 @@ function setCanvasSize(canvas, ctx){
   canvas.height = Math.floor(innerHeight * state.dpr);
   canvas.style.width = innerWidth + 'px';
   canvas.style.height = innerHeight + 'px';
-  ctx.setTransform(state.dpr,0,0,state.dpr,0,0);
+  ctx.setTransform(state.dpr, 0, 0, state.dpr, 0, 0);
 }
 
 function resize(){
@@ -300,13 +447,13 @@ function resize(){
 
 function fitAll(){
   const controlsHeight = state.w <= 390 ? 118 : 132;
-  const usableX = state.w * 0.44;
-  const usableY = Math.max(110, (state.h - controlsHeight) * 0.30);
+  const usableX = state.w * 0.46;
+  const usableY = Math.max(110, (state.h - controlsHeight) * 0.34);
   const usable = Math.min(usableX, usableY);
   state.baseKmPerPx = maxStructureKm / usable;
   state.kmPerPx = state.baseKmPerPx;
   state.offsetX = 0;
-  state.offsetY = -18;
+  state.offsetY = -22;
   markStaticDirty();
   updateScaleInfo();
 }
@@ -314,198 +461,319 @@ function fitAll(){
 function worldToScreen(xKm, yKm){
   return {
     x: state.centerX + state.offsetX + xKm / state.kmPerPx,
-    y: state.centerY + state.offsetY + (yKm * YSCALE) / state.kmPerPx
+    y: state.centerY + state.offsetY + yKm / state.kmPerPx
   };
 }
-function kmRadiusToPx(km){ return km / state.kmPerPx; }
+function kmRadiusToPx(km){
+  return km / state.kmPerPx;
+}
 
-function orbitVisibleOnScreen(radiusPxX, radiusPxY){
-  const margin = 24;
-  const cx = state.centerX + state.offsetX;
-  const cy = state.centerY + state.offsetY;
-  const left = cx - radiusPxX, right = cx + radiusPxX, top = cy - radiusPxY, bottom = cy + radiusPxY;
-  return !(right < -margin || left > state.w + margin || bottom < -margin || top > state.h + margin);
+// 3D-подобная проекция орбит
+function projectOrbitPoint(rKm, theta, incRad, nodeRad){
+  const cu = Math.cos(theta);
+  const su = Math.sin(theta);
+
+  let x = rKm * cu;
+  let y = rKm * su * Math.cos(incRad);
+  let z = rKm * su * Math.sin(incRad);
+
+  const cO = Math.cos(nodeRad);
+  const sO = Math.sin(nodeRad);
+  const x2 = x * cO - y * sO;
+  const y2 = x * sO + y * cO;
+  const z2 = z;
+
+  const ct = Math.cos(VIEW_TILT_RAD);
+  const st = Math.sin(VIEW_TILT_RAD);
+  const x3 = x2;
+  const y3 = y2 * ct - z2 * st;
+  const z3 = y2 * st + z2 * ct;
+
+  return {x:x3, y:y3, z:z3};
 }
 
 function updateScaleInfo(){
   const saturnPx = SATURN_DIAMETER_KM / state.kmPerPx;
+  const detail = getDetailLevel();
   scaleInfo.innerHTML =
-    'Масштаб: 1 px = <b>' + Math.round(state.kmPerPx).toLocaleString('ru-RU') + ' км</b><br>' +
+    'Масштаб: <b>1 px = ' + Math.round(state.kmPerPx).toLocaleString('ru-RU') + ' км</b><br>' +
     'Сатурн: <b>' + saturnPx.toFixed(2) + ' px</b> по диаметру<br>' +
-    'Объектов: <b>' + allMoonCount + '</b><br>' +
-    'Проекция: <b>' + TILT_DEG + '°</b>' + (isMobile ? ' · 30 FPS' : ' · 60 FPS');
+    'Объектов в базе: <b>' + allMoonCount + '</b><br>' +
+    'Уровень детализации: <b>' + detail + '</b>' +
+    (isMobile ? ' · 30 FPS' : ' · 60 FPS') + '<br>' +
+    'Наклон сцены: <b>30°</b>';
 }
 
-function ringColor(alpha){
-  return 'rgba(201,185,150,' + alpha + ')';
+function getDetailLevel(){
+  if (state.kmPerPx > 120000) return 'far';
+  if (state.kmPerPx > 15000) return 'medium';
+  return 'close';
 }
 
-function drawRingBandHalf(innerKm, outerKm, alpha, frontHalf){
-  const center = worldToScreen(0,0);
-  const inner = kmRadiusToPx(innerKm);
-  const outer = kmRadiusToPx(outerKm);
-  const width = Math.max(outer - inner, 1);
-  const rx = (inner + outer) / 2;
-  const ry = rx * YSCALE;
-  if (!orbitVisibleOnScreen(rx + width, ry + width)) return;
+function getVisibleMoons(){
+  const detail = getDetailLevel();
+  let filtered;
+  if (detail === 'far') filtered = moons.filter(m => m.diameter_km >= 100);
+  else if (detail === 'medium') filtered = moons.filter(m => m.diameter_km >= 10);
+  else filtered = moons.slice();
+  state.visibleMoons = filtered;
+  return filtered;
+}
 
-  sctx.save();
-  sctx.translate(center.x, center.y);
-  sctx.scale(1, YSCALE);
-  sctx.beginPath();
-  sctx.arc(0, 0, rx, frontHalf ? 0 : Math.PI, frontHalf ? Math.PI : Math.PI * 2, false);
-  sctx.strokeStyle = ringColor(alpha);
-  sctx.lineWidth = width;
-  sctx.stroke();
-  sctx.restore();
+function ringAlphaByDistance(outerKm){
+  return outerKm <= 480000 ? 0.50 : 0.10;
+}
+
+function drawProjectedPath(ctx, points, strokeStyle, lineWidth = 1){
+  if (points.length < 2) return;
+  ctx.beginPath();
+  ctx.moveTo(points[0].x, points[0].y);
+  for (let i = 1; i < points.length; i++){
+    ctx.lineTo(points[i].x, points[i].y);
+  }
+  ctx.closePath();
+  ctx.strokeStyle = strokeStyle;
+  ctx.lineWidth = lineWidth;
+  ctx.stroke();
+}
+
+function buildProjectedOrbitPoints(rKm, incRad, nodeRad, segments){
+  const pts = [];
+  for (let i = 0; i < segments; i++){
+    const t = (i / segments) * Math.PI * 2;
+    const p = projectOrbitPoint(rKm, t, incRad, nodeRad);
+    const s = worldToScreen(p.x, p.y);
+    pts.push({x:s.x, y:s.y});
+  }
+  return pts;
+}
+
+function drawRings(detail){
+  const ringColorNear = ['214,199,165','201,188,156','191,179,150','173,165,143'];
+  const ringColorFar = '171,170,168';
+
+  const ringSet = detail === 'far'
+    ? [
+        {inner:66900, outer:173200, color:ringColorNear[1], alpha:0.50},
+        {inner:7720000, outer:12500000, color:ringColorFar, alpha:0.10}
+      ]
+    : detail === 'medium'
+    ? [
+        {inner:66900, outer:173200, color:ringColorNear[1], alpha:0.50},
+        {inner:180000, outer:480000, color:ringColorNear[3], alpha:0.16},
+        {inner:7720000, outer:12500000, color:ringColorFar, alpha:0.10}
+      ]
+    : rings.map((r, i) => ({
+        inner:r.inner_km,
+        outer:r.outer_km,
+        color:r.outer_km <= 480000 ? ringColorNear[Math.min(i,3)] : ringColorFar,
+        alpha:ringAlphaByDistance(r.outer_km)
+      }));
+
+  const cx = state.centerX + state.offsetX;
+  const cy = state.centerY + state.offsetY;
+  const yScale = Math.cos(VIEW_TILT_RAD);
+
+  // задняя половина
+  for (const r of ringSet){
+    const inner = kmRadiusToPx(r.inner);
+    const outer = kmRadiusToPx(r.outer);
+    const mid = (inner + outer) / 2;
+    const width = Math.max(outer - inner, 1);
+
+    sctx.save();
+    sctx.translate(cx, cy);
+    sctx.scale(1, yScale);
+    sctx.beginPath();
+    sctx.arc(0, 0, mid, Math.PI, 0, false);
+    sctx.strokeStyle = 'rgba(' + r.color + ',' + r.alpha + ')';
+    sctx.lineWidth = width;
+    sctx.stroke();
+    sctx.restore();
+  }
+}
+
+function drawRingsFront(detail){
+  const ringColorNear = ['214,199,165','201,188,156','191,179,150','173,165,143'];
+  const ringColorFar = '171,170,168';
+
+  const ringSet = detail === 'far'
+    ? [
+        {inner:66900, outer:173200, color:ringColorNear[1], alpha:0.50},
+        {inner:7720000, outer:12500000, color:ringColorFar, alpha:0.10}
+      ]
+    : detail === 'medium'
+    ? [
+        {inner:66900, outer:173200, color:ringColorNear[1], alpha:0.50},
+        {inner:180000, outer:480000, color:ringColorNear[3], alpha:0.16},
+        {inner:7720000, outer:12500000, color:ringColorFar, alpha:0.10}
+      ]
+    : rings.map((r, i) => ({
+        inner:r.inner_km,
+        outer:r.outer_km,
+        color:r.outer_km <= 480000 ? ringColorNear[Math.min(i,3)] : ringColorFar,
+        alpha:ringAlphaByDistance(r.outer_km)
+      }));
+
+  const cx = state.centerX + state.offsetX;
+  const cy = state.centerY + state.offsetY;
+  const yScale = Math.cos(VIEW_TILT_RAD);
+
+  // передняя половина
+  for (const r of ringSet){
+    const inner = kmRadiusToPx(r.inner);
+    const outer = kmRadiusToPx(r.outer);
+    const mid = (inner + outer) / 2;
+    const width = Math.max(outer - inner, 1);
+
+    sctx.save();
+    sctx.translate(cx, cy);
+    sctx.scale(1, yScale);
+    sctx.beginPath();
+    sctx.arc(0, 0, mid, 0, Math.PI, false);
+    sctx.strokeStyle = 'rgba(' + r.color + ',' + r.alpha + ')';
+    sctx.lineWidth = width;
+    sctx.stroke();
+    sctx.restore();
+  }
 }
 
 function drawSaturnSphere(){
   const center = worldToScreen(0,0);
-  const r = Math.max(1, kmRadiusToPx(SATURN_RADIUS_KM));
-
-  const shadowGrad = sctx.createRadialGradient(center.x - r*0.35, center.y - r*0.25, r*0.15, center.x, center.y, r);
-  shadowGrad.addColorStop(0.00, '#f1d98d');
-  shadowGrad.addColorStop(0.35, '#d8b867');
-  shadowGrad.addColorStop(0.72, '#b38f4a');
-  shadowGrad.addColorStop(1.00, '#745825');
+  const r = Math.max(0.5, kmRadiusToPx(SATURN_RADIUS_KM));
 
   sctx.save();
   sctx.beginPath();
   sctx.arc(center.x, center.y, r, 0, Math.PI * 2);
   sctx.clip();
 
-  sctx.fillStyle = shadowGrad;
+  const baseGrad = sctx.createRadialGradient(
+    center.x - r * 0.28,
+    center.y - r * 0.30,
+    r * 0.08,
+    center.x,
+    center.y,
+    r * 1.05
+  );
+  baseGrad.addColorStop(0, '#f8e7b8');
+  baseGrad.addColorStop(0.36, '#ead39a');
+  baseGrad.addColorStop(0.74, '#c8a96f');
+  baseGrad.addColorStop(1, '#98764d');
+  sctx.fillStyle = baseGrad;
   sctx.fillRect(center.x - r, center.y - r, r * 2, r * 2);
 
-  const bandColors = [
-    ['rgba(236,213,155,0.90)', -0.72, 0.16],
-    ['rgba(201,168,108,0.45)', -0.48, 0.10],
-    ['rgba(236,213,155,0.80)', -0.26, 0.14],
-    ['rgba(180,145,86,0.35)', -0.08, 0.08],
-    ['rgba(233,204,140,0.75)', 0.06, 0.14],
-    ['rgba(170,134,78,0.28)', 0.28, 0.09],
-    ['rgba(227,199,139,0.68)', 0.44, 0.12],
-    ['rgba(205,171,116,0.32)', 0.63, 0.10]
+  const bands = [
+    [-0.72, 0.13, 'rgba(181,135,88,0.34)'],
+    [-0.50, 0.10, 'rgba(227,198,141,0.25)'],
+    [-0.28, 0.14, 'rgba(170,121,76,0.28)'],
+    [-0.05, 0.18, 'rgba(239,214,161,0.20)'],
+    [ 0.20, 0.12, 'rgba(166,118,74,0.24)'],
+    [ 0.42, 0.15, 'rgba(232,205,156,0.16)'],
+    [ 0.66, 0.12, 'rgba(156,113,72,0.18)']
   ];
 
-  for (const [color, pos, h] of bandColors){
-    const y = center.y + r * pos;
-    const hg = r * h;
-    const g = sctx.createLinearGradient(0, y - hg, 0, y + hg);
-    g.addColorStop(0, 'rgba(0,0,0,0)');
-    g.addColorStop(0.5, color);
-    g.addColorStop(1, 'rgba(0,0,0,0)');
-    sctx.fillStyle = g;
-    sctx.fillRect(center.x - r, y - hg, r * 2, hg * 2);
+  for (const [yy, hh, col] of bands){
+    sctx.fillStyle = col;
+    sctx.beginPath();
+    sctx.ellipse(center.x, center.y + r * yy, r * 0.98, r * hh, 0, 0, Math.PI * 2);
+    sctx.fill();
   }
 
-  const poleGradTop = sctx.createRadialGradient(center.x, center.y - r*0.9, r*0.05, center.x, center.y - r*0.75, r*0.7);
-  poleGradTop.addColorStop(0, 'rgba(110,88,53,0.22)');
-  poleGradTop.addColorStop(1, 'rgba(0,0,0,0)');
-  sctx.fillStyle = poleGradTop;
-  sctx.fillRect(center.x - r, center.y - r, r * 2, r);
+  const polarGradTop = sctx.createLinearGradient(center.x, center.y - r, center.x, center.y - r * 0.2);
+  polarGradTop.addColorStop(0, 'rgba(110,81,54,0.48)');
+  polarGradTop.addColorStop(1, 'rgba(110,81,54,0.00)');
+  sctx.fillStyle = polarGradTop;
+  sctx.fillRect(center.x - r, center.y - r, r * 2, r * 0.8);
 
-  const edgeGrad = sctx.createRadialGradient(center.x - r*0.3, center.y - r*0.3, r*0.1, center.x, center.y, r);
-  edgeGrad.addColorStop(0.0, 'rgba(255,255,255,0.0)');
-  edgeGrad.addColorStop(0.75, 'rgba(0,0,0,0.0)');
-  edgeGrad.addColorStop(1.0, 'rgba(0,0,0,0.28)');
-  sctx.fillStyle = edgeGrad;
-  sctx.fillRect(center.x - r, center.y - r, r * 2, r * 2);
+  const polarGradBottom = sctx.createLinearGradient(center.x, center.y + r, center.x, center.y + r * 0.15);
+  polarGradBottom.addColorStop(0, 'rgba(120,87,58,0.44)');
+  polarGradBottom.addColorStop(1, 'rgba(120,87,58,0.00)');
+  sctx.fillStyle = polarGradBottom;
+  sctx.fillRect(center.x - r, center.y + r * 0.15, r * 2, r * 0.85);
 
-  const hi = sctx.createRadialGradient(center.x - r*0.38, center.y - r*0.34, r*0.02, center.x - r*0.34, center.y - r*0.28, r*0.65);
-  hi.addColorStop(0, 'rgba(255,255,255,0.28)');
-  hi.addColorStop(1, 'rgba(255,255,255,0)');
-  sctx.fillStyle = hi;
+  const limb = sctx.createRadialGradient(center.x, center.y, r * 0.2, center.x, center.y, r);
+  limb.addColorStop(0.72, 'rgba(0,0,0,0)');
+  limb.addColorStop(1, 'rgba(0,0,0,0.22)');
+  sctx.fillStyle = limb;
   sctx.fillRect(center.x - r, center.y - r, r * 2, r * 2);
 
   sctx.restore();
 
   sctx.beginPath();
   sctx.arc(center.x, center.y, r, 0, Math.PI * 2);
-  sctx.strokeStyle = 'rgba(255,255,255,0.18)';
+  sctx.strokeStyle = 'rgba(255,240,200,0.18)';
   sctx.lineWidth = 1;
   sctx.stroke();
 }
 
-function drawStaticOrbits(){
-  const center = worldToScreen(0,0);
-  for (const m of state.visibleMoons){
+function drawStaticOrbits(visible, detail){
+  for (const m of visible){
     if (majorTailNames.has(m.name)) continue;
-    const rx = kmRadiusToPx(m.sma_km);
-    const ry = rx * YSCALE;
-    if (rx < 0.7 || !orbitVisibleOnScreen(rx, ry)) continue;
+    if (detail === 'far' && m.diameter_km < 1000) continue;
+
+    const pxR = kmRadiusToPx(m.sma_km);
+    if (pxR < 0.7) continue;
+
+    const segments = detail === 'close' ? 48 : 28;
+    const pts = buildProjectedOrbitPoints(m.sma_km, m.incRad, m.nodeRad, segments);
+
+    let alpha;
+    if (m.diameter_km < 100) alpha = 0.03;
+    else if (m.diameter_km < 1000) alpha = detail === 'close' ? 0.08 : 0.06;
+    else alpha = detail === 'close' ? 0.14 : 0.09;
 
     const base = m.diameter_km < 100 ? [200,205,210] : [243,211,106];
-    const alpha = m.diameter_km < 100 ? 0.05 : 0.10;
-
-    sctx.save();
-    sctx.translate(center.x, center.y);
-    sctx.scale(1, YSCALE);
-    sctx.beginPath();
-    sctx.arc(0, 0, rx, 0, Math.PI * 2);
-    sctx.strokeStyle = 'rgba(' + base[0] + ',' + base[1] + ',' + base[2] + ',' + alpha.toFixed(3) + ')';
-    sctx.lineWidth = 1;
-    sctx.stroke();
-    sctx.restore();
+    drawProjectedPath(
+      sctx,
+      pts,
+      'rgba(' + base[0] + ',' + base[1] + ',' + base[2] + ',' + alpha.toFixed(3) + ')',
+      1
+    );
   }
 }
 
 function drawStaticScene(){
-  sctx.clearRect(0,0,state.w,state.h);
-  state.visibleMoons = moons.slice();
-  drawStaticOrbits();
-
-  for (const r of rings){
-    const alpha = r.outer_km <= 480000 ? 0.50 : 0.10;
-    drawRingBandHalf(r.inner_km, r.outer_km, alpha * 0.70, false);
-  }
-
+  sctx.clearRect(0, 0, state.w, state.h);
+  const detail = getDetailLevel();
+  const visible = getVisibleMoons();
+  drawRings(detail);
+  drawStaticOrbits(visible, detail);
   drawSaturnSphere();
-
-  for (const r of rings){
-    const alpha = r.outer_km <= 480000 ? 0.50 : 0.10;
-    drawRingBandHalf(r.inner_km, r.outer_km, alpha, true);
-  }
-
+  drawRingsFront(detail);
+  state.lastDetailLevel = detail;
   state.staticDirty = false;
 }
 
 function drawTailOrbit(m, thetaNow){
-  const center = worldToScreen(0,0);
-  const rx = kmRadiusToPx(m.sma_km);
-  const ry = rx * YSCALE;
-  if (rx < 0.7 || !orbitVisibleOnScreen(rx, ry)) return;
-
   const segments = isMobile ? 12 : 18;
   const tailSpan = Math.PI * 0.75;
+  const pts = [];
+  for (let i = 0; i <= segments; i++){
+    const t = i / segments;
+    const theta = thetaNow - m.direction * (t * tailSpan);
+    const p = projectOrbitPoint(m.sma_km, theta, m.incRad, m.nodeRad);
+    const s = worldToScreen(p.x, p.y);
+    pts.push({x:s.x, y:s.y});
+  }
+
   const base = m.diameter_km < 100 ? [200,205,210] : [243,211,106];
-
-  for (let i = 0; i < segments; i++) {
-    const t0 = i / segments;
-    const t1 = (i + 1) / segments;
-    const a0 = thetaNow - m.direction * (t0 * tailSpan);
-    const a1 = thetaNow - m.direction * (t1 * tailSpan);
-    const alpha = (1 - t0) * 0.70;
-    if (alpha <= 0.02) continue;
-
-    dctx.save();
-    dctx.translate(center.x, center.y);
-    dctx.scale(1, YSCALE);
+  for (let i = 0; i < segments; i++){
+    const alpha = (1 - (i / segments)) * 0.70;
     dctx.beginPath();
-    dctx.arc(0, 0, rx, a1, a0, m.direction < 0);
+    dctx.moveTo(pts[i].x, pts[i].y);
+    dctx.lineTo(pts[i + 1].x, pts[i + 1].y);
     dctx.strokeStyle = 'rgba(' + base[0] + ',' + base[1] + ',' + base[2] + ',' + alpha.toFixed(3) + ')';
     dctx.lineWidth = 1;
     dctx.stroke();
-    dctx.restore();
   }
 }
 
-function drawMoon(m){
+function drawMoon(m, detail){
+  if (isMobile && detail !== 'close' && m.diameter_km < 100) return;
+
   const theta = m.phase0 + m.direction * (state.simSeconds / m.periodSec) * Math.PI * 2;
-  const x = Math.cos(theta) * m.sma_km;
-  const y = Math.sin(theta) * m.sma_km;
-  const p = worldToScreen(x, y);
+  const p3 = projectOrbitPoint(m.sma_km, theta, m.incRad, m.nodeRad);
+  const p = worldToScreen(p3.x, p3.y);
   m.screenX = p.x;
   m.screenY = p.y;
 
@@ -526,7 +794,7 @@ function drawMoon(m){
   dctx.fillStyle = moonColor(m);
   dctx.fillRect(Math.round(p.x - s / 2), Math.round(p.y - s / 2), s, s);
 
-  if (state.showLabels && state.selectedMoon && state.selectedMoon.name === m.name) {
+  if (state.showLabels && state.selectedMoon && state.selectedMoon.name === m.name){
     dctx.textAlign = 'center';
     dctx.fillStyle = '#ffffff';
     dctx.font = '10px system-ui,-apple-system,Segoe UI,Roboto,sans-serif';
@@ -537,18 +805,72 @@ function drawMoon(m){
   }
 }
 
+function paletteForMoon(m){
+  const n = m.name;
+  if (n === 'Titan') return ['#d9a25b','#b9733d','#eed09c','#7f5834'];
+  if (n === 'Enceladus' || n === 'Tethys' || n === 'Dione' || n === 'Rhea') return ['#edf4ff','#d7e4ef','#b3c2d0','#8697aa'];
+  if (n === 'Iapetus') return ['#e5dcc8','#9a8a73','#5d5146','#2f2c2a'];
+  if (n === 'Hyperion') return ['#c8ab78','#91724e','#6d4f37','#3a2a20'];
+  if (n === 'Phoebe') return ['#a3a3a3','#6a6a6a','#3f3f3f','#1f1f1f'];
+  if (m.diameter_km > 1000) return ['#dcd7cf','#b9b2a8','#8a8279','#5f5954'];
+  if (m.diameter_km > 100) return ['#d8d0c6','#b4aca2','#8a8378','#5d5851'];
+  return ['#cfd2d8','#9ba1aa','#707780','#4b5058'];
+}
+
+function drawPixelMoonIcon(m){
+  const pal = paletteForMoon(m);
+  ictx.clearRect(0, 0, 16, 16);
+  const cx = 8;
+  const cy = 8;
+  const r = 6.2;
+
+  for (let y = 0; y < 16; y++){
+    for (let x = 0; x < 16; x++){
+      const dx = x + 0.5 - cx;
+      const dy = y + 0.5 - cy;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist > r) continue;
+
+      const nx = dx / r;
+      const ny = dy / r;
+      const nz = Math.sqrt(Math.max(0, 1 - nx * nx - ny * ny));
+      const light = Math.max(0, nx * -0.55 + ny * -0.35 + nz * 0.95);
+      const noise = hash01(m.name + ':' + x + ':' + y) - 0.5;
+
+      let idx = 1;
+      const t = light + noise * 0.18;
+      if (t > 0.82) idx = 2;
+      else if (t > 0.58) idx = 0;
+      else if (t > 0.32) idx = 1;
+      else idx = 3;
+
+      if (m.name === 'Iapetus' && x < 8) idx = Math.min(3, idx + 1);
+      if (m.name === 'Titan' && (y === 7 || y === 8)) idx = 1;
+      if (m.name === 'Enceladus' && noise > 0.35) idx = 2;
+      if (m.name === 'Phoebe' && noise < -0.25) idx = 0;
+
+      ictx.fillStyle = pal[idx];
+      ictx.fillRect(x, y, 1, 1);
+    }
+  }
+}
+
 function showInfo(m){
   state.selectedMoon = m || null;
   if (!m){
     infoBox.style.display = 'none';
     return;
   }
-  infoBox.innerHTML =
-    '<b>' + m.name + '</b><br>' +
+
+  drawPixelMoonIcon(m);
+  infoText.innerHTML =
+    '<b>' + m.name + '</b>' +
     'Диаметр: ' + m.diameter_km + ' км<br>' +
     'Большая полуось: ' + Math.round(m.sma_km).toLocaleString('ru-RU') + ' км<br>' +
     'Период: ' + Math.abs(m.period_d).toLocaleString('ru-RU') + ' суток<br>' +
+    'Наклон орбиты: ' + m.incDeg.toFixed(1) + '°<br>' +
     'Направление: ' + (m.period_d < 0 ? 'ретроградное' : 'прямое');
+
   infoBox.style.display = 'block';
 }
 
@@ -557,7 +879,9 @@ function markStaticDirty(){
 }
 
 function hitTest(x, y){
-  let best = null, bestD = Infinity;
+  let best = null;
+  let bestD = Infinity;
+
   for (const m of state.visibleMoons){
     if (typeof m.screenX !== 'number' || typeof m.screenY !== 'number') continue;
     const dx = x - m.screenX;
@@ -583,17 +907,23 @@ function render(ts){
 
   const dt = elapsedMs / 1000;
   state.lastRenderTs = ts;
+  state.frameCount++;
 
   if (state.speedMode === 1) state.simSeconds += dt;
   if (state.speedMode === 3600) state.simSeconds += dt * 3600;
 
-  if (state.staticDirty){
+  const detail = getDetailLevel();
+  if (state.staticDirty || detail !== state.lastDetailLevel){
     drawStaticScene();
     updateScaleInfo();
+  } else {
+    getVisibleMoons();
   }
 
-  dctx.clearRect(0,0,state.w,state.h);
-  for (const m of state.visibleMoons) drawMoon(m);
+  dctx.clearRect(0, 0, state.w, state.h);
+  for (const m of state.visibleMoons){
+    drawMoon(m, detail);
+  }
 
   requestAnimationFrame(render);
 }
@@ -621,12 +951,15 @@ bindTap('labelsBtn', () => {
   state.showLabels = !state.showLabels;
   document.getElementById('labelsBtn').classList.toggle('active', state.showLabels);
 });
-bindTap('infoBtn', () => infoSheet.classList.toggle('open'));
+bindTap('infoBtn', () => {
+  infoSheet.classList.toggle('open');
+});
 
 dynamicCanvas.addEventListener('wheel', (e) => {
   e.preventDefault();
   const beforeX = (e.clientX - state.centerX - state.offsetX) * state.kmPerPx;
   const beforeY = (e.clientY - state.centerY - state.offsetY) * state.kmPerPx;
+
   state.kmPerPx = Math.max(100, Math.min(maxStructureKm, state.kmPerPx * (e.deltaY > 0 ? 1.12 : 0.9)));
   state.offsetX = e.clientX - state.centerX - beforeX / state.kmPerPx;
   state.offsetY = e.clientY - state.centerY - beforeY / state.kmPerPx;
@@ -642,24 +975,26 @@ dynamicCanvas.addEventListener('pointerdown', (e) => {
 
 dynamicCanvas.addEventListener('pointermove', (e) => {
   if (!state.pointers.has(e.pointerId)) return;
+
   const prev = state.pointers.get(e.pointerId);
   state.pointers.set(e.pointerId, {x:e.clientX, y:e.clientY});
 
-  if (state.pointers.size === 1) {
+  if (state.pointers.size === 1){
     const dx = e.clientX - prev.x;
     const dy = e.clientY - prev.y;
     if (Math.abs(dx) + Math.abs(dy) > 2) state.moved = true;
     state.offsetX += dx;
     state.offsetY += dy;
     markStaticDirty();
-  } else if (state.pointers.size === 2) {
+  } else if (state.pointers.size === 2){
     state.moved = true;
     const pts = [...state.pointers.values()];
     const d = Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y);
-    if (!state.pinchBaseDistance) {
+
+    if (!state.pinchBaseDistance){
       state.pinchBaseDistance = d;
       state.pinchBaseKmPerPx = state.kmPerPx;
-    } else if (d > 0) {
+    } else if (d > 0){
       state.kmPerPx = Math.max(100, Math.min(maxStructureKm, state.pinchBaseKmPerPx * (state.pinchBaseDistance / d)));
       markStaticDirty();
     }
@@ -668,7 +1003,7 @@ dynamicCanvas.addEventListener('pointermove', (e) => {
 
 function clearPointer(e){
   state.pointers.delete(e.pointerId);
-  if (state.pointers.size < 2) {
+  if (state.pointers.size < 2){
     state.pinchBaseDistance = null;
     state.pinchBaseKmPerPx = null;
   }
@@ -676,7 +1011,7 @@ function clearPointer(e){
 
 dynamicCanvas.addEventListener('pointerup', (e) => {
   const wasTap = !state.moved && (performance.now() - state.downAt < 250);
-  if (wasTap) {
+  if (wasTap){
     const hit = hitTest(e.clientX, e.clientY);
     if (hit) showInfo(hit);
     else showInfo(null);
@@ -684,6 +1019,7 @@ dynamicCanvas.addEventListener('pointerup', (e) => {
   clearPointer(e);
 });
 dynamicCanvas.addEventListener('pointercancel', clearPointer);
+
 dynamicCanvas.addEventListener('click', (e) => {
   const hit = hitTest(e.clientX, e.clientY);
   if (hit) showInfo(hit);
@@ -691,6 +1027,7 @@ dynamicCanvas.addEventListener('click', (e) => {
 });
 
 window.addEventListener('resize', resize);
+
 resize();
 fitAll();
 setSpeed(0);
