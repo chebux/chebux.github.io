@@ -3,82 +3,140 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no" />
-<title>Saturn System Suka</title>
+<title>Saturn System — Tilted 3D</title>
 <style>
 :root{
-  --bg:#050608; --panel:rgba(8,10,14,.88); --text:#f2f2f2; --muted:#aeb4be;
-  --yellow:#f3d36a; --purple:#9f7dff;
+  --bg:#050608;
+  --panel:rgba(8,10,14,.88);
+  --text:#f2f2f2;
+  --muted:#aeb4be;
+  --yellow:#f3d36a;
+  --purple:#9f7dff;
 }
-*{box-sizing:border-box; -webkit-tap-highlight-color: transparent;}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{
-  margin:0; padding:0; background:var(--bg); color:var(--text);
+  margin:0;
+  padding:0;
+  background:var(--bg);
+  color:var(--text);
   font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
-  height:100%; overflow:hidden;
+  height:100%;
+  overflow:hidden;
 }
-#app{position:fixed; inset:0;}
-.layerCanvas{
-  position:absolute; inset:0; width:100%; height:100%; display:block;
-}
-#dynamicCanvas{ touch-action:none; }
+#app{position:fixed;inset:0}
+.layerCanvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+#dynamicCanvas{touch-action:none}
 
 .topbar{
-  position:fixed; top:max(8px, env(safe-area-inset-top)); right:8px; z-index:30;
+  position:fixed;
+  top:max(8px, env(safe-area-inset-top));
+  right:8px;
+  z-index:30;
 }
 .iconBtn{
-  width:36px; height:36px; border-radius:999px; display:flex; align-items:center; justify-content:center;
-  border:1px solid rgba(255,255,255,.14); background:rgba(8,10,14,.78); color:var(--text);
-  font-size:18px; font-weight:700; backdrop-filter:blur(8px); touch-action:manipulation;
+  width:36px;
+  height:36px;
+  border-radius:999px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border:1px solid rgba(255,255,255,.14);
+  background:rgba(8,10,14,.78);
+  color:var(--text);
+  font-size:18px;
+  font-weight:700;
+  backdrop-filter:blur(8px);
+  touch-action:manipulation;
 }
+
 .infoSheet{
-  position:fixed; top:max(50px, calc(env(safe-area-inset-top) + 50px)); right:8px;
-  width:min(88vw, 320px); max-height:min(62vh, 520px); overflow:auto;
-  background:var(--panel); border:1px solid rgba(255,255,255,.08); border-radius:14px;
-  padding:12px; display:none; z-index:35; backdrop-filter:blur(10px);
+  position:fixed;
+  top:max(50px, calc(env(safe-area-inset-top) + 50px));
+  right:8px;
+  width:min(88vw, 320px);
+  max-height:min(62vh, 520px);
+  overflow:auto;
+  background:var(--panel);
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:14px;
+  padding:12px;
+  display:none;
+  z-index:35;
+  backdrop-filter:blur(10px);
 }
-.infoSheet.open{display:block;}
-.title{font-size:14px; font-weight:700; margin-bottom:8px;}
-.meta{font-size:11px; color:var(--muted); line-height:1.4;}
-.legend{display:grid; gap:5px; font-size:11px; color:var(--muted); margin-top:10px;}
+.infoSheet.open{display:block}
+.title{font-size:14px;font-weight:700;margin-bottom:8px}
+.meta{font-size:11px;color:var(--muted);line-height:1.4}
+.legend{display:grid;gap:5px;font-size:11px;color:var(--muted);margin-top:10px}
 
 .controls{
-  position:fixed; left:8px; right:8px; bottom:max(8px, env(safe-area-inset-bottom)); z-index:25;
+  position:fixed;
+  left:8px;
+  right:8px;
+  bottom:max(8px, env(safe-area-inset-bottom));
+  z-index:25;
 }
 .panel{
-  background:rgba(8,10,14,.78); backdrop-filter:blur(10px);
-  border:1px solid rgba(255,255,255,.08); border-radius:14px; padding:8px;
+  background:rgba(8,10,14,.78);
+  backdrop-filter:blur(10px);
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:14px;
+  padding:8px;
 }
 .grid.oneRow{
-  display:grid; grid-template-columns:repeat(4, minmax(0,1fr)); gap:6px;
+  display:grid;
+  grid-template-columns:repeat(4, minmax(0,1fr));
+  gap:6px;
 }
 button.control{
-  appearance:none; min-height:42px; border:1px solid rgba(255,255,255,.12);
-  background:rgba(255,255,255,.06); color:var(--text); border-radius:10px;
-  padding:8px 6px; font-size:11px; line-height:1.15; font-weight:700; text-align:center;
+  appearance:none;
+  min-height:42px;
+  border:1px solid rgba(255,255,255,.12);
+  background:rgba(255,255,255,.06);
+  color:var(--text);
+  border-radius:10px;
+  padding:8px 6px;
+  font-size:11px;
+  line-height:1.15;
+  font-weight:700;
+  text-align:center;
   touch-action:manipulation;
 }
 button.control.active{
-  background:rgba(243,211,106,.16); border-color:rgba(243,211,106,.45); color:var(--yellow);
+  background:rgba(243,211,106,.16);
+  border-color:rgba(243,211,106,.45);
+  color:var(--yellow);
 }
 
 .infoBox{
-  position:fixed; left:8px; right:8px; bottom:max(66px, calc(env(safe-area-inset-bottom) + 66px));
-  margin:0 auto; width:min(92vw, 340px); background:var(--panel);
-  border:1px solid rgba(255,255,255,.08); border-radius:12px; padding:10px 12px;
-  font-size:12px; line-height:1.35; display:none; z-index:28;
+  position:fixed;
+  left:8px;
+  right:8px;
+  bottom:max(66px, calc(env(safe-area-inset-bottom) + 66px));
+  margin:0 auto;
+  width:min(92vw, 340px);
+  background:var(--panel);
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:12px;
+  padding:10px 12px;
+  font-size:12px;
+  line-height:1.35;
+  display:none;
+  z-index:28;
 }
 
-.controls, .controls *, .topbar, .topbar *, .infoSheet, .infoSheet * { touch-action:manipulation; }
+.controls,.controls *,.topbar,.topbar *,.infoSheet,.infoSheet *{touch-action:manipulation}
 
 @media (max-width:390px){
-  .controls{left:6px; right:6px;}
-  .grid.oneRow{gap:5px;}
-  button.control{min-height:40px; font-size:10px; padding:7px 4px;}
-  .infoBox{bottom:max(70px, calc(env(safe-area-inset-bottom) + 70px));}
+  .controls{left:6px;right:6px}
+  .grid.oneRow{gap:5px}
+  button.control{min-height:40px;font-size:10px;padding:7px 4px}
+  .infoBox{bottom:max(70px, calc(env(safe-area-inset-bottom) + 70px))}
 }
 @media (min-width:700px){
-  .controls{left:10px; right:10px; max-width:640px; margin:0 auto;}
-  .grid.oneRow{grid-template-columns:repeat(4, minmax(0,1fr));}
-  button.control{font-size:12px; min-height:44px;}
+  .controls{left:10px;right:10px;max-width:640px;margin:0 auto}
+  .grid.oneRow{grid-template-columns:repeat(4, minmax(0,1fr))}
+  button.control{font-size:12px;min-height:44px}
 }
 </style>
 </head>
@@ -93,13 +151,14 @@ button.control.active{
 </div>
 
 <div id="infoSheet" class="infoSheet">
-  <div class="title">Система Сатурна — линейный масштаб</div>
+  <div class="title">Система Сатурна — объёмный вид</div>
   <div class="meta" id="scaleInfo"></div>
   <div class="legend">
-    <div>Орбиты спутников &lt; 100 км — светло-серые</div>
-    <div>Орбиты спутников ≥ 100 км — жёлтые</div>
-    <div>Орбиты спутников &gt; 1000 км — фиолетовые</div>
-    <div>Информация о спутнике возникает при нажатии</div>
+    <div>Плоскость колец и орбит показана под углом 30°.</div>
+    <div>Орбиты выглядят эллипсами за счёт проекции.</div>
+    <div>Сатурн изображён как шар с полосами и полярным затемнением.</div>
+    <div>Кольца имеют естественный бежево-золотистый оттенок.</div>
+    <div>Подписи показываются у выбранного спутника.</div>
   </div>
 </div>
 
@@ -117,8 +176,40 @@ button.control.active{
 <div class="infoBox" id="infoBox"></div>
 
 <script>
-const moons = [{"name": "S/2009 S 1", "diameter_km": 0.3, "sma_km": 116900.0, "period_d": 0.4715}, {"name": "Pan", "diameter_km": 28.2, "sma_km": 133600.0, "period_d": 0.57505}, {"name": "Daphnis", "diameter_km": 7.6, "sma_km": 136500.0, "period_d": 0.59408}, {"name": "Atlas", "diameter_km": 30.2, "sma_km": 137700.0, "period_d": 0.6046}, {"name": "Prometheus", "diameter_km": 86.2, "sma_km": 139400.0, "period_d": 0.61588}, {"name": "Pandora", "diameter_km": 81.4, "sma_km": 141700.0, "period_d": 0.63137}, {"name": "Epimetheus", "diameter_km": 116.2, "sma_km": 151400.0, "period_d": 0.69701}, {"name": "Janus", "diameter_km": 179.0, "sma_km": 151500.0, "period_d": 0.69735}, {"name": "Aegaeon", "diameter_km": 0.66, "sma_km": 167500.0, "period_d": 0.80812}, {"name": "Mimas", "diameter_km": 396.4, "sma_km": 186000.0, "period_d": 0.94242}, {"name": "Methone", "diameter_km": 2.9, "sma_km": 194700.0, "period_d": 1.00955}, {"name": "Anthe", "diameter_km": 1.8, "sma_km": 198100.0, "period_d": 1.0389}, {"name": "Pallene", "diameter_km": 4.44, "sma_km": 212300.0, "period_d": 1.15606}, {"name": "Enceladus", "diameter_km": 504.2, "sma_km": 238400.0, "period_d": 1.37022}, {"name": "Tethys", "diameter_km": 1062.2, "sma_km": 295000.0, "period_d": 1.8878}, {"name": "Telesto", "diameter_km": 24.8, "sma_km": 295000.0, "period_d": 1.8878}, {"name": "Calypso", "diameter_km": 21.4, "sma_km": 295000.0, "period_d": 1.8878}, {"name": "Helene", "diameter_km": 35.2, "sma_km": 377600.0, "period_d": 2.73692}, {"name": "Polydeuces", "diameter_km": 2.6, "sma_km": 377600.0, "period_d": 2.73692}, {"name": "Dione", "diameter_km": 1122.8, "sma_km": 377700.0, "period_d": 2.73692}, {"name": "Rhea", "diameter_km": 1527.6, "sma_km": 527200.0, "period_d": 4.5175}, {"name": "Titan", "diameter_km": 5149.46, "sma_km": 1221900.0, "period_d": 15.9454}, {"name": "Hyperion", "diameter_km": 270.0, "sma_km": 1481500.0, "period_d": 21.2767}, {"name": "Iapetus", "diameter_km": 1468.6, "sma_km": 3561700.0, "period_d": 79.331}, {"name": "S/2023 S 1", "diameter_km": 3.0, "sma_km": 11205400.0, "period_d": 442.86}, {"name": "S/2019 S 1", "diameter_km": 5.0, "sma_km": 11245400.0, "period_d": 445.17}, {"name": "S/2004 S 54", "diameter_km": 4.0, "sma_km": 11277500.0, "period_d": 447.14}, {"name": "S/2023 S 56", "diameter_km": 3.0, "sma_km": 11287500.0, "period_d": 447.75}, {"name": "S/2004 S 55", "diameter_km": 3.0, "sma_km": 11294700.0, "period_d": 448.16}, {"name": "S/2020 S 11", "diameter_km": 3.0, "sma_km": 11295600.0, "period_d": 448.21}, {"name": "S/2019 S 22", "diameter_km": 3.0, "sma_km": 11305100.0, "period_d": 448.48}, {"name": "S/2020 S 49", "diameter_km": 2.0, "sma_km": 11305900.0, "period_d": 448.84}, {"name": "Kiviuq", "diameter_km": 17.0, "sma_km": 11307400.0, "period_d": 448.91}, {"name": "S/2023 S 2", "diameter_km": 3.0, "sma_km": 11309900.0, "period_d": 449.05}, {"name": "S/2019 S 23", "diameter_km": 3.0, "sma_km": 11310200.0, "period_d": 449.08}, {"name": "S/2020 S 12", "diameter_km": 3.0, "sma_km": 11314500.0, "period_d": 449.33}, {"name": "S/2005 S 4", "diameter_km": 5.0, "sma_km": 11324500.0, "period_d": 449.93}, {"name": "S/2019 S 25", "diameter_km": 4.0, "sma_km": 11329400.0, "period_d": 450.22}, {"name": "S/2020 S 1", "diameter_km": 4.0, "sma_km": 11338600.0, "period_d": 450.77}, {"name": "Ijiraq", "diameter_km": 13.0, "sma_km": 11344700.0, "period_d": 451.12}, {"name": "S/2020 S 48", "diameter_km": 3.0, "sma_km": 11355100.0, "period_d": 451.75}, {"name": "S/2019 S 24", "diameter_km": 4.0, "sma_km": 11360500.0, "period_d": 452.07}, {"name": "S/2007 S 10", "diameter_km": 4.0, "sma_km": 11364900.0, "period_d": 452.36}, {"name": "S/2019 S 26", "diameter_km": 3.0, "sma_km": 11390900.0, "period_d": 453.89}, {"name": "S/2020 S 13", "diameter_km": 3.0, "sma_km": 11415600.0, "period_d": 455.39}, {"name": "S/2023 S 50", "diameter_km": 3.0, "sma_km": 11656500.0, "period_d": -469.82}, {"name": "S/2023 S 6", "diameter_km": 3.0, "sma_km": 11953100.0, "period_d": 487.91}, {"name": "S/2023 S 7", "diameter_km": 4.0, "sma_km": 12133700.0, "period_d": 499.01}, {"name": "S/2023 S 38", "diameter_km": 3.0, "sma_km": 12823500.0, "period_d": -546.31}, {"name": "Phoebe", "diameter_km": 213.0, "sma_km": 12929400.0, "period_d": -550.3}, {"name": "S/2023 S 9", "diameter_km": 3.0, "sma_km": 13167500.0, "period_d": -564.11}, {"name": "S/2006 S 20", "diameter_km": 5.0, "sma_km": 13193700.0, "period_d": -565.79}, {"name": "S/2004 S 56", "diameter_km": 5.0, "sma_km": 13670200.0, "period_d": -596.69}, {"name": "S/2023 S 8", "diameter_km": 3.0, "sma_km": 14018800.0, "period_d": -619.69}, {"name": "S/2023 S 62", "diameter_km": 2.0, "sma_km": 14025900.0, "period_d": -620.15}, {"name": "S/2023 S 11", "diameter_km": 3.0, "sma_km": 14046100.0, "period_d": -621.49}, {"name": "S/2006 S 9", "diameter_km": 3.0, "sma_km": 14406700.0, "period_d": -645.58}, {"name": "S/2006 S 21", "diameter_km": 3.0, "sma_km": 14976500.0, "period_d": -684.28}, {"name": "Paaliaq", "diameter_km": 25.0, "sma_km": 14997700.0, "period_d": 685.72}, {"name": "S/2006 S 22", "diameter_km": 3.0, "sma_km": 15109500.0, "period_d": -693.41}, {"name": "S/2023 S 13", "diameter_km": 3.0, "sma_km": 15193000.0, "period_d": -699.18}, {"name": "S/2023 S 10", "diameter_km": 3.0, "sma_km": 15500200.0, "period_d": -720.49}, {"name": "Skathi", "diameter_km": 8.0, "sma_km": 15575400.0, "period_d": -725.73}, {"name": "S/2023 S 12", "diameter_km": 3.0, "sma_km": 15805900.0, "period_d": -741.92}, {"name": "S/2007 S 5", "diameter_km": 4.0, "sma_km": 15835600.0, "period_d": -744.01}, {"name": "S/2007 S 7", "diameter_km": 4.0, "sma_km": 15931600.0, "period_d": -750.8}, {"name": "S/2007 S 2", "diameter_km": 5.0, "sma_km": 15939100.0, "period_d": -751.33}, {"name": "S/2004 S 37", "diameter_km": 4.0, "sma_km": 15956300.0, "period_d": -752.55}, {"name": "S/2004 S 47", "diameter_km": 4.0, "sma_km": 16050700.0, "period_d": -759.22}, {"name": "S/2004 S 40", "diameter_km": 4.0, "sma_km": 16075600.0, "period_d": -761.0}, {"name": "S/2020 S 14", "diameter_km": 3.0, "sma_km": 16186200.0, "period_d": -768.86}, {"name": "S/2019 S 27", "diameter_km": 3.0, "sma_km": 16267000.0, "period_d": -774.63}, {"name": "Albiorix", "diameter_km": 28.6, "sma_km": 16329200.0, "period_d": 779.07}, {"name": "S/2019 S 2", "diameter_km": 3.0, "sma_km": 16560300.0, "period_d": -795.67}, {"name": "S/2020 S 15", "diameter_km": 3.0, "sma_km": 16729200.0, "period_d": 807.82}, {"name": "S/2023 S 14", "diameter_km": 3.0, "sma_km": 16853000.0, "period_d": -816.86}, {"name": "S/2023 S 55", "diameter_km": 3.0, "sma_km": 16875100.0, "period_d": 818.51}, {"name": "S/2020 S 16", "diameter_km": 3.0, "sma_km": 16963400.0, "period_d": -824.92}, {"name": "S/2023 S 16", "diameter_km": 3.0, "sma_km": 17005300.0, "period_d": -827.81}, {"name": "Bebhionn", "diameter_km": 6.0, "sma_km": 17027300.0, "period_d": 829.64}, {"name": "S/2007 S 8", "diameter_km": 4.0, "sma_km": 17048900.0, "period_d": 831.21}, {"name": "S/2004 S 29", "diameter_km": 5.0, "sma_km": 17063900.0, "period_d": 832.27}, {"name": "S/2019 S 3", "diameter_km": 4.0, "sma_km": 17077400.0, "period_d": -833.19}, {"name": "S/2020 S 17", "diameter_km": 4.0, "sma_km": 17094200.0, "period_d": -834.45}, {"name": "S/2023 S 58", "diameter_km": 2.0, "sma_km": 17102000.0, "period_d": 835.11}, {"name": "S/2020 S 18", "diameter_km": 3.0, "sma_km": 17777900.0, "period_d": -885.12}, {"name": "S/2006 S 27", "diameter_km": 4.0, "sma_km": 17189400.0, "period_d": -841.76}, {"name": "S/2023 S 53", "diameter_km": 3.0, "sma_km": 17261200.0, "period_d": -847.27}, {"name": "S/2023 S 18", "diameter_km": 3.0, "sma_km": 17381700.0, "period_d": 855.65}, {"name": "S/2023 S 17", "diameter_km": 3.0, "sma_km": 17385300.0, "period_d": 855.94}, {"name": "S/2020 S 7", "diameter_km": 3.0, "sma_km": 17394000.0, "period_d": -856.53}, {"name": "S/2007 S 11", "diameter_km": 4.0, "sma_km": 17434400.0, "period_d": 859.53}, {"name": "S/2023 S 54", "diameter_km": 3.0, "sma_km": 17485100.0, "period_d": 863.35}, {"name": "S/2023 S 60", "diameter_km": 2.0, "sma_km": 17493700.0, "period_d": -863.96}, {"name": "S/2019 S 28", "diameter_km": 4.0, "sma_km": 17496000.0, "period_d": -864.09}, {"name": "S/2004 S 31", "diameter_km": 5.0, "sma_km": 17497100.0, "period_d": 863.92}, {"name": "Erriapus", "diameter_km": 10.0, "sma_km": 17506900.0, "period_d": 864.92}, {"name": "S/2023 S 19", "diameter_km": 3.0, "sma_km": 17590300.0, "period_d": 870.92}, {"name": "Skoll", "diameter_km": 5.0, "sma_km": 17623400.0, "period_d": -873.57}, {"name": "S/2023 S 3", "diameter_km": 3.0, "sma_km": 17646400.0, "period_d": 875.0}, {"name": "S/2019 S 30", "diameter_km": 3.0, "sma_km": 17709900.0, "period_d": -879.97}, {"name": "S/2020 S 19", "diameter_km": 3.0, "sma_km": 17726700.0, "period_d": 881.04}, {"name": "S/2019 S 31", "diameter_km": 3.0, "sma_km": 17739100.0, "period_d": 882.24}, {"name": "Tarqeq", "diameter_km": 7.0, "sma_km": 17751000.0, "period_d": 882.85}, {"name": "S/2023 S 21", "diameter_km": 3.0, "sma_km": 17755400.0, "period_d": -883.31}, {"name": "S/2023 S 4", "diameter_km": 3.0, "sma_km": 17764600.0, "period_d": -884.11}, {"name": "S/2019 S 14", "diameter_km": 3.0, "sma_km": 19329100.0, "period_d": -1004.0}, {"name": "S/2020 S 2", "diameter_km": 3.0, "sma_km": 19047500.0, "period_d": -981.99}, {"name": "Siarnaq", "diameter_km": 39.3, "sma_km": 17881100.0, "period_d": 892.68}, {"name": "S/2019 S 4", "diameter_km": 3.0, "sma_km": 17951900.0, "period_d": -898.09}, {"name": "S/2019 S 32", "diameter_km": 5.0, "sma_km": 17960500.0, "period_d": 898.71}, {"name": "S/2020 S 20", "diameter_km": 3.0, "sma_km": 17997300.0, "period_d": -901.53}, {"name": "S/2020 S 3", "diameter_km": 3.0, "sma_km": 18056800.0, "period_d": 905.84}, {"name": "S/2023 S 61", "diameter_km": 3.0, "sma_km": 18067700.0, "period_d": -906.85}, {"name": "S/2004 S 41", "diameter_km": 4.0, "sma_km": 18095400.0, "period_d": -908.89}, {"name": "S/2005 S 6", "diameter_km": 4.0, "sma_km": 18107300.0, "period_d": 909.58}, {"name": "S/2004 S 57", "diameter_km": 4.0, "sma_km": 18150500.0, "period_d": -913.07}, {"name": "S/2019 S 6", "diameter_km": 5.0, "sma_km": 18205600.0, "period_d": 917.11}, {"name": "S/2006 S 24", "diameter_km": 3.0, "sma_km": 18210700.0, "period_d": -917.56}, {"name": "Tarvos", "diameter_km": 15.0, "sma_km": 18216600.0, "period_d": 917.98}, {"name": "S/2020 S 4", "diameter_km": 3.0, "sma_km": 18236400.0, "period_d": 919.52}, {"name": "S/2023 S 30", "diameter_km": 3.0, "sma_km": 18238300.0, "period_d": -919.71}, {"name": "S/2004 S 42", "diameter_km": 4.0, "sma_km": 18240700.0, "period_d": -919.88}, {"name": "S/2023 S 15", "diameter_km": 3.0, "sma_km": 18241300.0, "period_d": -919.93}, {"name": "S/2004 S 58", "diameter_km": 5.0, "sma_km": 18254500.0, "period_d": 920.8}, {"name": "S/2006 S 23", "diameter_km": 3.0, "sma_km": 18269700.0, "period_d": 921.86}, {"name": "Hyrrokkin", "diameter_km": 8.0, "sma_km": 18340900.0, "period_d": -927.46}, {"name": "S/2023 S 24", "diameter_km": 3.0, "sma_km": 18351800.0, "period_d": -928.25}, {"name": "Greip", "diameter_km": 5.0, "sma_km": 18380000.0, "period_d": -930.44}, {"name": "S/2020 S 5", "diameter_km": 3.0, "sma_km": 18391000.0, "period_d": 931.19}, {"name": "S/2019 S 34", "diameter_km": 3.0, "sma_km": 18446800.0, "period_d": 935.45}, {"name": "S/2004 S 13", "diameter_km": 4.0, "sma_km": 18453700.0, "period_d": -936.09}, {"name": "S/2023 S 63", "diameter_km": 4.0, "sma_km": 18482600.0, "period_d": -938.25}, {"name": "S/2005 S 7", "diameter_km": 3.0, "sma_km": 18502500.0, "period_d": 939.75}, {"name": "S/2007 S 6", "diameter_km": 3.0, "sma_km": 18545000.0, "period_d": -942.98}, {"name": "S/2019 S 35", "diameter_km": 3.0, "sma_km": 18557800.0, "period_d": -944.0}, {"name": "S/2006 S 25", "diameter_km": 3.0, "sma_km": 18572400.0, "period_d": -945.07}, {"name": "S/2023 S 22", "diameter_km": 4.0, "sma_km": 18577500.0, "period_d": 945.37}, {"name": "Mundilfari", "diameter_km": 7.0, "sma_km": 18588200.0, "period_d": -946.29}, {"name": "S/2006 S 26", "diameter_km": 3.0, "sma_km": 18619300.0, "period_d": -948.67}, {"name": "S/2019 S 33", "diameter_km": 3.0, "sma_km": 18663000.0, "period_d": -952.05}, {"name": "S/2020 S 21", "diameter_km": 3.0, "sma_km": 18674100.0, "period_d": -952.95}, {"name": "S/2023 S 23", "diameter_km": 3.0, "sma_km": 18685700.0, "period_d": -953.8}, {"name": "S/2023 S 25", "diameter_km": 3.0, "sma_km": 18685700.0, "period_d": -953.8}, {"name": "S/2020 S 22", "diameter_km": 3.0, "sma_km": 18693000.0, "period_d": -954.41}, {"name": "S/2019 S 5", "diameter_km": 4.0, "sma_km": 18694000.0, "period_d": -954.45}, {"name": "S/2020 S 23", "diameter_km": 3.0, "sma_km": 18822000.0, "period_d": -964.37}, {"name": "S/2019 S 29", "diameter_km": 4.0, "sma_km": 18845000.0, "period_d": -966.15}, {"name": "S/2020 S 46", "diameter_km": 3.0, "sma_km": 18954300.0, "period_d": -974.7}, {"name": "S/2006 S 12", "diameter_km": 3.0, "sma_km": 18994600.0, "period_d": -977.82}, {"name": "S/2023 S 44", "diameter_km": 3.0, "sma_km": 19029700.0, "period_d": -980.54}, {"name": "S/2020 S 51", "diameter_km": 2.0, "sma_km": 19149400.0, "period_d": -989.91}, {"name": "S/2020 S 50", "diameter_km": 2.0, "sma_km": 19206300.0, "period_d": -994.37}, {"name": "S/2006 S 10", "diameter_km": 5.0, "sma_km": 19214300.0, "period_d": -995.0}, {"name": "S/2020 S 52", "diameter_km": 2.0, "sma_km": 19257400.0, "period_d": -998.37}, {"name": "S/2020 S 53", "diameter_km": 2.0, "sma_km": 19369100.0, "period_d": -1007.11}, {"name": "S/2020 S 54", "diameter_km": 2.0, "sma_km": 19479100.0, "period_d": -1015.72}, {"name": "S/2023 S 37", "diameter_km": 3.0, "sma_km": 19505100.0, "period_d": -1017.76}, {"name": "S/2006 S 11", "diameter_km": 3.0, "sma_km": 19550100.0, "period_d": -1021.23}, {"name": "S/2023 S 28", "diameter_km": 3.0, "sma_km": 19578800.0, "period_d": -1023.47}, {"name": "Narvi", "diameter_km": 16.0, "sma_km": 19610700.0, "period_d": -1025.97}, {"name": "S/2020 S 55", "diameter_km": 2.0, "sma_km": 19738900.0, "period_d": -1035.92}, {"name": "S/2023 S 27", "diameter_km": 3.0, "sma_km": 19755800.0, "period_d": -1037.4}, {"name": "S/2004 S 59", "diameter_km": 5.0, "sma_km": 19779400.0, "period_d": -1039.08}, {"name": "S/2020 S 56", "diameter_km": 2.0, "sma_km": 19854500.0, "period_d": -1044.9}, {"name": "S/2020 S 57", "diameter_km": 2.0, "sma_km": 19867800.0, "period_d": -1046.04}, {"name": "S/2020 S 58", "diameter_km": 2.0, "sma_km": 19871500.0, "period_d": -1046.35}, {"name": "S/2020 S 59", "diameter_km": 2.0, "sma_km": 19878100.0, "period_d": -1046.95}, {"name": "S/2020 S 60", "diameter_km": 2.0, "sma_km": 19883400.0, "period_d": -1047.36}, {"name": "S/2020 S 61", "diameter_km": 2.0, "sma_km": 19888500.0, "period_d": -1047.71}, {"name": "S/2023 S 26", "diameter_km": 3.0, "sma_km": 19894300.0, "period_d": -1047.76}, {"name": "S/2019 S 36", "diameter_km": 3.0, "sma_km": 19903200.0, "period_d": -1048.42}, {"name": "S/2006 S 13", "diameter_km": 4.0, "sma_km": 19953300.0, "period_d": -1052.32}, {"name": "S/2019 S 37", "diameter_km": 3.0, "sma_km": 19996900.0, "period_d": -1055.78}, {"name": "S/2023 S 48", "diameter_km": 3.0, "sma_km": 20029200.0, "period_d": -1058.35}, {"name": "S/2023 S 29", "diameter_km": 3.0, "sma_km": 20042400.0, "period_d": -1059.42}, {"name": "S/2023 S 59", "diameter_km": 2.0, "sma_km": 20064000.0, "period_d": -1061.04}, {"name": "S/2007 S 9", "diameter_km": 4.0, "sma_km": 20174600.0, "period_d": -1069.81}, {"name": "S/2019 S 7", "diameter_km": 4.0, "sma_km": 20185100.0, "period_d": -1070.8}, {"name": "S/2019 S 8", "diameter_km": 4.0, "sma_km": 20287400.0, "period_d": -1078.86}, {"name": "Farbauti", "diameter_km": 5.0, "sma_km": 20290700.0, "period_d": -1079.12}, {"name": "Thrymr", "diameter_km": 8.0, "sma_km": 20330500.0, "period_d": -1082.23}, {"name": "Bestla", "diameter_km": 7.0, "sma_km": 20337800.0, "period_d": -1082.94}, {"name": "S/2019 S 9", "diameter_km": 4.0, "sma_km": 20359700.0, "period_d": -1084.62}, {"name": "S/2023 S 32", "diameter_km": 2.0, "sma_km": 20454400.0, "period_d": -1092.24}, {"name": "S/2004 S 46", "diameter_km": 3.0, "sma_km": 20513800.0, "period_d": -1096.99}, {"name": "S/2023 S 57", "diameter_km": 2.0, "sma_km": 20536100.0, "period_d": -1098.83}, {"name": "Angrboda", "diameter_km": 4.0, "sma_km": 20591500.0, "period_d": -1103.2}, {"name": "S/2020 S 24", "diameter_km": 3.0, "sma_km": 20618300.0, "period_d": -1105.41}, {"name": "S/2019 S 11", "diameter_km": 4.0, "sma_km": 20664200.0, "period_d": -1109.11}, {"name": "Aegir", "diameter_km": 6.0, "sma_km": 20664400.0, "period_d": -1109.13}, {"name": "S/2019 S 10", "diameter_km": 3.0, "sma_km": 20700300.0, "period_d": -1111.99}, {"name": "Beli", "diameter_km": 4.0, "sma_km": 20703700.0, "period_d": -1112.27}, {"name": "S/2023 S 31", "diameter_km": 3.0, "sma_km": 20729200.0, "period_d": -1114.29}, {"name": "S/2020 S 25", "diameter_km": 3.0, "sma_km": 20763700.0, "period_d": -1117.09}, {"name": "S/2023 S 34", "diameter_km": 3.0, "sma_km": 20803900.0, "period_d": -1120.38}, {"name": "S/2023 S 39", "diameter_km": 3.0, "sma_km": 20824500.0, "period_d": -1121.99}, {"name": "S/2019 S 12", "diameter_km": 4.0, "sma_km": 20895000.0, "period_d": -1127.6}, {"name": "Gerd", "diameter_km": 4.0, "sma_km": 20947500.0, "period_d": -1131.91}, {"name": "S/2019 S 13", "diameter_km": 3.0, "sma_km": 20964500.0, "period_d": -1133.27}, {"name": "S/2004 S 61", "diameter_km": 4.0, "sma_km": 20986900.0, "period_d": -1135.06}, {"name": "S/2006 S 14", "diameter_km": 3.0, "sma_km": 21062300.0, "period_d": -1141.27}, {"name": "S/2023 S 40", "diameter_km": 3.0, "sma_km": 21065100.0, "period_d": -1141.48}, {"name": "Gunnlod", "diameter_km": 4.0, "sma_km": 21141800.0, "period_d": -1147.74}, {"name": "S/2019 S 15", "diameter_km": 3.0, "sma_km": 21191100.0, "period_d": -1151.66}, {"name": "S/2020 S 6", "diameter_km": 3.0, "sma_km": 21253300.0, "period_d": -1156.81}, {"name": "S/2020 S 26", "diameter_km": 3.0, "sma_km": 21264400.0, "period_d": -1157.77}, {"name": "S/2023 S 41", "diameter_km": 3.0, "sma_km": 21286400.0, "period_d": -1159.52}, {"name": "S/2004 S 7", "diameter_km": 5.0, "sma_km": 21327600.0, "period_d": -1162.93}, {"name": "S/2006 S 3", "diameter_km": 5.0, "sma_km": 21353100.0, "period_d": -1165.02}, {"name": "S/2005 S 5", "diameter_km": 3.0, "sma_km": 21364900.0, "period_d": -1165.96}, {"name": "S/2020 S 47", "diameter_km": 3.0, "sma_km": 21397400.0, "period_d": -1168.58}, {"name": "Skrymir", "diameter_km": 4.0, "sma_km": 21447400.0, "period_d": -1172.72}, {"name": "S/2023 S 33", "diameter_km": 3.0, "sma_km": 21621900.0, "period_d": -1187.07}, {"name": "S/2006 S 16", "diameter_km": 3.0, "sma_km": 21721200.0, "period_d": -1195.13}, {"name": "S/2023 S 49", "diameter_km": 3.0, "sma_km": 21766500.0, "period_d": -1198.99}, {"name": "S/2020 S 30", "diameter_km": 3.0, "sma_km": 21790700.0, "period_d": -1201.02}, {"name": "S/2006 S 15", "diameter_km": 4.0, "sma_km": 21799600.0, "period_d": -1201.69}, {"name": "S/2020 S 27", "diameter_km": 3.0, "sma_km": 21802300.0, "period_d": -1202.02}, {"name": "S/2023 S 42", "diameter_km": 3.0, "sma_km": 21837000.0, "period_d": -1204.81}, {"name": "S/2004 S 28", "diameter_km": 5.0, "sma_km": 21865900.0, "period_d": -1207.18}, {"name": "S/2020 S 32", "diameter_km": 3.0, "sma_km": 21884100.0, "period_d": -1208.85}, {"name": "S/2006 S 28", "diameter_km": 4.0, "sma_km": 21955100.0, "period_d": -1214.53}, {"name": "S/2020 S 8", "diameter_km": 3.0, "sma_km": 21967200.0, "period_d": -1215.61}, {"name": "S/2020 S 28", "diameter_km": 3.0, "sma_km": 21993700.0, "period_d": -1217.81}, {"name": "Alvaldi", "diameter_km": 6.0, "sma_km": 21993800.0, "period_d": -1217.8}, {"name": "S/2019 S 38", "diameter_km": 3.0, "sma_km": 21998400.0, "period_d": -1218.27}, {"name": "Kari", "diameter_km": 6.0, "sma_km": 22032100.0, "period_d": -1220.98}, {"name": "S/2004 S 48", "diameter_km": 4.0, "sma_km": 22137400.0, "period_d": -1229.86}, {"name": "S/2023 S 36", "diameter_km": 3.0, "sma_km": 22230600.0, "period_d": -1237.61}, {"name": "Geirrod", "diameter_km": 4.0, "sma_km": 22259400.0, "period_d": -1240.05}, {"name": "S/2023 S 35", "diameter_km": 3.0, "sma_km": 22269700.0, "period_d": -1240.76}, {"name": "S/2020 S 29", "diameter_km": 3.0, "sma_km": 22301400.0, "period_d": -1243.45}, {"name": "Fenrir", "diameter_km": 4.0, "sma_km": 22330800.0, "period_d": -1245.92}, {"name": "S/2004 S 50", "diameter_km": 3.0, "sma_km": 22345000.0, "period_d": -1247.19}, {"name": "S/2006 S 17", "diameter_km": 4.0, "sma_km": 22384200.0, "period_d": -1250.46}, {"name": "S/2004 S 49", "diameter_km": 4.0, "sma_km": 22399400.0, "period_d": -1251.68}, {"name": "S/2020 S 34", "diameter_km": 3.0, "sma_km": 22435600.0, "period_d": -1254.61}, {"name": "S/2020 S 31", "diameter_km": 3.0, "sma_km": 22457300.0, "period_d": -1256.5}, {"name": "S/2023 S 52", "diameter_km": 3.0, "sma_km": 22528000.0, "period_d": -1262.34}, {"name": "S/2023 S 43", "diameter_km": 3.0, "sma_km": 22563900.0, "period_d": -1265.57}, {"name": "S/2019 S 17", "diameter_km": 4.0, "sma_km": 22722700.0, "period_d": -1278.96}, {"name": "Surtur", "diameter_km": 6.0, "sma_km": 22748000.0, "period_d": -1281.14}, {"name": "S/2006 S 18", "diameter_km": 4.0, "sma_km": 22760600.0, "period_d": -1282.09}, {"name": "S/2020 S 36", "diameter_km": 3.0, "sma_km": 22806200.0, "period_d": -1286.03}, {"name": "Loge", "diameter_km": 5.0, "sma_km": 22919200.0, "period_d": -1295.52}, {"name": "S/2020 S 33", "diameter_km": 3.0, "sma_km": 22922500.0, "period_d": -1295.85}, {"name": "Ymir", "diameter_km": 19.0, "sma_km": 22955600.0, "period_d": -1298.68}, {"name": "S/2020 S 35", "diameter_km": 3.0, "sma_km": 23030300.0, "period_d": -1304.97}, {"name": "S/2019 S 19", "diameter_km": 3.0, "sma_km": 23044400.0, "period_d": -1306.16}, {"name": "S/2019 S 18", "diameter_km": 3.0, "sma_km": 23139500.0, "period_d": -1314.27}, {"name": "S/2004 S 21", "diameter_km": 4.0, "sma_km": 23160900.0, "period_d": -1316.12}, {"name": "S/2004 S 39", "diameter_km": 4.0, "sma_km": 23192400.0, "period_d": -1318.74}, {"name": "S/2019 S 16", "diameter_km": 3.0, "sma_km": 23265200.0, "period_d": -1324.95}, {"name": "S/2004 S 53", "diameter_km": 4.0, "sma_km": 23279800.0, "period_d": -1326.18}, {"name": "S/2004 S 24", "diameter_km": 4.0, "sma_km": 23338200.0, "period_d": 1331.32}, {"name": "S/2004 S 36", "diameter_km": 4.0, "sma_km": 23390800.0, "period_d": -1335.8}, {"name": "S/2023 S 51", "diameter_km": 3.0, "sma_km": 23431500.0, "period_d": -1339.21}, {"name": "S/2023 S 45", "diameter_km": 3.0, "sma_km": 23438400.0, "period_d": -1339.85}, {"name": "S/2020 S 45", "diameter_km": 3.0, "sma_km": 23507700.0, "period_d": -1345.79}, {"name": "Thiazzi", "diameter_km": 4.0, "sma_km": 23577500.0, "period_d": -1351.83}, {"name": "S/2020 S 38", "diameter_km": 4.0, "sma_km": 23583900.0, "period_d": -1352.43}, {"name": "S/2019 S 20", "diameter_km": 3.0, "sma_km": 23677900.0, "period_d": -1360.47}, {"name": "S/2020 S 37", "diameter_km": 3.0, "sma_km": 23751800.0, "period_d": -1366.82}, {"name": "S/2019 S 39", "diameter_km": 3.0, "sma_km": 23784500.0, "period_d": -1369.64}, {"name": "S/2020 S 40", "diameter_km": 3.0, "sma_km": 23785900.0, "period_d": -1369.76}, {"name": "S/2006 S 19", "diameter_km": 4.0, "sma_km": 23800500.0, "period_d": -1371.02}, {"name": "S/2019 S 40", "diameter_km": 3.0, "sma_km": 24087800.0, "period_d": -1395.88}, {"name": "S/2019 S 42", "diameter_km": 4.0, "sma_km": 24111600.0, "period_d": -1397.98}, {"name": "S/2004 S 34", "diameter_km": 4.0, "sma_km": 24145800.0, "period_d": -1400.93}, {"name": "S/2020 S 39", "diameter_km": 3.0, "sma_km": 24262400.0, "period_d": -1411.15}, {"name": "S/2019 S 41", "diameter_km": 3.0, "sma_km": 24493600.0, "period_d": -1431.3}, {"name": "S/2023 S 46", "diameter_km": 3.0, "sma_km": 24708900.0, "period_d": -1450.27}, {"name": "Fornjot", "diameter_km": 6.0, "sma_km": 24936800.0, "period_d": -1470.36}, {"name": "S/2023 S 47", "diameter_km": 3.0, "sma_km": 25102300.0, "period_d": -1485.04}, {"name": "S/2004 S 51", "diameter_km": 4.0, "sma_km": 25207100.0, "period_d": -1494.41}, {"name": "S/2006 S 29", "diameter_km": 3.0, "sma_km": 25212100.0, "period_d": -1494.78}, {"name": "S/2020 S 10", "diameter_km": 3.0, "sma_km": 25315300.0, "period_d": -1503.97}, {"name": "S/2020 S 42", "diameter_km": 3.0, "sma_km": 25329400.0, "period_d": -1505.31}, {"name": "S/2020 S 9", "diameter_km": 4.0, "sma_km": 25408700.0, "period_d": -1512.38}, {"name": "S/2023 S 5", "diameter_km": 3.0, "sma_km": 25583500.0, "period_d": -1528.04}, {"name": "S/2020 S 41", "diameter_km": 3.0, "sma_km": 25876400.0, "period_d": -1554.4}, {"name": "S/2004 S 26", "diameter_km": 5.0, "sma_km": 26097500.0, "period_d": -1574.25}, {"name": "S/2019 S 21", "diameter_km": 4.0, "sma_km": 26439500.0, "period_d": -1605.28}, {"name": "S/2004 S 52", "diameter_km": 3.0, "sma_km": 26446400.0, "period_d": -1605.89}, {"name": "S/2020 S 43", "diameter_km": 3.0, "sma_km": 26657400.0, "period_d": -1625.29}, {"name": "S/2019 S 43", "diameter_km": 3.0, "sma_km": 26664100.0, "period_d": -1625.9}, {"name": "S/2019 S 44", "diameter_km": 3.0, "sma_km": 26796900.0, "period_d": -1638.11}, {"name": "S/2020 S 44", "diameter_km": 3.0, "sma_km": 27259400.0, "period_d": -1680.64}];
-const rings = [{"name": "D Ring", "inner_km": 66900, "outer_km": 74491}, {"name": "C Ring", "inner_km": 74491, "outer_km": 91975}, {"name": "B Ring", "inner_km": 91975, "outer_km": 117570}, {"name": "Cassini Division", "inner_km": 117500, "outer_km": 122050}, {"name": "A Ring", "inner_km": 122050, "outer_km": 136770}, {"name": "Roche Division", "inner_km": 136770, "outer_km": 139380}, {"name": "F Ring", "inner_km": 139826, "outer_km": 140612}, {"name": "Janus/Epimetheus Ring", "inner_km": 149000, "outer_km": 154000}, {"name": "G Ring", "inner_km": 166000, "outer_km": 173200}, {"name": "E Ring", "inner_km": 180000, "outer_km": 480000}, {"name": "Methone Ring", "inner_km": 194440, "outer_km": 194440}, {"name": "Anthe Ring", "inner_km": 197655, "outer_km": 197655}, {"name": "Pallene Ring", "inner_km": 212280, "outer_km": 212280}, {"name": "Phoebe Ring", "inner_km": 7720000, "outer_km": 12500000}];
+/*
+  ВАЖНО:
+  Ниже сейчас стоит укороченный пример данных.
+  Чтобы вернуть полную систему, замените массив moons
+  на ваш полный массив из рабочей версии v6.
+  Формат объекта:
+  { name, diameter_km, sma_km, period_d }
+*/
+
+const moons = [
+  { name:"Mimas",     diameter_km:396.4,  sma_km:186000,  period_d:0.94242 },
+  { name:"Enceladus", diameter_km:504.2,  sma_km:238400,  period_d:1.37022 },
+  { name:"Tethys",    diameter_km:1062.2, sma_km:295000,  period_d:1.88780 },
+  { name:"Dione",     diameter_km:1122.8, sma_km:377700,  period_d:2.73692 },
+  { name:"Rhea",      diameter_km:1527.6, sma_km:527200,  period_d:4.51750 },
+  { name:"Titan",     diameter_km:5149.46,sma_km:1221900, period_d:15.94540 },
+  { name:"Hyperion",  diameter_km:270.0,  sma_km:1481500, period_d:21.2767 },
+  { name:"Iapetus",   diameter_km:1468.6, sma_km:3561700, period_d:79.3310 },
+  { name:"Phoebe",    diameter_km:213.0,  sma_km:12929400,period_d:-550.30 }
+];
+
+const rings = [
+  {name:"D Ring", inner_km:66900,   outer_km:74491},
+  {name:"C Ring", inner_km:74491,   outer_km:91975},
+  {name:"B Ring", inner_km:91975,   outer_km:117570},
+  {name:"Cassini Division", inner_km:117500, outer_km:122050},
+  {name:"A Ring", inner_km:122050,  outer_km:136770},
+  {name:"Roche Division", inner_km:136770, outer_km:139380},
+  {name:"F Ring", inner_km:139826,  outer_km:140612},
+  {name:"Janus/Epimetheus Ring", inner_km:149000, outer_km:154000},
+  {name:"G Ring", inner_km:166000,  outer_km:173200},
+  {name:"E Ring", inner_km:180000,  outer_km:480000},
+  {name:"Phoebe Ring", inner_km:7720000, outer_km:12500000}
+];
 
 const SATURN_RADIUS_KM = 58232;
 const SATURN_DIAMETER_KM = SATURN_RADIUS_KM * 2;
@@ -130,6 +221,10 @@ const coarsePointer = window.matchMedia('(pointer: coarse)').matches;
 const isMobile = coarsePointer || /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
 const targetFPS = isMobile ? 30 : 60;
 
+const TILT_DEG = 30;
+const TILT = TILT_DEG * Math.PI / 180;
+const YSCALE = Math.cos(TILT);
+
 function pxBucket(d){
   if (d < 10) return 1;
   if (d < 100) return 2;
@@ -140,9 +235,20 @@ function pxBucket(d){
   if (d < 4000) return 7;
   return 8;
 }
-function getCSS(name){ return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
-function moonColor(m){ return m.diameter_km > 1000 ? getCSS('--purple') : getCSS('--text'); }
-function hashPhase(name){ let h=2166136261>>>0; for(let i=0;i<name.length;i++){ h^=name.charCodeAt(i); h=Math.imul(h,16777619);} return (h>>>0)/4294967295*Math.PI*2; }
+function getCSS(name){
+  return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+}
+function moonColor(m){
+  return m.diameter_km > 1000 ? getCSS('--purple') : getCSS('--text');
+}
+function hashPhase(name){
+  let h = 2166136261 >>> 0;
+  for(let i=0;i<name.length;i++){
+    h ^= name.charCodeAt(i);
+    h = Math.imul(h,16777619);
+  }
+  return (h>>>0)/4294967295*Math.PI*2;
+}
 
 for (let i = 0; i < moons.length; i++) {
   const m = moons[i];
@@ -166,9 +272,9 @@ const state = {
   centerX:0, centerY:0, offsetX:0, offsetY:0,
   kmPerPx:1, baseKmPerPx:1,
   speedMode:0, showLabels:true,
-  simSeconds:0, lastRenderTs:0, frameCount:0,
+  simSeconds:0, lastRenderTs:0,
   pointers:new Map(), pinchBaseKmPerPx:null, pinchBaseDistance:null, moved:false, downAt:0,
-  selectedMoon:null, staticDirty:true, lastDetailLevel:'', visibleMoons:[]
+  selectedMoon:null, staticDirty:true, visibleMoons:[]
 };
 
 function setCanvasSize(canvas, ctx){
@@ -181,8 +287,10 @@ function setCanvasSize(canvas, ctx){
 
 function resize(){
   state.dpr = Math.max(1, window.devicePixelRatio || 1);
-  state.w = innerWidth; state.h = innerHeight;
-  state.centerX = innerWidth / 2; state.centerY = innerHeight / 2;
+  state.w = innerWidth;
+  state.h = innerHeight;
+  state.centerX = innerWidth / 2;
+  state.centerY = innerHeight / 2;
   setCanvasSize(staticCanvas, sctx);
   setCanvasSize(dynamicCanvas, dctx);
   if (!state.baseKmPerPx || !isFinite(state.baseKmPerPx)) fitAll();
@@ -192,13 +300,13 @@ function resize(){
 
 function fitAll(){
   const controlsHeight = state.w <= 390 ? 118 : 132;
-  const usableX = state.w * 0.46;
-  const usableY = Math.max(110, (state.h - controlsHeight) * 0.34);
+  const usableX = state.w * 0.44;
+  const usableY = Math.max(110, (state.h - controlsHeight) * 0.30);
   const usable = Math.min(usableX, usableY);
   state.baseKmPerPx = maxStructureKm / usable;
   state.kmPerPx = state.baseKmPerPx;
   state.offsetX = 0;
-  state.offsetY = -22;
+  state.offsetY = -18;
   markStaticDirty();
   updateScaleInfo();
 }
@@ -206,125 +314,168 @@ function fitAll(){
 function worldToScreen(xKm, yKm){
   return {
     x: state.centerX + state.offsetX + xKm / state.kmPerPx,
-    y: state.centerY + state.offsetY + yKm / state.kmPerPx
+    y: state.centerY + state.offsetY + (yKm * YSCALE) / state.kmPerPx
   };
 }
 function kmRadiusToPx(km){ return km / state.kmPerPx; }
 
-function updateScaleInfo(){
-  const saturnPx = SATURN_DIAMETER_KM / state.kmPerPx;
-  const detail = getDetailLevel();
-  scaleInfo.innerHTML =
-    'Масштаб: 1 px = <b>' + Math.round(state.kmPerPx).toLocaleString('ru-RU') + ' км</b><br>' +
-    'Сатурн: <b>' + saturnPx.toFixed(2) + ' px</b> по диаметру<br>' +
-    'Объектов в базе: <b>' + allMoonCount + '</b><br>' +
-    'Режим детализации: <b>' + detail + '</b>' + (isMobile ? ' · 30 FPS' : ' · 60 FPS');
-}
-
-function getDetailLevel(){
-  if (state.kmPerPx > 120000) return 'far';
-  if (state.kmPerPx > 15000) return 'medium';
-  return 'close';
-}
-
-function getVisibleMoons(){
-  const detail = getDetailLevel();
-  let filtered;
-  if (detail === 'far') filtered = moons.filter(m => m.diameter_km >= 100);
-  else if (detail === 'medium') filtered = moons.filter(m => m.diameter_km >= 10);
-  else filtered = moons.slice();
-  state.visibleMoons = filtered;
-  return filtered;
-}
-
-function orbitVisibleOnScreen(radiusPx){
+function orbitVisibleOnScreen(radiusPxX, radiusPxY){
   const margin = 24;
   const cx = state.centerX + state.offsetX;
   const cy = state.centerY + state.offsetY;
-  const left = cx - radiusPx, right = cx + radiusPx, top = cy - radiusPx, bottom = cy + radiusPx;
+  const left = cx - radiusPxX, right = cx + radiusPxX, top = cy - radiusPxY, bottom = cy + radiusPxY;
   return !(right < -margin || left > state.w + margin || bottom < -margin || top > state.h + margin);
 }
 
-function ringAlphaByDistance(outerKm){
-  return outerKm <= 480000 ? 0.50 : 0.10;
+function updateScaleInfo(){
+  const saturnPx = SATURN_DIAMETER_KM / state.kmPerPx;
+  scaleInfo.innerHTML =
+    'Масштаб: 1 px = <b>' + Math.round(state.kmPerPx).toLocaleString('ru-RU') + ' км</b><br>' +
+    'Сатурн: <b>' + saturnPx.toFixed(2) + ' px</b> по диаметру<br>' +
+    'Объектов: <b>' + allMoonCount + '</b><br>' +
+    'Проекция: <b>' + TILT_DEG + '°</b>' + (isMobile ? ' · 30 FPS' : ' · 60 FPS');
 }
 
-function drawRingBand(innerKm, outerKm, alpha){
+function ringColor(alpha){
+  return 'rgba(201,185,150,' + alpha + ')';
+}
+
+function drawRingBandHalf(innerKm, outerKm, alpha, frontHalf){
   const center = worldToScreen(0,0);
   const inner = kmRadiusToPx(innerKm);
   const outer = kmRadiusToPx(outerKm);
   const width = Math.max(outer - inner, 1);
-  const radius = (inner + outer) / 2;
-  if (!orbitVisibleOnScreen(radius + width)) return;
+  const rx = (inner + outer) / 2;
+  const ry = rx * YSCALE;
+  if (!orbitVisibleOnScreen(rx + width, ry + width)) return;
+
+  sctx.save();
+  sctx.translate(center.x, center.y);
+  sctx.scale(1, YSCALE);
   sctx.beginPath();
-  sctx.arc(center.x, center.y, radius, 0, Math.PI * 2);
-  sctx.strokeStyle = 'rgba(143,148,154,' + alpha + ')';
+  sctx.arc(0, 0, rx, frontHalf ? 0 : Math.PI, frontHalf ? Math.PI : Math.PI * 2, false);
+  sctx.strokeStyle = ringColor(alpha);
   sctx.lineWidth = width;
+  sctx.stroke();
+  sctx.restore();
+}
+
+function drawSaturnSphere(){
+  const center = worldToScreen(0,0);
+  const r = Math.max(1, kmRadiusToPx(SATURN_RADIUS_KM));
+
+  const shadowGrad = sctx.createRadialGradient(center.x - r*0.35, center.y - r*0.25, r*0.15, center.x, center.y, r);
+  shadowGrad.addColorStop(0.00, '#f1d98d');
+  shadowGrad.addColorStop(0.35, '#d8b867');
+  shadowGrad.addColorStop(0.72, '#b38f4a');
+  shadowGrad.addColorStop(1.00, '#745825');
+
+  sctx.save();
+  sctx.beginPath();
+  sctx.arc(center.x, center.y, r, 0, Math.PI * 2);
+  sctx.clip();
+
+  sctx.fillStyle = shadowGrad;
+  sctx.fillRect(center.x - r, center.y - r, r * 2, r * 2);
+
+  const bandColors = [
+    ['rgba(236,213,155,0.90)', -0.72, 0.16],
+    ['rgba(201,168,108,0.45)', -0.48, 0.10],
+    ['rgba(236,213,155,0.80)', -0.26, 0.14],
+    ['rgba(180,145,86,0.35)', -0.08, 0.08],
+    ['rgba(233,204,140,0.75)', 0.06, 0.14],
+    ['rgba(170,134,78,0.28)', 0.28, 0.09],
+    ['rgba(227,199,139,0.68)', 0.44, 0.12],
+    ['rgba(205,171,116,0.32)', 0.63, 0.10]
+  ];
+
+  for (const [color, pos, h] of bandColors){
+    const y = center.y + r * pos;
+    const hg = r * h;
+    const g = sctx.createLinearGradient(0, y - hg, 0, y + hg);
+    g.addColorStop(0, 'rgba(0,0,0,0)');
+    g.addColorStop(0.5, color);
+    g.addColorStop(1, 'rgba(0,0,0,0)');
+    sctx.fillStyle = g;
+    sctx.fillRect(center.x - r, y - hg, r * 2, hg * 2);
+  }
+
+  const poleGradTop = sctx.createRadialGradient(center.x, center.y - r*0.9, r*0.05, center.x, center.y - r*0.75, r*0.7);
+  poleGradTop.addColorStop(0, 'rgba(110,88,53,0.22)');
+  poleGradTop.addColorStop(1, 'rgba(0,0,0,0)');
+  sctx.fillStyle = poleGradTop;
+  sctx.fillRect(center.x - r, center.y - r, r * 2, r);
+
+  const edgeGrad = sctx.createRadialGradient(center.x - r*0.3, center.y - r*0.3, r*0.1, center.x, center.y, r);
+  edgeGrad.addColorStop(0.0, 'rgba(255,255,255,0.0)');
+  edgeGrad.addColorStop(0.75, 'rgba(0,0,0,0.0)');
+  edgeGrad.addColorStop(1.0, 'rgba(0,0,0,0.28)');
+  sctx.fillStyle = edgeGrad;
+  sctx.fillRect(center.x - r, center.y - r, r * 2, r * 2);
+
+  const hi = sctx.createRadialGradient(center.x - r*0.38, center.y - r*0.34, r*0.02, center.x - r*0.34, center.y - r*0.28, r*0.65);
+  hi.addColorStop(0, 'rgba(255,255,255,0.28)');
+  hi.addColorStop(1, 'rgba(255,255,255,0)');
+  sctx.fillStyle = hi;
+  sctx.fillRect(center.x - r, center.y - r, r * 2, r * 2);
+
+  sctx.restore();
+
+  sctx.beginPath();
+  sctx.arc(center.x, center.y, r, 0, Math.PI * 2);
+  sctx.strokeStyle = 'rgba(255,255,255,0.18)';
+  sctx.lineWidth = 1;
   sctx.stroke();
 }
 
-function drawRings(detail){
-  if (detail === 'far') {
-    drawRingBand(66900, 173200, 0.50);
-    drawRingBand(7720000, 12500000, 0.10);
-    return;
-  }
-  if (detail === 'medium') {
-    const grouped = [
-      {inner:66900, outer:173200, alpha:0.50},
-      {inner:180000, outer:480000, alpha:0.50},
-      {inner:7720000, outer:12500000, alpha:0.10}
-    ];
-    for (const g of grouped) drawRingBand(g.inner, g.outer, g.alpha);
-    return;
-  }
-  for (const r of rings) drawRingBand(r.inner_km, r.outer_km, ringAlphaByDistance(r.outer_km));
-}
-
-function drawSaturn(){
+function drawStaticOrbits(){
   const center = worldToScreen(0,0);
-  const r = Math.max(0.5, kmRadiusToPx(SATURN_RADIUS_KM));
-  sctx.beginPath();
-  sctx.arc(center.x, center.y, r, 0, Math.PI * 2);
-  sctx.fillStyle = getCSS('--yellow');
-  sctx.fill();
-}
-
-function drawStaticOrbits(visible, detail){
-  const center = worldToScreen(0,0);
-  for (const m of visible){
+  for (const m of state.visibleMoons){
     if (majorTailNames.has(m.name)) continue;
-    const r = kmRadiusToPx(m.sma_km);
-    if (r < 0.7 || !orbitVisibleOnScreen(r)) continue;
-    if (detail === 'far' && m.diameter_km < 1000) continue;
-    let alpha;
-    if (m.diameter_km < 100) alpha = 0.04;
-    else if (m.diameter_km < 1000) alpha = detail === 'close' ? 0.10 : 0.07;
-    else alpha = detail === 'close' ? 0.16 : 0.10;
+    const rx = kmRadiusToPx(m.sma_km);
+    const ry = rx * YSCALE;
+    if (rx < 0.7 || !orbitVisibleOnScreen(rx, ry)) continue;
+
     const base = m.diameter_km < 100 ? [200,205,210] : [243,211,106];
+    const alpha = m.diameter_km < 100 ? 0.05 : 0.10;
+
+    sctx.save();
+    sctx.translate(center.x, center.y);
+    sctx.scale(1, YSCALE);
     sctx.beginPath();
-    sctx.arc(center.x, center.y, r, 0, Math.PI * 2);
+    sctx.arc(0, 0, rx, 0, Math.PI * 2);
     sctx.strokeStyle = 'rgba(' + base[0] + ',' + base[1] + ',' + base[2] + ',' + alpha.toFixed(3) + ')';
     sctx.lineWidth = 1;
     sctx.stroke();
+    sctx.restore();
   }
 }
 
 function drawStaticScene(){
   sctx.clearRect(0,0,state.w,state.h);
-  const detail = getDetailLevel();
-  const visible = getVisibleMoons();
-  drawRings(detail);
-  drawStaticOrbits(visible, detail);
-  drawSaturn();
-  state.lastDetailLevel = detail;
+  state.visibleMoons = moons.slice();
+  drawStaticOrbits();
+
+  for (const r of rings){
+    const alpha = r.outer_km <= 480000 ? 0.50 : 0.10;
+    drawRingBandHalf(r.inner_km, r.outer_km, alpha * 0.70, false);
+  }
+
+  drawSaturnSphere();
+
+  for (const r of rings){
+    const alpha = r.outer_km <= 480000 ? 0.50 : 0.10;
+    drawRingBandHalf(r.inner_km, r.outer_km, alpha, true);
+  }
+
   state.staticDirty = false;
 }
 
 function drawTailOrbit(m, thetaNow){
   const center = worldToScreen(0,0);
-  const r = kmRadiusToPx(m.sma_km);
-  if (r < 0.7 || !orbitVisibleOnScreen(r)) return;
+  const rx = kmRadiusToPx(m.sma_km);
+  const ry = rx * YSCALE;
+  if (rx < 0.7 || !orbitVisibleOnScreen(rx, ry)) return;
 
   const segments = isMobile ? 12 : 18;
   const tailSpan = Math.PI * 0.75;
@@ -337,23 +488,27 @@ function drawTailOrbit(m, thetaNow){
     const a1 = thetaNow - m.direction * (t1 * tailSpan);
     const alpha = (1 - t0) * 0.70;
     if (alpha <= 0.02) continue;
+
+    dctx.save();
+    dctx.translate(center.x, center.y);
+    dctx.scale(1, YSCALE);
     dctx.beginPath();
-    dctx.arc(center.x, center.y, r, a1, a0, m.direction < 0);
+    dctx.arc(0, 0, rx, a1, a0, m.direction < 0);
     dctx.strokeStyle = 'rgba(' + base[0] + ',' + base[1] + ',' + base[2] + ',' + alpha.toFixed(3) + ')';
     dctx.lineWidth = 1;
     dctx.stroke();
+    dctx.restore();
   }
 }
 
-function drawMoon(m, detail){
-  if (isMobile) {
-    if (detail !== 'close' && m.diameter_km < 100) return;
-  }
+function drawMoon(m){
   const theta = m.phase0 + m.direction * (state.simSeconds / m.periodSec) * Math.PI * 2;
   const x = Math.cos(theta) * m.sma_km;
   const y = Math.sin(theta) * m.sma_km;
   const p = worldToScreen(x, y);
-  m.screenX = p.x; m.screenY = p.y;
+  m.screenX = p.x;
+  m.screenY = p.y;
+
   const margin = 18;
   if (p.x < -margin || p.x > state.w + margin || p.y < -margin || p.y > state.h + margin) return;
 
@@ -405,10 +560,14 @@ function hitTest(x, y){
   let best = null, bestD = Infinity;
   for (const m of state.visibleMoons){
     if (typeof m.screenX !== 'number' || typeof m.screenY !== 'number') continue;
-    const dx = x - m.screenX, dy = y - m.screenY;
+    const dx = x - m.screenX;
+    const dy = y - m.screenY;
     const d = Math.hypot(dx, dy);
     const hitR = Math.max(16, Math.sqrt(2) * m.sizePx / 2 + 8);
-    if (d <= hitR && d < bestD){ best = m; bestD = d; }
+    if (d <= hitR && d < bestD){
+      best = m;
+      bestD = d;
+    }
   }
   return best;
 }
@@ -424,21 +583,17 @@ function render(ts){
 
   const dt = elapsedMs / 1000;
   state.lastRenderTs = ts;
-  state.frameCount++;
 
   if (state.speedMode === 1) state.simSeconds += dt;
   if (state.speedMode === 3600) state.simSeconds += dt * 3600;
 
-  const detail = getDetailLevel();
-  if (state.staticDirty || detail !== state.lastDetailLevel) {
+  if (state.staticDirty){
     drawStaticScene();
     updateScaleInfo();
-  } else {
-    getVisibleMoons();
   }
 
   dctx.clearRect(0,0,state.w,state.h);
-  for (const m of state.visibleMoons) drawMoon(m, detail);
+  for (const m of state.visibleMoons) drawMoon(m);
 
   requestAnimationFrame(render);
 }
@@ -513,7 +668,7 @@ dynamicCanvas.addEventListener('pointermove', (e) => {
 
 function clearPointer(e){
   state.pointers.delete(e.pointerId);
-  if (state.pointers.size < 2){
+  if (state.pointers.size < 2) {
     state.pinchBaseDistance = null;
     state.pinchBaseKmPerPx = null;
   }
@@ -532,6 +687,7 @@ dynamicCanvas.addEventListener('pointercancel', clearPointer);
 dynamicCanvas.addEventListener('click', (e) => {
   const hit = hitTest(e.clientX, e.clientY);
   if (hit) showInfo(hit);
+  else showInfo(null);
 });
 
 window.addEventListener('resize', resize);
