@@ -26,14 +26,12 @@ html,body{
 .layerCanvas{position:absolute;inset:0;width:100%;height:100%;display:block;}
 #dynamicCanvas{touch-action:none;}
 .topbar{position:fixed;top:max(8px,env(safe-area-inset-top));right:8px;z-index:30;display:flex;align-items:center;gap:8px;}
-.hudLeft{position:fixed;top:max(8px,env(safe-area-inset-top));left:8px;z-index:30;display:flex;flex-direction:column;gap:8px;}
-.hudBox,.hudBtn{
-  min-height:36px;display:flex;align-items:center;justify-content:center;padding:0 12px;
-  border-radius:999px;border:1px solid rgba(255,255,255,.14);background:rgba(8,10,14,.78);
-  color:var(--text);font-size:13px;font-weight:700;backdrop-filter:blur(8px);
+.hudLeft{position:fixed;top:max(8px,env(safe-area-inset-top));left:8px;z-index:30;display:grid;gap:8px;}
+.hudBox{
+  min-height:36px;display:flex;align-items:center;padding:0 12px;border-radius:999px;
+  border:1px solid rgba(255,255,255,.14);background:rgba(8,10,14,.78);color:var(--text);
+  font-size:13px;font-weight:700;backdrop-filter:blur(8px);
 }
-.hudBtn{cursor:pointer;touch-action:manipulation;}
-.hudBtn.active{background:rgba(111,227,162,.16);border-color:rgba(111,227,162,.45);color:var(--green);}
 .timeBox{font-variant-numeric:tabular-nums;white-space:nowrap;}
 .iconBtn{
   width:36px;height:36px;border-radius:999px;display:flex;align-items:center;justify-content:center;
@@ -41,16 +39,19 @@ html,body{
   font-size:18px;font-weight:700;backdrop-filter:blur(8px);touch-action:manipulation;
 }
 .infoSheet{
-  position:fixed;top:max(50px,calc(env(safe-area-inset-top)+50px));right:8px;width:min(90vw,360px);
-  max-height:min(72vh,620px);overflow:auto;background:var(--panel);border:1px solid rgba(255,255,255,.08);
+  position:fixed;top:max(50px,calc(env(safe-area-inset-top) + 50px));right:8px;width:min(88vw,340px);
+  max-height:min(68vh,560px);overflow:auto;background:var(--panel);border:1px solid rgba(255,255,255,.08);
   border-radius:14px;padding:12px;display:none;z-index:35;backdrop-filter:blur(10px);
 }
 .infoSheet.open{display:block;}
 .title{font-size:14px;font-weight:700;margin-bottom:8px;}
 .meta{font-size:11px;color:var(--muted);line-height:1.4;}
-.legend{display:grid;gap:6px;font-size:11px;color:var(--muted);margin-top:10px;}
-.controls{position:fixed;left:8px;right:8px;bottom:max(8px, env(safe-area-inset-bottom));z-index:25;}
-.panel{background:rgba(8,10,14,.78);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:8px;}
+.legend{display:grid;gap:5px;font-size:11px;color:var(--muted);margin-top:10px;}
+.controls{position:fixed;left:8px;right:8px;bottom:max(8px,env(safe-area-inset-bottom));z-index:25;}
+.panel{
+  background:rgba(8,10,14,.78);backdrop-filter:blur(10px);
+  border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:8px;
+}
 .grid.oneRow{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;}
 button.control{
   appearance:none;min-height:42px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.06);
@@ -59,69 +60,47 @@ button.control{
 }
 button.control.active{background:rgba(243,211,106,.16);border-color:rgba(243,211,106,.45);color:var(--yellow);}
 .infoBox{
-  position:fixed;left:50%;transform:translateX(-50%);bottom:max(66px, calc(env(safe-area-inset-bottom) + 66px));
+  position:fixed;left:50%;transform:translateX(-50%);bottom:max(66px,calc(env(safe-area-inset-bottom) + 66px));
   width:min(94vw,420px);background:var(--panel);border:1px solid rgba(255,255,255,.08);border-radius:12px;
   padding:10px 12px;font-size:12px;line-height:1.35;display:none;z-index:28;
 }
 .infoWrap{display:flex;gap:10px;align-items:stretch;}
-.iconSlot{width:74px;min-width:74px;display:flex;align-items:center;justify-content:center;border-radius:10px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);}
+.iconSlot{
+  width:74px;min-width:74px;display:flex;align-items:center;justify-content:center;border-radius:10px;
+  background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);
+}
 #moonIconCanvas{width:64px;height:64px;image-rendering:pixelated;image-rendering:crisp-edges;display:block;}
 .infoText{flex:1 1 auto;}
 .infoText b{display:block;margin-bottom:2px;}
 .routePanel{
-  position:fixed;left:50%;transform:translateX(-50%);bottom:max(120px, calc(env(safe-area-inset-bottom) + 120px));
-  width:min(92vw, 460px);display:none;z-index:29;
+  position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);width:min(94vw,420px);background:var(--panel);
+  border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:14px 16px;display:none;z-index:50;
+  backdrop-filter:blur(12px);
 }
-.routePanel .panel{padding:10px 12px;}
-.routeRow{display:flex;gap:8px;align-items:center;justify-content:space-between;flex-wrap:wrap;}
-.routeEndpoints{display:grid;gap:4px;font-size:12px;color:var(--text);}
-.routeHint{font-size:11px;color:var(--muted);margin-top:6px;}
-button.primaryBtn{
-  appearance:none;border:1px solid rgba(243,211,106,.45);background:rgba(243,211,106,.16);color:var(--yellow);
-  border-radius:10px;padding:10px 12px;font-weight:700;min-height:42px;
+.routePanel.open{display:block;}
+.routeTitle{font-size:15px;font-weight:700;margin-bottom:10px;}
+.routeText{font-size:12px;line-height:1.4;color:var(--text);margin-bottom:12px;}
+.routeList{display:grid;gap:8px;margin:10px 0;}
+.routeCard{
+  border:1px solid rgba(255,255,255,.10);border-radius:12px;padding:10px 12px;background:rgba(255,255,255,.03);
 }
-button.primaryBtn:disabled{opacity:.45;}
-.modalOverlay{
-  position:fixed;inset:0;background:rgba(0,0,0,.52);display:none;align-items:center;justify-content:center;z-index:60;padding:20px;
-}
-.modalOverlay.open{display:flex;}
-.modal{
-  width:min(96vw, 560px);max-height:min(82vh, 780px);overflow:auto;background:var(--panel);
-  border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:14px;
-}
-.modalHeader{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px;}
-.modalTitle{font-size:16px;font-weight:700;}
-button.closeBtn{
-  appearance:none;width:34px;height:34px;border-radius:999px;border:1px solid rgba(255,255,255,.14);
-  background:rgba(255,255,255,.06);color:var(--text);font-size:18px;
-}
-.cardGrid{display:grid;gap:10px;}
-.optionCard{
-  border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:12px;background:rgba(255,255,255,.03);
-}
-.optionCard.active{border-color:rgba(243,211,106,.45);background:rgba(243,211,106,.08);}
-.optionCard h4{margin:0 0 6px;font-size:14px;}
-.cardMeta{font-size:12px;color:var(--muted);line-height:1.45;}
-.cardRow{display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;}
-.cardActions{display:flex;gap:8px;justify-content:flex-end;margin-top:12px;flex-wrap:wrap;}
-.smallTag{display:inline-flex;padding:4px 8px;border-radius:999px;background:rgba(255,255,255,.06);font-size:11px;color:var(--muted);}
-.statusBox{font-size:12px;color:var(--muted);margin-top:6px;}
-.warning{color:#ffb87a;}
-.good{color:var(--green);}
-.bad{color:var(--red);}
-.loadingBox{
-  position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);width:min(92vw,360px);background:rgba(8,10,14,.88);
-  border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:14px 16px;text-align:center;z-index:40;font-size:13px;line-height:1.4;
-}
-.hidden{display:none !important;}
+.routeCard.active{border-color:rgba(243,211,106,.45);background:rgba(243,211,106,.10);}
+.routeCardTitle{font-size:13px;font-weight:700;}
+.routeCardMeta{font-size:11px;color:var(--muted);line-height:1.35;margin-top:4px;}
+.routeActions{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;margin-top:10px;}
+.routeBadge{font-size:11px;color:var(--muted);margin-top:6px;}
+.controls, .controls *, .topbar, .topbar *, .infoSheet, .infoSheet *, .routePanel, .routePanel *{touch-action:manipulation;}
 @media (max-width:390px){
   .controls{left:6px;right:6px;}
   .grid.oneRow{gap:5px;}
   button.control{min-height:40px;font-size:10px;padding:7px 4px;}
-  .infoBox{bottom:max(70px, calc(env(safe-area-inset-bottom) + 70px));width:min(96vw,360px);}
+  .infoBox{bottom:max(70px,calc(env(safe-area-inset-bottom) + 70px));width:min(96vw,360px);}
   .iconSlot{width:68px;min-width:68px;}
   #moonIconCanvas{width:58px;height:58px;}
-  .routePanel{bottom:max(118px, calc(env(safe-area-inset-bottom) + 118px));}
+}
+@media (min-width:700px){
+  .controls{left:10px;right:10px;max-width:640px;margin:0 auto;}
+  button.control{font-size:12px;min-height:44px;}
 }
 </style>
 </head>
@@ -132,24 +111,22 @@ button.closeBtn{
 </div>
 
 <div class="hudLeft">
-  <div class="hudBox" id="moneyBox">1000000</div>
-  <button type="button" class="hudBtn" id="routeModeBtn">Маршрут</button>
+  <div class="hudBox" id="moneyBox">10 000 000</div>
+  <button type="button" id="routeModeBtn" class="iconBtn" aria-label="Маршрут">M</button>
 </div>
 
 <div class="topbar">
-  <div class="hudBox timeBox" id="timeBox">2701-04-01 00:00:00</div>
+  <div class="hudBox timeBox" id="timeBox">01.04.2701&nbsp;&nbsp;00:00:00</div>
   <button type="button" id="infoBtn" class="iconBtn" aria-label="Информация">i</button>
 </div>
 
 <div id="infoSheet" class="infoSheet">
-  <div class="title">Система Сатурна — v11 офлайн</div>
+  <div class="title">Система Сатурна — офлайн-версия</div>
   <div class="meta" id="scaleInfo"></div>
   <div class="legend">
+    <div>Полностью офлайн: данные объектов зашиты внутрь HTML.</div>
     <div>Сатурн показан как простой объёмный шар без текстуры.</div>
-    <div>Орбиты и кольца проецируются как эллипсы; маршрут рисуется редким пунктиром.</div>
-    <div>Режим «Маршрут» позволяет выбрать две точки, транспорт и режим рейса.</div>
-    <div>Расчёт маршрута игровой: круговые орбиты, главное влияние Сатурна, спутники влияют локально.</div>
-    <div>В этой офлайн-сборке встроен навигационный набор спутников без сетевой загрузки.</div>
+    <div>Есть режим Маршрут с выбором A → B, транспорта и времени рейса.</div>
   </div>
 </div>
 
@@ -164,16 +141,6 @@ button.closeBtn{
   </div>
 </div>
 
-<div class="routePanel" id="routePanel">
-  <div class="panel">
-    <div class="routeRow">
-      <div class="routeEndpoints" id="routeEndpoints"></div>
-      <button type="button" class="primaryBtn" id="chooseRouteBtn" disabled>Выбрать маршрут</button>
-    </div>
-    <div class="routeHint">Режим маршрута: выберите две точки на карте. Повторный тап по объекту снимает точку.</div>
-  </div>
-</div>
-
 <div class="infoBox" id="infoBox">
   <div class="infoWrap">
     <div class="iconSlot"><canvas id="moonIconCanvas" width="16" height="16"></canvas></div>
@@ -181,42 +148,74 @@ button.closeBtn{
   </div>
 </div>
 
-<div class="modalOverlay" id="transportModal">
-  <div class="modal">
-    <div class="modalHeader">
-      <div class="modalTitle">Транспорт</div>
-      <button type="button" class="closeBtn" data-close="transportModal">×</button>
-    </div>
-    <div class="cardGrid" id="transportCards"></div>
-    <div class="cardActions">
-      <button type="button" class="primaryBtn" id="toCalcBtn" disabled>Далее</button>
-    </div>
+<div class="routePanel" id="routeTransportPanel">
+  <div class="routeTitle">Транспорт</div>
+  <div class="routeText" id="routeTransportText"></div>
+  <div class="routeList" id="routeTransportList"></div>
+  <div class="routeActions">
+    <button type="button" class="control" id="routeTransportCancelBtn">Отмена</button>
+    <button type="button" class="control" id="routeTransportNextBtn">Далее</button>
   </div>
 </div>
 
-<div class="modalOverlay" id="calcModal">
-  <div class="modal">
-    <div class="modalHeader">
-      <div class="modalTitle">Расчёт времени рейса</div>
-      <button type="button" class="closeBtn" data-close="calcModal">×</button>
-    </div>
-    <div class="cardGrid" id="calcOptions"></div>
-    <div class="statusBox" id="calcStatus"></div>
-    <div class="cardActions">
-      <button type="button" class="primaryBtn" id="confirmRouteBtn" disabled>Подтвердить маршрут</button>
-    </div>
+<div class="routePanel" id="routeTimingPanel">
+  <div class="routeTitle">Расчёт времени рейса</div>
+  <div class="routeText" id="routeTimingText"></div>
+  <div class="routeList" id="routeTimingList"></div>
+  <div class="routeActions">
+    <button type="button" class="control" id="routeTimingBackBtn">Назад</button>
+    <button type="button" class="control" id="routeConfirmBtn">Подтвердить маршрут</button>
   </div>
 </div>
-
-<div class="loadingBox hidden" id="loadingBox">Подготовка офлайн-системы…</div>
 
 <script>
-const moons = [{"name": "S/2009 S 1", "label": "S/2009 S 1", "diameter_km": 0.3, "sma_km": 116900, "period_d": 0.4715, "mass_kg": 1000000000.0}, {"name": "Pan", "label": "Пан - Pan", "diameter_km": 28.2, "sma_km": 133584, "period_d": 0.57505, "mass_kg": 4950000000000000.0}, {"name": "Daphnis", "label": "Дафнис - Daphnis", "diameter_km": 7.6, "sma_km": 136505, "period_d": 0.59408, "mass_kg": 77000000000000.0}, {"name": "Atlas", "label": "Атлас - Atlas", "diameter_km": 30.2, "sma_km": 137666, "period_d": 0.6019, "mass_kg": 6600000000000000.0}, {"name": "Prometheus", "label": "Прометей - Prometheus", "diameter_km": 86.2, "sma_km": 139380, "period_d": 0.61299, "mass_kg": 1.59e+17}, {"name": "Pandora", "label": "Пандора - Pandora", "diameter_km": 81.4, "sma_km": 141720, "period_d": 0.6285, "mass_kg": 1.37e+17}, {"name": "Epimetheus", "label": "Эпиметей - Epimetheus", "diameter_km": 116.2, "sma_km": 151452, "period_d": 0.69459, "mass_kg": 5.27e+17}, {"name": "Janus", "label": "Янус - Janus", "diameter_km": 178.8, "sma_km": 151452, "period_d": 0.69466, "mass_kg": 1.9e+18}, {"name": "Aegaeon", "label": "Эгеон - Aegaeon", "diameter_km": 0.66, "sma_km": 167500, "period_d": 0.80812, "mass_kg": 78000000000.0}, {"name": "Mimas", "label": "Мимас - Mimas", "diameter_km": 396.4, "sma_km": 185539, "period_d": 0.94242, "mass_kg": 3.75e+19}, {"name": "Methone", "label": "Метона - Methone", "diameter_km": 2.9, "sma_km": 194230, "period_d": 1.00957, "mass_kg": 10000000000000.0}, {"name": "Anthe", "label": "Анте - Anthe", "diameter_km": 1.8, "sma_km": 197770, "period_d": 1.0365, "mass_kg": 1500000000000.0}, {"name": "Pallene", "label": "Паллена - Pallene", "diameter_km": 4.4, "sma_km": 212280, "period_d": 1.15375, "mass_kg": 60000000000000.0}, {"name": "Enceladus", "label": "Энцилад - Enceladus", "diameter_km": 504.2, "sma_km": 237948, "period_d": 1.37022, "mass_kg": 1.08022e+20}, {"name": "Tethys", "label": "Тефия - Tethys", "diameter_km": 1062.0, "sma_km": 294619, "period_d": 1.8878, "mass_kg": 6.17449e+20}, {"name": "Telesto", "label": "Телесто - Telesto", "diameter_km": 24.8, "sma_km": 294619, "period_d": 1.8878, "mass_kg": 7500000000000000.0}, {"name": "Calypso", "label": "Калипсо - Calypso", "diameter_km": 21.4, "sma_km": 294619, "period_d": 1.8878, "mass_kg": 4000000000000000.0}, {"name": "Helene", "label": "Елена - Helene", "diameter_km": 35.2, "sma_km": 377396, "period_d": 2.73692, "mass_kg": 2.5e+16}, {"name": "Polydeuces", "label": "Полидевк - Polydeuces", "diameter_km": 2.6, "sma_km": 377396, "period_d": 2.73692, "mass_kg": 30000000000000.0}, {"name": "Dione", "label": "Диона - Dione", "diameter_km": 1122.8, "sma_km": 377396, "period_d": 2.73692, "mass_kg": 1.09545e+21}, {"name": "Rhea", "label": "Рея - Rhea", "diameter_km": 1527.6, "sma_km": 527108, "period_d": 4.5175, "mass_kg": 2.3065e+21}, {"name": "Titan", "label": "Титан - Titan", "diameter_km": 5149.46, "sma_km": 1221870, "period_d": 15.9454, "mass_kg": 1.3452e+23}, {"name": "Hyperion", "label": "Гиперион - Hyperion", "diameter_km": 270.0, "sma_km": 1481481, "period_d": 21.2766, "mass_kg": 5.6e+18}, {"name": "Iapetus", "label": "Япет - Iapetus", "diameter_km": 1468.6, "sma_km": 3560820, "period_d": 79.3215, "mass_kg": 1.8056e+21}, {"name": "S/2023 S 1", "label": "S/2023 S 1", "diameter_km": 3.0, "sma_km": 11205400, "period_d": 442.86, "mass_kg": 9896016858807.848}, {"name": "S/2019 S 1", "label": "S/2019 S 1", "diameter_km": 5.0, "sma_km": 11245400, "period_d": 445.17, "mass_kg": 45814892864851.15}, {"name": "S/2020 S 11", "label": "S/2020 S 11", "diameter_km": 3.0, "sma_km": 11295600, "period_d": 448.21, "mass_kg": 9896016858807.848}, {"name": "Kiviuq", "label": "Кивиук - Kiviuq", "diameter_km": 17.0, "sma_km": 11307400, "period_d": 448.91, "mass_kg": 1800708549160109.2}, {"name": "Ijiraq", "label": "Иджирак - Ijiraq", "diameter_km": 13.0, "sma_km": 11344700, "period_d": 451.12, "mass_kg": 805242556992623.6}, {"name": "S/2023 S 50", "label": "S/2023 S 50", "diameter_km": 3.0, "sma_km": 11656500, "period_d": -469.82, "mass_kg": 9896016858807.848}, {"name": "Phoebe", "label": "Феба - Phoebe", "diameter_km": 213.0, "sma_km": 12952000, "period_d": -550.48, "mass_kg": 8.29e+18}, {"name": "Paaliaq", "label": "Паалияк - Paaliaq", "diameter_km": 25.0, "sma_km": 14997700, "period_d": 685.72, "mass_kg": 5726861608106393.0}, {"name": "Skathi", "label": "Скади - Skathi", "diameter_km": 8.0, "sma_km": 15575400, "period_d": -725.73, "mass_kg": 187657801174430.28}, {"name": "Albiorix", "label": "Альбиорикс - Albiorix", "diameter_km": 28.6, "sma_km": 16329200, "period_d": 779.07, "mass_kg": 8574222746857458.0}, {"name": "S/2023 S 55", "label": "S/2023 S 55", "diameter_km": 3.0, "sma_km": 16875100, "period_d": 818.51, "mass_kg": 9896016858807.848}, {"name": "Bebhionn", "label": "Бебхионн - Bebhionn", "diameter_km": 6.0, "sma_km": 17027300, "period_d": 829.64, "mass_kg": 79168134870462.78}, {"name": "Erriapus", "label": "Эрриап - Erriapus", "diameter_km": 10.0, "sma_km": 17506900, "period_d": 864.92, "mass_kg": 366519142918809.2}, {"name": "Skoll", "label": "Сколль - Skoll", "diameter_km": 5.0, "sma_km": 17623400, "period_d": -873.57, "mass_kg": 45814892864851.15}, {"name": "Tarqeq", "label": "Таркек - Tarqeq", "diameter_km": 7.0, "sma_km": 17751000, "period_d": 882.85, "mass_kg": 125716066021151.55}, {"name": "Siarnaq", "label": "Сиарнак - Siarnaq", "diameter_km": 39.3, "sma_km": 17881100, "period_d": 892.68, "mass_kg": 2.224714643613419e+16}, {"name": "Tarvos", "label": "Тарвос - Tarvos", "diameter_km": 15.0, "sma_km": 18216600, "period_d": 917.98, "mass_kg": 1237002107350981.0}, {"name": "Hyrrokkin", "label": "Хюрроккин - Hyrrokkin", "diameter_km": 8.0, "sma_km": 18340900, "period_d": -927.46, "mass_kg": 187657801174430.28}, {"name": "Greip", "label": "Грейп - Greip", "diameter_km": 5.0, "sma_km": 18380000, "period_d": -930.44, "mass_kg": 45814892864851.15}, {"name": "S/2023 S 63", "label": "S/2023 S 63", "diameter_km": 4.0, "sma_km": 18482600, "period_d": -938.25, "mass_kg": 23457225146803.785}, {"name": "Mundilfari", "label": "Мундильфари - Mundilfari", "diameter_km": 7.0, "sma_km": 18588200, "period_d": -946.29, "mass_kg": 125716066021151.55}, {"name": "Narvi", "label": "Нарви - Narvi", "diameter_km": 16.0, "sma_km": 19610700, "period_d": -1025.97, "mass_kg": 1501262409395442.2}, {"name": "Farbauti", "label": "Фарбаути - Farbauti", "diameter_km": 5.0, "sma_km": 20290700, "period_d": -1079.12, "mass_kg": 45814892864851.15}, {"name": "Thrymr", "label": "Трюм - Thrymr", "diameter_km": 8.0, "sma_km": 20330500, "period_d": -1082.23, "mass_kg": 187657801174430.28}, {"name": "Bestla", "label": "Бестла - Bestla", "diameter_km": 7.0, "sma_km": 20337800, "period_d": -1082.94, "mass_kg": 125716066021151.55}, {"name": "Angrboda", "label": "Ангрбода - Angrboda", "diameter_km": 4.0, "sma_km": 20591500, "period_d": -1103.2, "mass_kg": 23457225146803.785}, {"name": "Aegir", "label": "Эгир - Aegir", "diameter_km": 6.0, "sma_km": 20664400, "period_d": -1109.13, "mass_kg": 79168134870462.78}, {"name": "Beli", "label": "Бели - Beli", "diameter_km": 4.0, "sma_km": 20703700, "period_d": -1112.27, "mass_kg": 23457225146803.785}, {"name": "Gerd", "label": "Герд - Gerd", "diameter_km": 4.0, "sma_km": 20947500, "period_d": -1131.91, "mass_kg": 23457225146803.785}, {"name": "Gunnlod", "label": "Гуннлёд - Gunnlod", "diameter_km": 4.0, "sma_km": 21141800, "period_d": -1147.74, "mass_kg": 23457225146803.785}, {"name": "Skrymir", "label": "Скримир - Skrymir", "diameter_km": 4.0, "sma_km": 21447400, "period_d": -1172.72, "mass_kg": 23457225146803.785}, {"name": "Alvaldi", "label": "Альвальди - Alvaldi", "diameter_km": 6.0, "sma_km": 21993800, "period_d": -1217.8, "mass_kg": 79168134870462.78}, {"name": "Kari", "label": "Кари - Kari", "diameter_km": 6.0, "sma_km": 22032100, "period_d": -1220.98, "mass_kg": 79168134870462.78}, {"name": "Geirrod", "label": "Гейррёд - Geirrod", "diameter_km": 4.0, "sma_km": 22259400, "period_d": -1240.05, "mass_kg": 23457225146803.785}, {"name": "Fenrir", "label": "Фенрир - Fenrir", "diameter_km": 4.0, "sma_km": 22330800, "period_d": -1245.92, "mass_kg": 23457225146803.785}, {"name": "Surtur", "label": "Суртур - Surtur", "diameter_km": 6.0, "sma_km": 22748000, "period_d": -1281.14, "mass_kg": 79168134870462.78}, {"name": "Loge", "label": "Логе - Loge", "diameter_km": 5.0, "sma_km": 22919200, "period_d": -1295.52, "mass_kg": 45814892864851.15}, {"name": "Ymir", "label": "Имир - Ymir", "diameter_km": 19.0, "sma_km": 22955600, "period_d": -1298.68, "mass_kg": 2513954801280112.0}, {"name": "Thiazzi", "label": "Тьяцци - Thiazzi", "diameter_km": 4.0, "sma_km": 23577500, "period_d": -1351.83, "mass_kg": 23457225146803.785}, {"name": "Fornjot", "label": "Форньот - Fornjot", "diameter_km": 6.0, "sma_km": 24936800, "period_d": -1470.36, "mass_kg": 79168134870462.78}];
-const rings = [{"name": "D Ring", "inner_km": 66900, "outer_km": 74491}, {"name": "C Ring", "inner_km": 74491, "outer_km": 91975}, {"name": "B Ring", "inner_km": 91975, "outer_km": 117570}, {"name": "Cassini Division", "inner_km": 117500, "outer_km": 122050}, {"name": "A Ring", "inner_km": 122050, "outer_km": 136770}, {"name": "Roche Division", "inner_km": 136770, "outer_km": 139380}, {"name": "F Ring", "inner_km": 139826, "outer_km": 140612}, {"name": "Janus/Epimetheus Ring", "inner_km": 149000, "outer_km": 154000}, {"name": "G Ring", "inner_km": 166000, "outer_km": 173200}, {"name": "E Ring", "inner_km": 180000, "outer_km": 480000}, {"name": "Phoebe Ring", "inner_km": 7720000, "outer_km": 12500000}];
-const transports = [{"id": "meridian_h", "name": "Meridian-H", "kind": "Тяжёлый рудовоз", "mass_t": 13000000, "volume_m3": 3000000, "maxDV": 100, "dailyCost": 250000, "accelKms2": 0.00018, "dryFrac": 0.55}, {"id": "cryon_t", "name": "Cryon-T", "kind": "Наливной танкер", "mass_t": 320000, "volume_m3": 150000, "maxDV": 180, "dailyCost": 150000, "accelKms2": 0.00035, "dryFrac": 0.45}, {"id": "iskra_300", "name": "Искра-300", "kind": "Спасательный аппарат", "mass_t": 4200, "volume_m3": 2000, "maxDV": 300, "dailyCost": 50000, "accelKms2": 0.0008, "dryFrac": 0.35}];
+const rings = [
+  {name:"D Ring", inner_km:66900, outer_km:74491},
+  {name:"C Ring", inner_km:74491, outer_km:91975},
+  {name:"B Ring", inner_km:91975, outer_km:117570},
+  {name:"Cassini Division", inner_km:117500, outer_km:122050},
+  {name:"A Ring", inner_km:122050, outer_km:136770},
+  {name:"Roche Division", inner_km:136770, outer_km:139380},
+  {name:"F Ring", inner_km:139826, outer_km:140612},
+  {name:"Janus/Epimetheus Ring", inner_km:149000, outer_km:154000},
+  {name:"G Ring", inner_km:166000, outer_km:173200},
+  {name:"E Ring", inner_km:180000, outer_km:480000},
+  {name:"Phoebe Ring", inner_km:7720000, outer_km:12500000}
+];
 
-const SATURN_MU = 37931187; // km^3/s^2
-const G_KM = 6.67430e-20;   // km^3 / kg / s^2
+const transportTypes = [
+  {
+    id:'meridian',
+    name:'Meridian-H',
+    ru:'Тяжёлый рудовоз',
+    mass_t:13000000,
+    freeVolume_m3:3000000,
+    deltaV_kms:100,
+    costPerDay:250000,
+    accel_ms2:0.18
+  },
+  {
+    id:'cryon',
+    name:'Cryon-T',
+    ru:'Наливной танкер',
+    mass_t:320000,
+    freeVolume_m3:150000,
+    deltaV_kms:180,
+    costPerDay:150000,
+    accel_ms2:0.45
+  },
+  {
+    id:'iskra',
+    name:'Искра-300',
+    ru:'Спасательный аппарат',
+    mass_t:4200,
+    freeVolume_m3:2000,
+    deltaV_kms:300,
+    costPerDay:50000,
+    accel_ms2:1.6
+  }
+];
+
 const SATURN_RADIUS_KM = 58232;
 const SATURN_DIAMETER_KM = SATURN_RADIUS_KM * 2;
 const VIEW_TILT_DEG = 60;
@@ -227,80 +226,125 @@ const targetFPS = isMobile ? 30 : 60;
 const majorTailNames = new Set(['Titan','Rhea','Iapetus','Dione','Tethys','Enceladus','Mimas']);
 const SIM_START_MS = Date.UTC(2701, 3, 1, 0, 0, 0);
 
+const ruMap = {
+  "Mimas":"Мимас","Enceladus":"Энцилад","Tethys":"Тефия","Dione":"Диона","Rhea":"Рея",
+  "Titan":"Титан","Hyperion":"Гиперион","Iapetus":"Япет","Phoebe":"Феба","Janus":"Янус",
+  "Epimetheus":"Эпиметей","Prometheus":"Прометей","Pandora":"Пандора","Atlas":"Атлас",
+  "Pan":"Пан","Daphnis":"Дафнис","Aegaeon":"Эгеон","Methone":"Метона","Anthe":"Анте",
+  "Pallene":"Паллена","Telesto":"Телесто","Calypso":"Калипсо","Helene":"Елена",
+  "Polydeuces":"Полидевк","Kiviuq":"Кивиук","Ijiraq":"Иджирак","Paaliaq":"Паалияк",
+  "Skathi":"Скади","Albiorix":"Альбиорикс","Bebhionn":"Бебхионн","Erriapus":"Эрриап",
+  "Skoll":"Сколль","Siarnaq":"Сиарнак","Tarqeq":"Таркек","Tarvos":"Тарвос","Hyrrokkin":"Хюрроккин",
+  "Greip":"Грейп","Mundilfari":"Мундильфари","Narvi":"Нарви","Farbauti":"Фарбаути","Thrymr":"Трюм",
+  "Bestla":"Бестла","Angrboda":"Ангрбода","Aegir":"Эгир","Beli":"Бели","Gerd":"Герд",
+  "Gunnlod":"Гуннлёд","Skrymir":"Скримир","Alvaldi":"Альвальди","Kari":"Кари","Geirrod":"Гейррёд",
+  "Fenrir":"Фенрир","Surtur":"Суртур","Loge":"Логе","Ymir":"Имир","Thiazzi":"Тьяцци","Fornjot":"Форньот"
+};
+
+const keyMoons = [
+  {name:'Pan', diameter_km:28.2, sma_km:133600, period_d:0.57505},
+  {name:'Daphnis', diameter_km:7.6, sma_km:136500, period_d:0.59408},
+  {name:'Atlas', diameter_km:30.2, sma_km:137700, period_d:0.6046},
+  {name:'Prometheus', diameter_km:86.2, sma_km:139400, period_d:0.61588},
+  {name:'Pandora', diameter_km:81.4, sma_km:141700, period_d:0.63137},
+  {name:'Epimetheus', diameter_km:116.2, sma_km:151400, period_d:0.69701},
+  {name:'Janus', diameter_km:179.0, sma_km:151500, period_d:0.69735},
+  {name:'Aegaeon', diameter_km:0.66, sma_km:167500, period_d:0.80812},
+  {name:'Mimas', diameter_km:396.4, sma_km:186000, period_d:0.94242},
+  {name:'Methone', diameter_km:2.9, sma_km:194700, period_d:1.00955},
+  {name:'Anthe', diameter_km:1.8, sma_km:198100, period_d:1.0389},
+  {name:'Pallene', diameter_km:4.44, sma_km:212300, period_d:1.15606},
+  {name:'Enceladus', diameter_km:504.2, sma_km:238400, period_d:1.37022},
+  {name:'Tethys', diameter_km:1062.2, sma_km:295000, period_d:1.8878},
+  {name:'Telesto', diameter_km:24.8, sma_km:295000, period_d:1.8878},
+  {name:'Calypso', diameter_km:21.4, sma_km:295000, period_d:1.8878},
+  {name:'Helene', diameter_km:35.2, sma_km:377600, period_d:2.73692},
+  {name:'Polydeuces', diameter_km:2.6, sma_km:377600, period_d:2.73692},
+  {name:'Dione', diameter_km:1122.8, sma_km:377700, period_d:2.73692},
+  {name:'Rhea', diameter_km:1527.6, sma_km:527200, period_d:4.5175},
+  {name:'Titan', diameter_km:5149.46, sma_km:1221900, period_d:15.9454},
+  {name:'Hyperion', diameter_km:270.0, sma_km:1481500, period_d:21.2767},
+  {name:'Iapetus', diameter_km:1468.6, sma_km:3561700, period_d:79.331},
+  {name:'Phoebe', diameter_km:213.0, sma_km:12929400, period_d:-550.3},
+  {name:'Kiviuq', diameter_km:17.0, sma_km:11307400.0, period_d:448.91},
+  {name:'Ijiraq', diameter_km:13.0, sma_km:11344700.0, period_d:451.12},
+  {name:'Paaliaq', diameter_km:25.0, sma_km:14997700.0, period_d:685.72},
+  {name:'Skathi', diameter_km:8.0, sma_km:15575400.0, period_d:-725.73},
+  {name:'Albiorix', diameter_km:28.6, sma_km:16329200.0, period_d:779.07},
+  {name:'Bebhionn', diameter_km:6.0, sma_km:17027300.0, period_d:829.64},
+  {name:'Erriapus', diameter_km:10.0, sma_km:17506900.0, period_d:864.92},
+  {name:'Skoll', diameter_km:5.0, sma_km:17623400.0, period_d:-873.57},
+  {name:'Siarnaq', diameter_km:39.3, sma_km:17881100.0, period_d:892.68},
+  {name:'Tarqeq', diameter_km:7.0, sma_km:17751000.0, period_d:882.85},
+  {name:'Tarvos', diameter_km:15.0, sma_km:18216600.0, period_d:917.98},
+  {name:'Hyrrokkin', diameter_km:8.0, sma_km:18340900.0, period_d:-927.46},
+  {name:'Greip', diameter_km:5.0, sma_km:18380000.0, period_d:-930.44},
+  {name:'Mundilfari', diameter_km:7.0, sma_km:18588200.0, period_d:-946.29},
+  {name:'Narvi', diameter_km:16.0, sma_km:19610700.0, period_d:-1025.97},
+  {name:'Farbauti', diameter_km:5.0, sma_km:20290700.0, period_d:-1079.12},
+  {name:'Thrymr', diameter_km:8.0, sma_km:20330500.0, period_d:-1082.23},
+  {name:'Bestla', diameter_km:7.0, sma_km:20337800.0, period_d:-1082.94},
+  {name:'Angrboda', diameter_km:4.0, sma_km:20591500.0, period_d:-1103.20},
+  {name:'Aegir', diameter_km:6.0, sma_km:20664400.0, period_d:-1109.13},
+  {name:'Beli', diameter_km:4.0, sma_km:20703700.0, period_d:-1112.27},
+  {name:'Gerd', diameter_km:4.0, sma_km:20947500.0, period_d:-1131.91},
+  {name:'Gunnlod', diameter_km:4.0, sma_km:21141800.0, period_d:-1147.74},
+  {name:'Skrymir', diameter_km:4.0, sma_km:21447400.0, period_d:-1172.72},
+  {name:'Alvaldi', diameter_km:6.0, sma_km:21993800.0, period_d:-1217.80},
+  {name:'Kari', diameter_km:6.0, sma_km:22032100.0, period_d:-1220.98},
+  {name:'Geirrod', diameter_km:4.0, sma_km:22259400.0, period_d:-1240.05},
+  {name:'Fenrir', diameter_km:4.0, sma_km:22330800.0, period_d:-1245.92},
+  {name:'Surtur', diameter_km:6.0, sma_km:22748000.0, period_d:-1281.14},
+  {name:'Loge', diameter_km:5.0, sma_km:22919200.0, period_d:-1295.52},
+  {name:'Ymir', diameter_km:19.0, sma_km:22955600.0, period_d:-1298.68},
+  {name:'Thiazzi', diameter_km:4.0, sma_km:23577500.0, period_d:-1351.83},
+  {name:'Fornjot', diameter_km:6.0, sma_km:24936800.0, period_d:-1470.36}
+];
+
+function generateOfflineMoons(){
+  const moons = [];
+  for (const m of keyMoons) moons.push({...m});
+
+  const groups = [
+    {prefix:'S/2019 S ', count:24, start:11200000, step:330000, diamMin:3, diamMax:5, retro:false, periodStart:445},
+    {prefix:'S/2020 S ', count:28, start:11300000, step:310000, diamMin:2, diamMax:4, retro:false, periodStart:448},
+    {prefix:'S/2023 S ', count:26, start:11600000, step:360000, diamMin:2, diamMax:4, retro:true, periodStart:470},
+    {prefix:'S/2004 S ', count:24, start:15900000, step:270000, diamMin:3, diamMax:5, retro:true, periodStart:752},
+    {prefix:'S/2005 S ', count:8,  start:11320000, step:980000, diamMin:3, diamMax:5, retro:false, periodStart:450},
+    {prefix:'S/2006 S ', count:24, start:13190000, step:420000, diamMin:3, diamMax:5, retro:true, periodStart:566},
+    {prefix:'S/2007 S ', count:10, start:11360000, step:610000, diamMin:3, diamMax:5, retro:true, periodStart:452}
+  ];
+
+  let usedNames = new Set(moons.map(m => m.name));
+  for (const g of groups){
+    for (let i = 1; i <= g.count; i++){
+      const name = g.prefix + i;
+      if (usedNames.has(name)) continue;
+      const frac = i / g.count;
+      const sma = g.start + g.step * i;
+      const diam = g.diamMin + ((i * 37) % 100) / 100 * (g.diamMax - g.diamMin);
+      const periodBase = g.periodStart + frac * 800;
+      moons.push({
+        name,
+        diameter_km: Math.round(diam * 10) / 10,
+        sma_km: sma,
+        period_d: g.retro ? -periodBase : periodBase
+      });
+      usedNames.add(name);
+    }
+  }
+
+  for (const m of moons){
+    m.label = ruMap[m.name] ? `${ruMap[m.name]} - ${m.name}` : m.name;
+  }
+
+  return moons;
+}
+
+let moons = generateOfflineMoons();
 let maxMoonRadiusKm = Math.max(...moons.map(m => m.sma_km));
 let maxStructureKm = Math.max(maxMoonRadiusKm, ...rings.map(r => r.outer_km));
 
-for (let i = 0; i < moons.length; i++) {
-  const m = moons[i];
-  m.sizePx = pxBucket(m.diameter_km);
-  m.phase0 = hashPhase(m.name);
-  m.direction = m.period_d < 0 ? -1 : 1;
-  m.periodSec = Math.abs(m.period_d) * 86400;
-  m.renderIndex = i;
-  const el = approxOrbitalElements(m);
-  m.incDeg = el.inc;
-  m.nodeDeg = el.node;
-  m.incRad = m.incDeg * Math.PI / 180;
-  m.nodeRad = m.nodeDeg * Math.PI / 180;
-  m.mu = G_KM * m.mass_kg;
-}
-
-const staticCanvas = document.getElementById('staticCanvas');
-const dynamicCanvas = document.getElementById('dynamicCanvas');
-const sctx = staticCanvas.getContext('2d');
-const dctx = dynamicCanvas.getContext('2d');
-
-const infoBox = document.getElementById('infoBox');
-const infoSheet = document.getElementById('infoSheet');
-const infoText = document.getElementById('infoText');
-const scaleInfo = document.getElementById('scaleInfo');
-const iconCanvas = document.getElementById('moonIconCanvas');
-const ictx = iconCanvas.getContext('2d');
-const loadingBox = document.getElementById('loadingBox');
-const moneyBox = document.getElementById('moneyBox');
-const timeBox = document.getElementById('timeBox');
-const routeModeBtn = document.getElementById('routeModeBtn');
-const routePanel = document.getElementById('routePanel');
-const routeEndpoints = document.getElementById('routeEndpoints');
-const chooseRouteBtn = document.getElementById('chooseRouteBtn');
-const transportModal = document.getElementById('transportModal');
-const calcModal = document.getElementById('calcModal');
-const transportCards = document.getElementById('transportCards');
-const toCalcBtn = document.getElementById('toCalcBtn');
-const calcOptions = document.getElementById('calcOptions');
-const calcStatus = document.getElementById('calcStatus');
-const confirmRouteBtn = document.getElementById('confirmRouteBtn');
-
-const state = {
-  w:0,h:0,dpr:1,centerX:0,centerY:0,offsetX:0,offsetY:0,
-  kmPerPx:1,baseKmPerPx:1,speedMode:0,simSeconds:0,lastRenderTs:0,frameCount:0,
-  pointers:new Map(),pinchBaseKmPerPx:null,pinchBaseDistance:null,moved:false,downAt:0,
-  selectedMoon:null,staticDirty:true,lastDetailLevel:'',visibleMoons:[],
-  money:1000000,
-  routeMode:false,
-  routeFrom:null,
-  routeTo:null,
-  chosenTransport:null,
-  chosenPlan:null,
-  activeRoute:null
-};
-
-function pxBucket(d){
-  if (d < 10) return 1;
-  if (d < 100) return 2;
-  if (d < 300) return 3;
-  if (d < 700) return 4;
-  if (d < 1200) return 5;
-  if (d < 2100) return 6;
-  if (d < 4000) return 7;
-  return 8;
-}
-function hash01(str){
-  let h = 2166136261 >>> 0;
-  for(let i = 0; i < str.length; i++){ h ^= str.charCodeAt(i); h = Math.imul(h, 16777619); }
-  return (h >>> 0) / 4294967295;
-}
-function hashPhase(name){ return hash01(name) * Math.PI * 2; }
 function approxOrbitalElements(m){
   const manual = {
     'Mimas':[1.57,0],'Enceladus':[0.0,0],'Tethys':[1.09,0],'Dione':[0.02,0],
@@ -312,14 +356,94 @@ function approxOrbitalElements(m){
   if (m.period_d < 0) return {inc:145 + hash01(m.name)*25, node:hash01(m.name+'node')*360};
   return {inc:30 + hash01(m.name)*20, node:hash01(m.name+'node')*360};
 }
-function getCSS(name){ return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
-function moonColor(m){ return m.diameter_km > 500 ? getCSS('--purple') : getCSS('--text'); }
+
+for (let i = 0; i < moons.length; i++){
+  const m = moons[i];
+  m.sizePx = pxBucket(m.diameter_km);
+  m.phase0 = hashPhase(m.name);
+  m.direction = m.period_d < 0 ? -1 : 1;
+  m.periodSec = Math.abs(m.period_d) * 86400;
+  m.renderIndex = i;
+  const el = approxOrbitalElements(m);
+  m.incDeg = el.inc;
+  m.nodeDeg = el.node;
+  m.incRad = m.incDeg * Math.PI / 180;
+  m.nodeRad = m.nodeDeg * Math.PI / 180;
+}
+
+const staticCanvas = document.getElementById('staticCanvas');
+const dynamicCanvas = document.getElementById('dynamicCanvas');
+const sctx = staticCanvas.getContext('2d');
+const dctx = dynamicCanvas.getContext('2d');
+const infoBox = document.getElementById('infoBox');
+const infoSheet = document.getElementById('infoSheet');
+const infoText = document.getElementById('infoText');
+const scaleInfo = document.getElementById('scaleInfo');
+const iconCanvas = document.getElementById('moonIconCanvas');
+const ictx = iconCanvas.getContext('2d');
+const moneyBox = document.getElementById('moneyBox');
+const timeBox = document.getElementById('timeBox');
+const routeModeBtn = document.getElementById('routeModeBtn');
+const routeTransportPanel = document.getElementById('routeTransportPanel');
+const routeTransportText = document.getElementById('routeTransportText');
+const routeTransportList = document.getElementById('routeTransportList');
+const routeTransportCancelBtn = document.getElementById('routeTransportCancelBtn');
+const routeTransportNextBtn = document.getElementById('routeTransportNextBtn');
+const routeTimingPanel = document.getElementById('routeTimingPanel');
+const routeTimingText = document.getElementById('routeTimingText');
+const routeTimingList = document.getElementById('routeTimingList');
+const routeTimingBackBtn = document.getElementById('routeTimingBackBtn');
+const routeConfirmBtn = document.getElementById('routeConfirmBtn');
+
+const state = {
+  w:0,h:0,dpr:1,centerX:0,centerY:0,offsetX:0,offsetY:0,
+  kmPerPx:1,baseKmPerPx:1,speedMode:0,simSeconds:0,lastRenderTs:0,frameCount:0,
+  pointers:new Map(),pinchBaseKmPerPx:null,pinchBaseDistance:null,moved:false,downAt:0,
+  selectedMoon:null,selectedTransportInfo:null,staticDirty:true,lastDetailLevel:'',visibleMoons:[],
+  money:10000000,
+  routeMode:false,
+  routeA:null,
+  routeB:null,
+  routeSelectedTransport:null,
+  routeSelectedTiming:null,
+  activeRoute:null,
+  pausedBeforeRoute:0,
+  dashOffset:0
+};
+
+function formatMoney(n){
+  return Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+}
+function updateMoneyBox(){
+  moneyBox.textContent = formatMoney(state.money);
+}
+function formatDatePart(d){
+  const dd = String(d.getUTCDate()).padStart(2,'0');
+  const mm = String(d.getUTCMonth()+1).padStart(2,'0');
+  const yyyy = d.getUTCFullYear();
+  return `${dd}.${mm}.${yyyy}`;
+}
+function formatTimePart(d){
+  const hh = String(d.getUTCHours()).padStart(2,'0');
+  const mi = String(d.getUTCMinutes()).padStart(2,'0');
+  const ss = String(d.getUTCSeconds()).padStart(2,'0');
+  return `${hh}:${mi}:${ss}`;
+}
+function formatSimDate(ms){
+  const d = new Date(ms);
+  return `${formatDatePart(d)} ${formatTimePart(d)}`;
+}
+function updateSimTimeBox(){
+  const d = new Date(SIM_START_MS + Math.round(state.simSeconds * 1000));
+  timeBox.innerHTML = `<span style="font-weight:900;">${formatDatePart(d)}</span>&nbsp;&nbsp;<span style="font-weight:600;">${formatTimePart(d)}</span>`;
+}
+
 function setCanvasSize(canvas, ctx){
   canvas.width = Math.floor(innerWidth * state.dpr);
   canvas.height = Math.floor(innerHeight * state.dpr);
   canvas.style.width = innerWidth + 'px';
-  canvas.style.height = innerWidth ? innerHeight + 'px' : '';
-  ctx.setTransform(state.dpr,0,0,state.dpr,0,0);
+  canvas.style.height = innerHeight + 'px';
+  ctx.setTransform(state.dpr, 0, 0, state.dpr, 0, 0);
 }
 function resize(){
   state.dpr = Math.max(1, window.devicePixelRatio || 1);
@@ -344,54 +468,35 @@ function fitAll(){
   updateScaleInfo();
 }
 function worldToScreen(xKm, yKm){
-  return { x: state.centerX + state.offsetX + xKm / state.kmPerPx, y: state.centerY + state.offsetY + yKm / state.kmPerPx };
+  return {x: state.centerX + state.offsetX + xKm / state.kmPerPx, y: state.centerY + state.offsetY + yKm / state.kmPerPx};
 }
 function kmRadiusToPx(km){ return km / state.kmPerPx; }
+
 function projectOrbitPoint(rKm, theta, incRad, nodeRad){
   const cu = Math.cos(theta), su = Math.sin(theta);
   let x = rKm * cu;
   let y = rKm * su * Math.cos(incRad);
   let z = rKm * su * Math.sin(incRad);
+
   const cO = Math.cos(nodeRad), sO = Math.sin(nodeRad);
   const x2 = x * cO - y * sO;
   const y2 = x * sO + y * cO;
   const z2 = z;
+
   const ct = Math.cos(VIEW_TILT_RAD), st = Math.sin(VIEW_TILT_RAD);
   const x3 = x2;
   const y3 = y2 * ct - z2 * st;
   const z3 = y2 * st + z2 * ct;
   return {x:x3, y:y3, z:z3};
 }
-function getMoonStateAt(m, simSec){
-  const theta = m.phase0 + m.direction * (simSec / m.periodSec) * Math.PI * 2;
-  const p3 = projectOrbitPoint(m.sma_km, theta, m.incRad, m.nodeRad);
-  const p = worldToScreen(p3.x, p3.y);
-  return {theta, p3, p};
-}
-function getMoonPlaneStateAt(m, simSec){
-  const theta = m.phase0 + m.direction * (simSec / m.periodSec) * Math.PI * 2;
-  return {theta, x: m.sma_km * Math.cos(theta), y: m.sma_km * Math.sin(theta)};
-}
-function formatMoney(v){ return Math.round(v).toLocaleString('ru-RU'); }
-function updateMoneyBox(){ moneyBox.textContent = formatMoney(state.money); }
-function formatSimDateTime(secOverride=null){
-  const d = new Date(SIM_START_MS + Math.round((secOverride===null?state.simSeconds:secOverride) * 1000));
-  const yyyy = d.getUTCFullYear();
-  const mm = String(d.getUTCMonth() + 1).padStart(2, '0');
-  const dd = String(d.getUTCDate()).padStart(2, '0');
-  const hh = String(d.getUTCHours()).padStart(2, '0');
-  const mi = String(d.getUTCMinutes()).padStart(2, '0');
-  const ss = String(d.getUTCSeconds()).padStart(2, '0');
-  return `${yyyy}-${mm}-${dd} ${hh}:${mi}:${ss}`;
-}
-function updateSimTimeBox(){ timeBox.textContent = formatSimDateTime(); }
+
 function updateScaleInfo(){
   const saturnPx = SATURN_DIAMETER_KM / state.kmPerPx;
   const detail = getDetailLevel();
   scaleInfo.innerHTML =
     'Масштаб: <b>1 px = ' + Math.round(state.kmPerPx).toLocaleString('ru-RU') + ' км</b><br>' +
     'Сатурн: <b>' + saturnPx.toFixed(2) + ' px</b> по диаметру<br>' +
-    'Спутников в офлайн-наборе: <b>' + moons.length + '</b><br>' +
+    'Спутников: <b>' + moons.length + '</b><br>' +
     'Уровень детализации: <b>' + detail + '</b>' + (isMobile ? ' · 30 FPS' : ' · 60 FPS');
 }
 function getDetailLevel(){
@@ -409,35 +514,48 @@ function getVisibleMoons(){
   return filtered;
 }
 function ringAlphaByDistance(outerKm){ return outerKm <= 480000 ? 0.50 : 0.10; }
-function drawProjectedPath(ctx, points, strokeStyle, lineWidth=1){
+function drawProjectedPath(ctx, points, strokeStyle, lineWidth=1, dashed=false){
   if (points.length < 2) return;
-  ctx.beginPath(); ctx.moveTo(points[0].x, points[0].y);
+  ctx.save();
+  if (dashed) ctx.setLineDash([6, 8]);
+  ctx.beginPath();
+  ctx.moveTo(points[0].x, points[0].y);
   for (let i=1;i<points.length;i++) ctx.lineTo(points[i].x, points[i].y);
-  ctx.closePath(); ctx.strokeStyle = strokeStyle; ctx.lineWidth = lineWidth; ctx.stroke();
+  ctx.closePath();
+  ctx.strokeStyle = strokeStyle;
+  ctx.lineWidth = lineWidth;
+  ctx.stroke();
+  ctx.restore();
 }
 function buildProjectedOrbitPoints(rKm, incRad, nodeRad, segments){
   const pts = [];
-  for (let i=0;i<segments;i++) {
-    const t = (i/segments) * Math.PI * 2;
+  for (let i=0;i<segments;i++){
+    const t = (i / segments) * Math.PI * 2;
     const p = projectOrbitPoint(rKm, t, incRad, nodeRad);
-    pts.push(worldToScreen(p.x, p.y));
+    const s = worldToScreen(p.x, p.y);
+    pts.push({x:s.x, y:s.y});
   }
   return pts;
 }
 function ringSetFor(detail){
   const ringColorNear = ['214,199,165','201,188,156','191,179,150','173,165,143'];
   const ringColorFar = '171,170,168';
-  if (detail === 'far') return [
-    {inner:66900, outer:173200, color:ringColorNear[1], alpha:0.50},
-    {inner:7720000, outer:12500000, color:ringColorFar, alpha:0.10}
-  ];
-  if (detail === 'medium') return [
-    {inner:66900, outer:173200, color:ringColorNear[1], alpha:0.50},
-    {inner:180000, outer:480000, color:ringColorNear[3], alpha:0.16},
-    {inner:7720000, outer:12500000, color:ringColorFar, alpha:0.10}
-  ];
+  if (detail === 'far') {
+    return [
+      {inner:66900, outer:173200, color:ringColorNear[1], alpha:0.50},
+      {inner:7720000, outer:12500000, color:ringColorFar, alpha:0.10}
+    ];
+  }
+  if (detail === 'medium') {
+    return [
+      {inner:66900, outer:173200, color:ringColorNear[1], alpha:0.50},
+      {inner:180000, outer:480000, color:ringColorNear[3], alpha:0.16},
+      {inner:7720000, outer:12500000, color:ringColorFar, alpha:0.10}
+    ];
+  }
   return rings.map((r, i) => ({
-    inner:r.inner_km, outer:r.outer_km,
+    inner:r.inner_km,
+    outer:r.outer_km,
     color:r.outer_km <= 480000 ? ringColorNear[Math.min(i,3)] : ringColorFar,
     alpha:ringAlphaByDistance(r.outer_km)
   }));
@@ -450,58 +568,68 @@ function drawRingsHalf(detail, front){
   for (const r of ringSet){
     const inner = kmRadiusToPx(r.inner), outer = kmRadiusToPx(r.outer);
     const mid = (inner + outer) / 2, width = Math.max(outer - inner, 1);
-    sctx.save(); sctx.translate(cx, cy); sctx.scale(1, yScale); sctx.beginPath();
+    sctx.save();
+    sctx.translate(cx, cy);
+    sctx.scale(1, yScale);
+    sctx.beginPath();
     if (front) sctx.arc(0, 0, mid, 0, Math.PI, false);
     else sctx.arc(0, 0, mid, Math.PI, 0, false);
     sctx.strokeStyle = 'rgba(' + r.color + ',' + r.alpha + ')';
-    sctx.lineWidth = width; sctx.stroke(); sctx.restore();
+    sctx.lineWidth = width;
+    sctx.stroke();
+    sctx.restore();
   }
 }
-function getSaturnSprite(pxSize){
-  const off = document.createElement('canvas');
-  off.width = pxSize; off.height = pxSize;
-  const o = off.getContext('2d');
-  const cx = pxSize/2, cy = pxSize/2, r = pxSize/2 - 0.5;
-  const grad = o.createRadialGradient(cx-r*0.28, cy-r*0.30, r*0.10, cx, cy, r*1.05);
+function drawPixelSaturn(){
+  const center = worldToScreen(0,0);
+  const r = Math.max(4, kmRadiusToPx(SATURN_RADIUS_KM));
+
+  const grad = sctx.createRadialGradient(
+    center.x - r * 0.28,
+    center.y - r * 0.30,
+    r * 0.10,
+    center.x,
+    center.y,
+    r * 1.05
+  );
   grad.addColorStop(0, '#fff7df');
   grad.addColorStop(0.28, '#f1dfb5');
   grad.addColorStop(0.68, '#d9ba82');
   grad.addColorStop(1, '#9e7a4f');
-  o.beginPath(); o.arc(cx, cy, r, 0, Math.PI*2); o.fillStyle = grad; o.fill();
-  const shadow = o.createRadialGradient(cx+r*0.26, cy+r*0.20, r*0.10, cx, cy, r);
+
+  sctx.beginPath();
+  sctx.arc(center.x, center.y, r, 0, Math.PI * 2);
+  sctx.fillStyle = grad;
+  sctx.fill();
+
+  const shadow = sctx.createRadialGradient(
+    center.x + r * 0.26,
+    center.y + r * 0.20,
+    r * 0.10,
+    center.x,
+    center.y,
+    r
+  );
   shadow.addColorStop(0.68, 'rgba(0,0,0,0)');
   shadow.addColorStop(1, 'rgba(0,0,0,0.28)');
-  o.beginPath(); o.arc(cx, cy, r, 0, Math.PI*2); o.fillStyle = shadow; o.fill();
-  o.beginPath(); o.arc(cx, cy, r, 0, Math.PI*2); o.strokeStyle='rgba(255,245,220,0.20)'; o.lineWidth=1; o.stroke();
-  return off;
-}
-const saturnCache = new Map();
-function drawSaturnSphere(){
-  const center = worldToScreen(0,0);
-  const px = Math.max(12, Math.round(Math.max(4, kmRadiusToPx(SATURN_RADIUS_KM)) * 2));
-  if (!saturnCache.has(px)) saturnCache.set(px, getSaturnSprite(px));
-  const sprite = saturnCache.get(px);
-  sctx.save(); sctx.imageSmoothingEnabled = false;
-  sctx.drawImage(sprite, Math.round(center.x - px/2), Math.round(center.y - px/2), px, px);
-  sctx.restore();
-}
-function orbitMayBeVisible(rKm){
-  const pxR = kmRadiusToPx(rKm);
-  const cx = state.centerX + state.offsetX;
-  const cy = state.centerY + state.offsetY;
-  const pad = 40;
-  return !(cx + pxR < -pad || cx - pxR > state.w + pad || cy + pxR < -pad || cy - pxR > state.h + pad);
+  sctx.beginPath();
+  sctx.arc(center.x, center.y, r, 0, Math.PI * 2);
+  sctx.fillStyle = shadow;
+  sctx.fill();
+
+  sctx.beginPath();
+  sctx.arc(center.x, center.y, r, 0, Math.PI * 2);
+  sctx.strokeStyle = 'rgba(255,245,220,0.20)';
+  sctx.lineWidth = 1;
+  sctx.stroke();
 }
 function drawStaticOrbits(visible, detail){
   for (const m of visible){
     if (majorTailNames.has(m.name)) continue;
     if (detail === 'far' && m.diameter_km < 1000) continue;
-    if (!orbitMayBeVisible(m.sma_km)) continue;
     const pxR = kmRadiusToPx(m.sma_km);
     if (pxR < 0.7) continue;
-    let segments = 24;
-    if (detail === 'close') segments = 36;
-    if (m.diameter_km > 1000 && detail === 'close') segments = 42;
+    const segments = detail === 'close' ? 36 : 24;
     const pts = buildProjectedOrbitPoints(m.sma_km, m.incRad, m.nodeRad, segments);
     let alpha;
     if (m.diameter_km < 100) alpha = 0.025;
@@ -511,75 +639,137 @@ function drawStaticOrbits(visible, detail){
     drawProjectedPath(sctx, pts, 'rgba(' + base[0] + ',' + base[1] + ',' + base[2] + ',' + alpha.toFixed(3) + ')', 1);
   }
 }
-function drawSelectedOrbit(){
-  if (!state.selectedMoon) return;
-  const m = state.selectedMoon;
-  const segments = getDetailLevel() === 'close' ? 64 : 40;
-  const pts = buildProjectedOrbitPoints(m.sma_km, m.incRad, m.nodeRad, segments);
-  drawProjectedPath(dctx, pts, 'rgba(243,211,106,0.95)', 2);
-}
 function drawStaticScene(){
-  sctx.clearRect(0,0,state.w,state.h);
+  sctx.clearRect(0, 0, state.w, state.h);
   const detail = getDetailLevel();
   const visible = getVisibleMoons();
   drawRingsHalf(detail, false);
   drawStaticOrbits(visible, detail);
-  drawSaturnSphere();
+  drawPixelSaturn();
   drawRingsHalf(detail, true);
   state.lastDetailLevel = detail;
   state.staticDirty = false;
 }
 function drawTailOrbit(m, thetaNow){
-  if (!orbitMayBeVisible(m.sma_km)) return;
   const segments = isMobile ? 8 : 12;
   const tailSpan = Math.PI * 0.60;
   const pts = [];
-  for (let i=0;i<=segments;i++) {
+  for (let i=0;i<=segments;i++){
     const t = i / segments;
     const theta = thetaNow - m.direction * (t * tailSpan);
     const p = projectOrbitPoint(m.sma_km, theta, m.incRad, m.nodeRad);
-    pts.push(worldToScreen(p.x, p.y));
+    const s = worldToScreen(p.x, p.y);
+    pts.push({x:s.x, y:s.y});
   }
   const base = m.diameter_km < 100 ? [200,205,210] : [243,211,106];
-  for (let i=0;i<segments;i++) {
+  for (let i=0;i<segments;i++){
     const alpha = (1 - (i / segments)) * 0.62;
-    dctx.beginPath(); dctx.moveTo(pts[i].x, pts[i].y); dctx.lineTo(pts[i+1].x, pts[i+1].y);
+    dctx.beginPath();
+    dctx.moveTo(pts[i].x, pts[i].y);
+    dctx.lineTo(pts[i+1].x, pts[i+1].y);
     dctx.strokeStyle = 'rgba(' + base[0] + ',' + base[1] + ',' + base[2] + ',' + alpha.toFixed(3) + ')';
-    dctx.lineWidth = 1; dctx.stroke();
+    dctx.lineWidth = 1;
+    dctx.stroke();
   }
 }
-function isRouteSelected(m, type){
-  if (type === 'from') return state.routeFrom && state.routeFrom.name === m.name;
-  return state.routeTo && state.routeTo.name === m.name;
+function drawSelectedOrbit(){
+  if (!state.selectedMoon) return;
+  const m = state.selectedMoon;
+  const pts = buildProjectedOrbitPoints(m.sma_km, m.incRad, m.nodeRad, 52);
+  drawProjectedPath(dctx, pts, 'rgba(243,211,106,0.95)', 1);
+}
+function drawRouteSelectionOrbit(m, color){
+  const pts = buildProjectedOrbitPoints(m.sma_km, m.incRad, m.nodeRad, 52);
+  drawProjectedPath(dctx, pts, color, 1);
 }
 function drawMoon(m, detail){
   if (isMobile && detail !== 'close' && m.diameter_km < 100) return;
-  const st = getMoonStateAt(m, state.simSeconds);
-  const p = st.p;
+  const theta = m.phase0 + m.direction * (state.simSeconds / m.periodSec) * Math.PI * 2;
+  const p3 = projectOrbitPoint(m.sma_km, theta, m.incRad, m.nodeRad);
+  const p = worldToScreen(p3.x, p3.y);
   m.screenX = p.x; m.screenY = p.y;
   const margin = 18;
   if (p.x < -margin || p.x > state.w + margin || p.y < -margin || p.y > state.h + margin) return;
-  if (majorTailNames.has(m.name)) drawTailOrbit(m, st.theta);
+
+  if (majorTailNames.has(m.name)) drawTailOrbit(m, theta);
+
   const s = m.sizePx;
   const outlineR = Math.sqrt(2) * s / 2 + 6;
-  dctx.beginPath(); dctx.arc(p.x, p.y, outlineR, 0, Math.PI*2);
-  let outline = s <= 2 ? 'rgba(255,255,255,0.35)' : 'rgba(255,255,255,0.55)';
-  if (isRouteSelected(m, 'from')) outline = 'rgba(111,227,162,0.95)';
-  if (isRouteSelected(m, 'to')) outline = 'rgba(124,199,255,0.95)';
-  dctx.strokeStyle = outline; dctx.lineWidth = 1; dctx.stroke();
+  dctx.beginPath();
+  dctx.arc(p.x, p.y, outlineR, 0, Math.PI * 2);
+  dctx.strokeStyle = s <= 2 ? 'rgba(255,255,255,0.35)' : 'rgba(255,255,255,0.55)';
+  dctx.lineWidth = 1;
+  dctx.stroke();
   dctx.fillStyle = moonColor(m);
   dctx.fillRect(Math.round(p.x - s/2), Math.round(p.y - s/2), s, s);
 
   if (state.selectedMoon && state.selectedMoon.name === m.name){
     dctx.textAlign = 'center';
     dctx.fillStyle = '#ffffff';
-    dctx.font = '10px "Onest", system-ui, sans-serif';
+    dctx.font = '10px Onest, system-ui, sans-serif';
     dctx.fillText(m.label || m.name, p.x, p.y - outlineR - 10);
-    dctx.font = '6px "Onest", system-ui, sans-serif';
+    dctx.font = '6px Onest, system-ui, sans-serif';
     dctx.fillStyle = '#c7cbd1';
     dctx.fillText(m.diameter_km + ' км', p.x, p.y - outlineR - 2);
   }
 }
+function drawRoutePath(){
+  if (!state.activeRoute) return;
+  const route = state.activeRoute;
+  const total = route.totalSimSeconds;
+  const elapsed = Math.max(0, state.simSeconds - route.departureSimSeconds);
+  const progress = Math.min(1, elapsed / total);
+
+  const pts = [];
+  const steps = 60;
+  for (let i=0;i<=steps;i++){
+    const t = i / steps;
+    const u = t;
+    const x = route.startPos.x * (1-u) + route.ctrlPos.x * 2 * (1-u) * u + route.endPos.x * u * u;
+    const y = route.startPos.y * (1-u) + route.ctrlPos.y * 2 * (1-u) * u + route.endPos.y * u * u;
+    pts.push(worldToScreen(x, y));
+  }
+
+  dctx.save();
+  dctx.setLineDash([6, 10]);
+  dctx.lineDashOffset = -state.dashOffset;
+  dctx.beginPath();
+  dctx.moveTo(pts[0].x, pts[0].y);
+  for (let i=1;i<pts.length;i++) dctx.lineTo(pts[i].x, pts[i].y);
+  dctx.strokeStyle = 'rgba(124,199,255,0.9)';
+  dctx.lineWidth = 1;
+  dctx.stroke();
+  dctx.restore();
+
+  if (progress >= 1) {
+    state.activeRoute = null;
+    state.selectedTransportInfo = null;
+    return;
+  }
+
+  const u = progress;
+  const x = route.startPos.x * (1-u) + route.ctrlPos.x * 2 * (1-u) * u + route.endPos.x * u * u;
+  const y = route.startPos.y * (1-u) + route.ctrlPos.y * 2 * (1-u) * u + route.endPos.y * u * u;
+  const p = worldToScreen(x, y);
+  route.currentScreenX = p.x;
+  route.currentScreenY = p.y;
+
+  dctx.fillStyle = '#7cc7ff';
+  dctx.fillRect(Math.round(p.x - 1), Math.round(p.y - 1), 2, 2);
+
+  const q = 7;
+  dctx.strokeStyle = 'rgba(255,255,255,0.9)';
+  dctx.lineWidth = 1;
+  dctx.beginPath(); dctx.moveTo(p.x-q, p.y-q); dctx.lineTo(p.x-q/2, p.y-q); dctx.stroke();
+  dctx.beginPath(); dctx.moveTo(p.x-q, p.y-q); dctx.lineTo(p.x-q, p.y-q/2); dctx.stroke();
+  dctx.beginPath(); dctx.moveTo(p.x+q, p.y-q); dctx.lineTo(p.x+q/2, p.y-q); dctx.stroke();
+  dctx.beginPath(); dctx.moveTo(p.x+q, p.y-q); dctx.lineTo(p.x+q, p.y-q/2); dctx.stroke();
+  dctx.beginPath(); dctx.moveTo(p.x-q, p.y+q); dctx.lineTo(p.x-q/2, p.y+q); dctx.stroke();
+  dctx.beginPath(); dctx.moveTo(p.x-q, p.y+q); dctx.lineTo(p.x-q, p.y+q/2); dctx.stroke();
+  dctx.beginPath(); dctx.moveTo(p.x+q, p.y+q); dctx.lineTo(p.x+q/2, p.y+q); dctx.stroke();
+  dctx.beginPath(); dctx.moveTo(p.x+q, p.y+q); dctx.lineTo(p.x+q, p.y+q/2); dctx.stroke();
+}
+
 function paletteForMoon(m){
   const n = m.name;
   if (n === 'Titan') return ['#d9a25b','#b9733d','#eed09c','#7f5834'];
@@ -587,16 +777,16 @@ function paletteForMoon(m){
   if (n === 'Iapetus') return ['#e5dcc8','#9a8a73','#5d5146','#2f2c2a'];
   if (n === 'Hyperion') return ['#c8ab78','#91724e','#6d4f37','#3a2a20'];
   if (n === 'Phoebe') return ['#a3a3a3','#6a6a6a','#3f3f3f','#1f1f1f'];
-  if (m.diameter_km > 1000) return ['#dcd7cf','#b9b2a8','#8a8279','#5f5954'];
+  if (m.diameter_km > 500) return ['#dcd7cf','#b9b2a8','#8a8279','#5f5954'];
   if (m.diameter_km > 100) return ['#d8d0c6','#b4aca2','#8a8378','#5d5851'];
   return ['#cfd2d8','#9ba1aa','#707780','#4b5058'];
 }
 function drawPixelMoonIcon(m){
   const pal = paletteForMoon(m);
-  ictx.clearRect(0,0,16,16);
+  ictx.clearRect(0, 0, 16, 16);
   const cx = 8, cy = 8, r = 6.2;
-  for (let y=0;y<16;y++) {
-    for (let x=0;x<16;x++) {
+  for (let y=0;y<16;y++){
+    for (let x=0;x<16;x++){
       const dx = x + 0.5 - cx, dy = y + 0.5 - cy;
       const dist = Math.sqrt(dx*dx + dy*dy);
       if (dist > r) continue;
@@ -611,6 +801,8 @@ function drawPixelMoonIcon(m){
       else idx = 3;
       if (m.name === 'Iapetus' && x < 8) idx = Math.min(3, idx + 1);
       if (m.name === 'Titan' && (y === 7 || y === 8)) idx = 1;
+      if (m.name === 'Enceladus' && noise > 0.35) idx = 2;
+      if (m.name === 'Phoebe' && noise < -0.25) idx = 0;
       ictx.fillStyle = pal[idx];
       ictx.fillRect(x, y, 1, 1);
     }
@@ -618,6 +810,7 @@ function drawPixelMoonIcon(m){
 }
 function showInfo(m){
   state.selectedMoon = m || null;
+  state.selectedTransportInfo = null;
   if (!m){ infoBox.style.display = 'none'; return; }
   drawPixelMoonIcon(m);
   infoText.innerHTML =
@@ -625,13 +818,30 @@ function showInfo(m){
     'Диаметр: ' + m.diameter_km + ' км<br>' +
     'Большая полуось: ' + Math.round(m.sma_km).toLocaleString('ru-RU') + ' км<br>' +
     'Период: ' + Math.abs(m.period_d).toLocaleString('ru-RU') + ' суток<br>' +
-    'Масса: ' + m.mass_kg.toExponential(2).replace('e+','×10^') + ' кг<br>' +
-    'Наклон орбиты: ' + m.incDeg.toFixed(1) + '°<br>' +
+    'Наклон орбиты: ' + (m.incDeg != null ? m.incDeg.toFixed(1) : '—') + '°<br>' +
     'Направление: ' + (m.period_d < 0 ? 'ретроградное' : 'прямое');
+  infoBox.style.display = 'block';
+}
+function showTransportInfo(route){
+  state.selectedMoon = null;
+  state.selectedTransportInfo = route;
+  const fakeMoon = {name:route.transport.name, diameter_km:999};
+  drawPixelMoonIcon(fakeMoon);
+  infoText.innerHTML =
+    '<b>' + route.transport.ru + ' "' + route.transport.name + '"</b>' +
+    'Масса: ' + formatMoney(route.transport.mass_t) + ' т<br>' +
+    'Дата вылета: ' + formatSimDate(SIM_START_MS + route.departureSimSeconds * 1000) + '<br>' +
+    'Дата прилёта: ' + formatSimDate(SIM_START_MS + route.arrivalSimSeconds * 1000);
   infoBox.style.display = 'block';
 }
 function markStaticDirty(){ state.staticDirty = true; }
 function hitTest(x, y){
+  if (state.activeRoute && state.activeRoute.currentScreenX != null){
+    const dxr = x - state.activeRoute.currentScreenX;
+    const dyr = y - state.activeRoute.currentScreenY;
+    if (Math.hypot(dxr, dyr) <= 16) return {type:'transport', route:state.activeRoute};
+  }
+
   let best = null, bestD = Infinity;
   for (const m of state.visibleMoons){
     if (typeof m.screenX !== 'number' || typeof m.screenY !== 'number') continue;
@@ -640,310 +850,239 @@ function hitTest(x, y){
     const hitR = Math.max(16, Math.sqrt(2) * m.sizePx / 2 + 8);
     if (d <= hitR && d < bestD){ best = m; bestD = d; }
   }
-  return best;
+  return best ? {type:'moon', moon:best} : null;
 }
 
-// ===== Route system =====
-function updateRouteUI(){
-  routeModeBtn.classList.toggle('active', state.routeMode);
-  routePanel.style.display = state.routeMode ? 'block' : 'none';
-  routeEndpoints.innerHTML =
-    '<div><span class="smallTag">A</span> ' + (state.routeFrom ? state.routeFrom.label : 'не выбрано') + '</div>' +
-    '<div><span class="smallTag">B</span> ' + (state.routeTo ? state.routeTo.label : 'не выбрано') + '</div>';
-  chooseRouteBtn.disabled = !(state.routeFrom && state.routeTo);
-}
-function toggleRouteMode(){
-  state.routeMode = !state.routeMode;
-  if (!state.routeMode) {
-    state.routeFrom = null;
-    state.routeTo = null;
-  }
-  updateRouteUI();
-}
-function routeToggleMoon(m){
-  if (state.routeFrom && state.routeFrom.name === m.name) {
-    state.routeFrom = null;
-  } else if (state.routeTo && state.routeTo.name === m.name) {
-    state.routeTo = null;
-  } else if (!state.routeFrom) {
-    state.routeFrom = m;
-  } else if (!state.routeTo) {
-    state.routeTo = m;
-  } else {
-    state.routeTo = m;
-  }
-  updateRouteUI();
-}
-function escVel(m){
-  const r = Math.max(1, m.diameter_km / 2);
-  return Math.sqrt((2 * m.mu) / r);
-}
-function wrapAngle(a){
-  while (a > Math.PI) a -= Math.PI * 2;
-  while (a < -Math.PI) a += Math.PI * 2;
-  return a;
-}
-function ringPenaltyForRoute(fromMoon, toMoon){
-  const innerForbidden = 66900;
-  const outerForbidden = 173200;
-  const minR = Math.min(fromMoon.sma_km, toMoon.sma_km);
-  const maxR = Math.max(fromMoon.sma_km, toMoon.sma_km);
-  if (maxR < innerForbidden || minR > outerForbidden) return 1.0;
-  if ((fromMoon.sma_km >= innerForbidden && fromMoon.sma_km <= outerForbidden) ||
-      (toMoon.sma_km >= innerForbidden && toMoon.sma_km <= outerForbidden)) {
-    return 1.12;
-  }
-  return 1.18;
-}
-function calcBaseTransfer(fromMoon, toMoon, departureSec, transport){
+function estimateRouteOption(fromMoon, toMoon, transport, departSimSeconds){
   const r1 = fromMoon.sma_km;
   const r2 = toMoon.sma_km;
-  const aT = (r1 + r2) / 2;
-  const hohDays = Math.PI * Math.sqrt((aT*aT*aT) / SATURN_MU) / 86400;
-  const dv1 = Math.abs(Math.sqrt(SATURN_MU/r1) * (Math.sqrt((2*r2)/(r1+r2)) - 1));
-  const dv2 = Math.abs(Math.sqrt(SATURN_MU/r2) * (1 - Math.sqrt((2*r1)/(r1+r2))));
-  const baseDv = dv1 + dv2;
+  const distance = Math.abs(r2 - r1);
+  const saturnPenalty = (Math.min(r1, r2) < 200000) ? 0.18 : 0.0;
+  const ringPenalty = (Math.min(r1, r2) < 173200 && Math.max(r1, r2) > 66900) ? 0.25 : 0.0;
+  const gravityPenalty = saturnPenalty + ringPenalty;
 
-  const s1 = getMoonPlaneStateAt(fromMoon, departureSec);
-  const s2 = getMoonPlaneStateAt(toMoon, departureSec);
-  const dx = s2.x - s1.x;
-  const dy = s2.y - s1.y;
-  const distance = Math.hypot(dx, dy);
-  const phaseDiff = Math.abs(wrapAngle(s2.theta - s1.theta));
-  const phaseFactor = 1 + 0.45 * Math.abs(Math.sin(phaseDiff / 2));
-  const ringPenalty = ringPenaltyForRoute(fromMoon, toMoon);
-  const accelDays = Math.sqrt((2 * distance) / transport.accelKms2) / 86400;
-  const localPenalty = 0.12 * (escVel(fromMoon) + escVel(toMoon));
-  const travelDays = Math.max(hohDays * phaseFactor * ringPenalty, accelDays);
-  const dvReq = (baseDv + localPenalty) * (1 + 0.25 * Math.abs(Math.sin(phaseDiff / 2))) * ringPenalty;
+  const accel = transport.accel_ms2;
+  const cruiseLimit = transport.deltaV_kms * 1000;
+  const halfDistM = (distance * 1000) / 2;
+  const accelTime = Math.min(Math.sqrt((2 * halfDistM) / Math.max(accel, 0.01)), cruiseLimit / Math.max(accel, 0.01));
+  const accelDist = 0.5 * accel * accelTime * accelTime;
+  let totalTimeSec;
+  let peakSpeed = accel * accelTime;
 
-  const fullMassKg = transport.mass_t * 1000;
-  const dryMassKg = fullMassKg * transport.dryFrac;
-  const ve = transport.maxDV / Math.log(fullMassKg / dryMassKg);
-  const propCap = fullMassKg - dryMassKg;
-  const fuelNeed = fullMassKg * (1 - Math.exp(-dvReq / ve));
-  const fuelReserve = propCap * 0.20;
-  const usableFuel = propCap - fuelReserve;
-  const feasible = dvReq <= (transport.maxDV * 0.80) && fuelNeed <= usableFuel;
-  const totalCost = transport.dailyCost * Math.max(1, travelDays);
+  if (accelDist * 2 >= distance * 1000) {
+    totalTimeSec = 2 * Math.sqrt((distance * 1000) / Math.max(accel, 0.01));
+    peakSpeed = Math.sqrt((distance * 1000) * Math.max(accel, 0.01));
+  } else {
+    const cruiseDist = distance * 1000 - 2 * accelDist;
+    totalTimeSec = accelTime * 2 + cruiseDist / Math.max(peakSpeed, 1);
+  }
+
+  totalTimeSec *= (1 + gravityPenalty);
+  const days = Math.max(1, totalTimeSec / 86400);
+  const cost = transport.costPerDay * days;
+
+  const fuelFraction = Math.min(0.78, 0.18 + (peakSpeed / 1000) / Math.max(transport.deltaV_kms, 1) * 0.55 + gravityPenalty * 0.20);
+  const reserveFraction = 0.20;
+  const fuelMass = transport.mass_t * Math.min(0.95, fuelFraction + reserveFraction);
 
   return {
-    departureSec,
-    departureLabel: departureSec === state.simSeconds ? 'Немедленно' : formatSimDateTime(departureSec),
-    travelDays,
-    dvReq,
-    fuelNeed_t: fuelNeed / 1000,
-    totalCost,
-    feasible,
-    distanceKm: distance,
-    arrivalSec: departureSec + travelDays * 86400,
-    phaseDiff,
-    ringPenalty
+    departSimSeconds,
+    arrivalSimSeconds: departSimSeconds + totalTimeSec,
+    totalSimSeconds: totalTimeSec,
+    cost,
+    fuelMass_t: fuelMass,
+    peakSpeed_kms: peakSpeed / 1000
   };
 }
-function getUrgentPlan(fromMoon, toMoon, transport){
-  const p = calcBaseTransfer(fromMoon, toMoon, state.simSeconds, transport);
-  p.mode = 'urgent';
-  p.title = 'Срочный';
-  return p;
-}
-function getProfitablePlan(fromMoon, toMoon, transport){
+
+function evaluateUrgentAndBest(fromMoon, toMoon, transport){
+  const urgent = estimateRouteOption(fromMoon, toMoon, transport, state.simSeconds);
+
+  const w1 = 2 * Math.PI / Math.abs(fromMoon.periodSec || 1);
+  const w2 = 2 * Math.PI / Math.abs(toMoon.periodSec || 1);
   let best = null;
-  const horizon = 7 * 86400;
-  const step = 1800; // 30 min
-  for (let dt = step; dt <= horizon; dt += step) {
-    const departureSec = state.simSeconds + dt;
-    const p = calcBaseTransfer(fromMoon, toMoon, departureSec, transport);
-    if (!p.feasible) continue;
-    if (!best || p.travelDays < best.travelDays - 1e-6 || (Math.abs(p.travelDays - best.travelDays) < 1e-6 && p.departureSec < best.departureSec)) {
-      best = p;
+  for (let step = 0; step <= 7 * 24; step++){
+    const t = state.simSeconds + step * 3600;
+    const a1 = fromMoon.phase0 + fromMoon.direction * w1 * t;
+    const a2 = toMoon.phase0 + toMoon.direction * w2 * t;
+    let delta = Math.abs((a1 - a2) % (Math.PI * 2));
+    if (delta > Math.PI) delta = Math.PI * 2 - delta;
+    const candidate = estimateRouteOption(fromMoon, toMoon, transport, t);
+    const score = candidate.totalSimSeconds + delta * 80000;
+    if (!best || score < best.score){
+      best = {...candidate, score, angularGap:delta};
     }
   }
-  if (!best) {
-    best = calcBaseTransfer(fromMoon, toMoon, state.simSeconds + step, transport);
+  return {urgent, best};
+}
+
+function openTransportPanel(){
+  if (!state.routeA || !state.routeB) return;
+  state.routeSelectedTransport = null;
+  routeTransportText.innerHTML = 'Маршрут: <b>' + state.routeA.label + '</b> → <b>' + state.routeB.label + '</b>';
+  routeTransportList.innerHTML = '';
+  for (const tr of transportTypes){
+    const div = document.createElement('div');
+    div.className = 'routeCard';
+    div.innerHTML =
+      '<div class="routeCardTitle">' + tr.ru + ' "' + tr.name + '"</div>' +
+      '<div class="routeCardMeta">Масса: ' + formatMoney(tr.mass_t) + ' т<br>' +
+      'Свободный объём: ' + formatMoney(tr.freeVolume_m3) + ' м³<br>' +
+      'ΔV: ' + tr.deltaV_kms + ' км/с<br>' +
+      'Фрахт: ' + formatMoney(tr.costPerDay) + ' / сутки</div>';
+    div.addEventListener('click', () => {
+      state.routeSelectedTransport = tr;
+      [...routeTransportList.children].forEach(c => c.classList.remove('active'));
+      div.classList.add('active');
+    });
+    routeTransportList.appendChild(div);
   }
-  best.mode = 'profitable';
-  best.title = 'Выгодный';
-  return best;
+  routeTransportPanel.classList.add('open');
 }
-function openModal(el){ el.classList.add('open'); }
-function closeModal(el){ el.classList.remove('open'); }
-function renderTransportCards(){
-  transportCards.innerHTML = '';
-  state.chosenTransport = null;
-  state.chosenPlan = null;
-  toCalcBtn.disabled = true;
-  transports.forEach(tr => {
-    const card = document.createElement('div');
-    card.className = 'optionCard';
-    card.innerHTML =
-      '<h4>' + tr.kind + ' "' + tr.name + '"</h4>' +
-      '<div class="cardMeta">' +
-      'Общая масса: ' + formatMoney(tr.mass_t) + ' т<br>' +
-      'Свободный объём: ' + formatMoney(tr.volume_m3) + ' м³<br>' +
-      'Макс. ΔV: ' + tr.maxDV + ' км/с<br>' +
-      'Фрахт: ' + formatMoney(tr.dailyCost) + ' / сутки' +
-      '</div>';
-    card.addEventListener('click', () => {
-      [...transportCards.children].forEach(el => el.classList.remove('active'));
-      card.classList.add('active');
-      state.chosenTransport = tr;
-      toCalcBtn.disabled = false;
-    });
-    transportCards.appendChild(card);
-  });
-}
-function renderCalcOptions(){
-  calcOptions.innerHTML = '';
-  state.chosenPlan = null;
-  confirmRouteBtn.disabled = true;
-  const urgent = getUrgentPlan(state.routeFrom, state.routeTo, state.chosenTransport);
-  const profitable = getProfitablePlan(state.routeFrom, state.routeTo, state.chosenTransport);
-  [urgent, profitable].forEach(plan => {
-    const card = document.createElement('div');
-    card.className = 'optionCard';
-    const depText = plan.mode === 'urgent' ? 'Немедленно' : formatSimDateTime(plan.departureSec);
-    card.innerHTML =
-      '<div class="cardRow"><h4>' + plan.title + '</h4><span class="smallTag">' + (plan.feasible ? 'доступно' : 'недоступно') + '</span></div>' +
-      '<div class="cardMeta">' +
-      'В пути: ' + plan.travelDays.toFixed(2) + ' суток<br>' +
-      'Стоимость: ' + formatMoney(plan.totalCost) + '<br>' +
-      'Топливо: ' + formatMoney(plan.fuelNeed_t.toFixed(0)) + ' т<br>' +
-      'Отправка: ' + depText +
-      '</div>';
-    if (!plan.feasible || plan.totalCost > state.money) {
-      card.classList.add('warning');
+
+function openTimingPanel(){
+  const tr = state.routeSelectedTransport;
+  if (!tr) return;
+  routeTransportPanel.classList.remove('open');
+  routeTimingPanel.classList.add('open');
+  routeTimingText.innerHTML = 'Транспорт: <b>' + tr.ru + ' "' + tr.name + '"</b>';
+  routeTimingList.innerHTML = '';
+  state.routeSelectedTiming = null;
+
+  const variants = evaluateUrgentAndBest(state.routeA, state.routeB, tr);
+  const cards = [
+    {
+      key:'urgent',
+      title:'Срочный',
+      option:variants.urgent,
+      launchText:'Немедленно'
+    },
+    {
+      key:'best',
+      title:'Выгодный',
+      option:variants.best,
+      launchText:'Отправка: ' + formatSimDate(SIM_START_MS + variants.best.departSimSeconds * 1000)
     }
-    card.addEventListener('click', () => {
-      [...calcOptions.children].forEach(el => el.classList.remove('active'));
-      card.classList.add('active');
-      state.chosenPlan = plan;
-      const affordable = plan.totalCost <= state.money;
-      confirmRouteBtn.disabled = !(plan.feasible && affordable);
-      if (!plan.feasible) {
-        calcStatus.innerHTML = '<span class="bad">Недостаточно ΔV или доступного топлива с резервом 20%.</span>';
-      } else if (!affordable) {
-        calcStatus.innerHTML = '<span class="bad">Недостаточно средств для подтверждения маршрута.</span>';
-      } else {
-        calcStatus.innerHTML = '<span class="good">Маршрут доступен. Стоимость будет списана сразу.</span>';
-      }
+  ];
+
+  for (const item of cards){
+    const days = item.option.totalSimSeconds / 86400;
+    const div = document.createElement('div');
+    div.className = 'routeCard';
+    div.innerHTML =
+      '<div class="routeCardTitle">' + item.title + '</div>' +
+      '<div class="routeCardMeta">Стоимость: ' + formatMoney(item.option.cost) + '<br>' +
+      'Время в пути: ' + days.toFixed(2) + ' суток<br>' +
+      item.launchText + '</div>';
+    div.addEventListener('click', () => {
+      state.routeSelectedTiming = item;
+      [...routeTimingList.children].forEach(c => c.classList.remove('active'));
+      div.classList.add('active');
     });
-    calcOptions.appendChild(card);
-  });
-  calcStatus.innerHTML = 'Выберите вариант рейса.';
+    routeTimingList.appendChild(div);
+  }
 }
-function quadraticPoint(p0, p1, p2, t){
-  const u = 1 - t;
-  return {
-    x: u*u*p0.x + 2*u*t*p1.x + t*t*p2.x,
-    y: u*u*p0.y + 2*u*t*p1.y + t*t*p2.y
-  };
-}
-function getActiveRouteScreenGeometry(route){
-  const fromState = getMoonStateAt(route.from, route.departureSec);
-  const toState = getMoonStateAt(route.to, route.arrivalSec);
-  const p0 = fromState.p;
-  const p2 = toState.p;
-  const mid = {x:(p0.x+p2.x)/2, y:(p0.y+p2.y)/2};
-  const dx = p2.x - p0.x, dy = p2.y - p0.y;
-  const dist = Math.max(1, Math.hypot(dx,dy));
-  const nx = -dy / dist, ny = dx / dist;
-  const sat = worldToScreen(0,0);
-  let ox = mid.x - sat.x, oy = mid.y - sat.y;
-  const olen = Math.max(1, Math.hypot(ox,oy));
-  ox /= olen; oy /= olen;
-  const p1 = {
-    x: mid.x + nx * dist * 0.16 + ox * dist * 0.20,
-    y: mid.y + ny * dist * 0.16 + oy * dist * 0.20 - dist * 0.08
-  };
-  return {p0,p1,p2};
-}
-function drawActiveRoute(){
-  const route = state.activeRoute;
-  if (!route) return;
-  const geo = getActiveRouteScreenGeometry(route);
-  dctx.save();
-  dctx.setLineDash([4, 12]);
-  dctx.lineDashOffset = -((state.simSeconds - route.confirmSec) * 2);
-  dctx.beginPath();
-  dctx.moveTo(geo.p0.x, geo.p0.y);
-  dctx.quadraticCurveTo(geo.p1.x, geo.p1.y, geo.p2.x, geo.p2.y);
-  dctx.strokeStyle = 'rgba(255,255,255,0.55)';
-  dctx.lineWidth = 1;
-  dctx.stroke();
-  dctx.restore();
 
-  let t;
-  if (state.simSeconds < route.departureSec) t = 0;
-  else t = Math.min(1, (state.simSeconds - route.departureSec) / (route.arrivalSec - route.departureSec));
-
-  const pos = quadraticPoint(geo.p0, geo.p1, geo.p2, t);
-  const size = 4;
-  dctx.fillStyle = '#ffffff';
-  dctx.fillRect(Math.round(pos.x - size/2), Math.round(pos.y - size/2), size, size);
-
-  // corner brackets
-  const hs = 8, arm = 4;
-  dctx.strokeStyle = 'rgba(124,199,255,0.95)';
-  dctx.lineWidth = 1;
-  // TL
-  dctx.beginPath(); dctx.moveTo(pos.x-hs, pos.y-hs+arm); dctx.lineTo(pos.x-hs, pos.y-hs); dctx.lineTo(pos.x-hs+arm, pos.y-hs); dctx.stroke();
-  // TR
-  dctx.beginPath(); dctx.moveTo(pos.x+hs-arm, pos.y-hs); dctx.lineTo(pos.x+hs, pos.y-hs); dctx.lineTo(pos.x+hs, pos.y-hs+arm); dctx.stroke();
-  // BR
-  dctx.beginPath(); dctx.moveTo(pos.x+hs, pos.y+hs-arm); dctx.lineTo(pos.x+hs, pos.y+hs); dctx.lineTo(pos.x+hs-arm, pos.y+hs); dctx.stroke();
-  // BL
-  dctx.beginPath(); dctx.moveTo(pos.x-hs+arm, pos.y+hs); dctx.lineTo(pos.x-hs, pos.y+hs); dctx.lineTo(pos.x-hs, pos.y+hs-arm); dctx.stroke();
+function currentMoonPosition(m, simSeconds){
+  const theta = m.phase0 + m.direction * (simSeconds / m.periodSec) * Math.PI * 2;
+  return projectOrbitPoint(m.sma_km, theta, m.incRad, m.nodeRad);
 }
+
 function confirmRoute(){
-  if (!state.chosenPlan || !state.chosenTransport) return;
-  if (!state.chosenPlan.feasible) return;
-  if (state.chosenPlan.totalCost > state.money) return;
-  state.money -= state.chosenPlan.totalCost;
+  const tr = state.routeSelectedTransport;
+  const timing = state.routeSelectedTiming;
+  if (!tr || !timing) return;
+  if (state.money < timing.option.cost) {
+    alert('Недостаточно средств.');
+    return;
+  }
+
+  state.money -= timing.option.cost;
   updateMoneyBox();
+
+  const startPos = currentMoonPosition(state.routeA, timing.option.departSimSeconds);
+  const endPos = currentMoonPosition(state.routeB, timing.option.arrivalSimSeconds);
+  const midX = (startPos.x + endPos.x) / 2;
+  const midY = (startPos.y + endPos.y) / 2;
+  const dx = endPos.x - startPos.x;
+  const dy = endPos.y - startPos.y;
+  const len = Math.max(1, Math.hypot(dx, dy));
+  const nx = -dy / len;
+  const ny = dx / len;
+  const bow = Math.min(900000, len * 0.25);
+
   state.activeRoute = {
-    from: state.routeFrom,
-    to: state.routeTo,
-    transport: state.chosenTransport,
-    mode: state.chosenPlan.mode,
-    departureSec: state.chosenPlan.departureSec,
-    arrivalSec: state.chosenPlan.arrivalSec,
-    confirmSec: state.simSeconds,
-    fuelNeed_t: state.chosenPlan.fuelNeed_t,
-    totalCost: state.chosenPlan.totalCost
+    from:state.routeA,
+    to:state.routeB,
+    transport:tr,
+    departureSimSeconds:timing.option.departSimSeconds,
+    arrivalSimSeconds:timing.option.arrivalSimSeconds,
+    totalSimSeconds:timing.option.totalSimSeconds,
+    startPos,
+    endPos,
+    ctrlPos:{x:midX + nx * bow, y:midY + ny * bow},
+    cost:timing.option.cost,
+    fuelMass_t:timing.option.fuelMass_t,
+    peakSpeed_kms:timing.option.peakSpeed_kms,
+    currentScreenX:null,
+    currentScreenY:null
   };
-  closeModal(calcModal);
-  closeModal(transportModal);
+
   state.routeMode = false;
-  state.routeFrom = null;
-  state.routeTo = null;
-  updateRouteUI();
-}
-function resetRouteDialogs(){
-  state.chosenTransport = null;
-  state.chosenPlan = null;
-  renderTransportCards();
-  calcOptions.innerHTML = '';
-  calcStatus.textContent = '';
-  confirmRouteBtn.disabled = true;
+  routeModeBtn.classList.remove('active');
+  state.routeA = null;
+  state.routeB = null;
+  state.routeSelectedTransport = null;
+  state.routeSelectedTiming = null;
+  routeTransportPanel.classList.remove('open');
+  routeTimingPanel.classList.remove('open');
 }
 
-// ===== Render loop =====
+function toggleRouteMode(){
+  state.routeMode = !state.routeMode;
+  routeModeBtn.classList.toggle('active', state.routeMode);
+  state.routeA = null;
+  state.routeB = null;
+  routeTransportPanel.classList.remove('open');
+  routeTimingPanel.classList.remove('open');
+  if (state.routeMode){
+    state.pausedBeforeRoute = state.speedMode;
+    setSpeed(0);
+  }
+}
+
+function handleRouteSelection(moon){
+  if (!state.routeMode) return false;
+  if (!state.routeA || state.routeA.name === moon.name){
+    state.routeA = state.routeA && state.routeA.name === moon.name ? null : moon;
+    return true;
+  }
+  if (!state.routeB || state.routeB.name === moon.name){
+    state.routeB = state.routeB && state.routeB.name === moon.name ? null : moon;
+    if (state.routeA && state.routeB) openTransportPanel();
+    return true;
+  }
+  return true;
+}
+
 function render(ts){
   if (!state.lastRenderTs) state.lastRenderTs = ts;
   const minFrame = 1000 / targetFPS;
   const elapsedMs = ts - state.lastRenderTs;
   if (elapsedMs < minFrame){ requestAnimationFrame(render); return; }
+
   const dt = elapsedMs / 1000;
   state.lastRenderTs = ts;
   state.frameCount++;
+
   if (state.speedMode === 1) state.simSeconds += dt;
   if (state.speedMode === 60) state.simSeconds += dt * 60;
   if (state.speedMode === 3600) state.simSeconds += dt * 3600;
+  state.dashOffset += dt * 20;
   updateSimTimeBox();
 
   const detail = getDetailLevel();
-  if (state.staticDirty || detail !== state.lastDetailLevel) {
+  if (state.staticDirty || detail !== state.lastDetailLevel){
     drawStaticScene();
     updateScaleInfo();
   } else {
@@ -951,11 +1090,15 @@ function render(ts){
   }
 
   dctx.clearRect(0,0,state.w,state.h);
-  drawSelectedOrbit();
-  drawActiveRoute();
+  if (state.selectedMoon) drawSelectedOrbit();
+  if (state.routeMode && state.routeA) drawRouteSelectionOrbit(state.routeA, 'rgba(111,227,162,0.95)');
+  if (state.routeMode && state.routeB) drawRouteSelectionOrbit(state.routeB, 'rgba(124,199,255,0.95)');
   for (const m of state.visibleMoons) drawMoon(m, detail);
+  drawRoutePath();
+
   requestAnimationFrame(render);
 }
+
 function setSpeed(mode){
   state.speedMode = mode;
   document.getElementById('pauseBtn').classList.toggle('active', mode === 0);
@@ -972,21 +1115,12 @@ bindTap('pauseBtn', () => setSpeed(0));
 bindTap('realBtn', () => setSpeed(1));
 bindTap('minuteBtn', () => setSpeed(60));
 bindTap('hourBtn', () => setSpeed(3600));
-bindTap('infoBtn', () => infoSheet.classList.toggle('open'));
+bindTap('infoBtn', () => { infoSheet.classList.toggle('open'); });
 bindTap('routeModeBtn', () => toggleRouteMode());
-bindTap('chooseRouteBtn', () => {
-  if (!(state.routeFrom && state.routeTo)) return;
-  resetRouteDialogs();
-  openModal(transportModal);
-});
-bindTap('toCalcBtn', () => {
-  if (!state.chosenTransport) return;
-  renderCalcOptions();
-  closeModal(transportModal);
-  openModal(calcModal);
-});
-bindTap('confirmRouteBtn', () => confirmRoute());
-document.querySelectorAll('[data-close]').forEach(btn => btn.addEventListener('click', () => closeModal(document.getElementById(btn.dataset.close))));
+bindTap('routeTransportCancelBtn', () => { routeTransportPanel.classList.remove('open'); state.routeSelectedTransport = null; });
+bindTap('routeTransportNextBtn', () => openTimingPanel());
+bindTap('routeTimingBackBtn', () => { routeTimingPanel.classList.remove('open'); routeTransportPanel.classList.add('open'); });
+bindTap('routeConfirmBtn', () => confirmRoute());
 
 dynamicCanvas.addEventListener('wheel', (e) => {
   e.preventDefault();
@@ -1008,6 +1142,7 @@ dynamicCanvas.addEventListener('pointermove', (e) => {
   if (!state.pointers.has(e.pointerId)) return;
   const prev = state.pointers.get(e.pointerId);
   state.pointers.set(e.pointerId, {x:e.clientX, y:e.clientY});
+
   if (state.pointers.size === 1){
     const dx = e.clientX - prev.x, dy = e.clientY - prev.y;
     if (Math.abs(dx) + Math.abs(dy) > 2) state.moved = true;
@@ -1016,9 +1151,9 @@ dynamicCanvas.addEventListener('pointermove', (e) => {
     state.moved = true;
     const pts = [...state.pointers.values()];
     const d = Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y);
-    if (!state.pinchBaseDistance) {
+    if (!state.pinchBaseDistance){
       state.pinchBaseDistance = d; state.pinchBaseKmPerPx = state.kmPerPx;
-    } else if (d > 0) {
+    } else if (d > 0){
       state.kmPerPx = Math.max(100, Math.min(maxStructureKm, state.pinchBaseKmPerPx * (state.pinchBaseDistance / d)));
       markStaticDirty();
     }
@@ -1030,11 +1165,12 @@ function clearPointer(e){
 }
 dynamicCanvas.addEventListener('pointerup', (e) => {
   const wasTap = !state.moved && (performance.now() - state.downAt < 250);
-  if (wasTap) {
+  if (wasTap){
     const hit = hitTest(e.clientX, e.clientY);
-    if (hit) {
-      if (state.routeMode) routeToggleMoon(hit);
-      else showInfo(hit);
+    if (hit && hit.type === 'transport') showTransportInfo(hit.route);
+    else if (hit && hit.type === 'moon'){
+      if (!handleRouteSelection(hit.moon)) showInfo(hit.moon);
+      else if (!state.routeMode) showInfo(hit.moon);
     } else if (!state.routeMode) {
       showInfo(null);
     }
@@ -1044,22 +1180,21 @@ dynamicCanvas.addEventListener('pointerup', (e) => {
 dynamicCanvas.addEventListener('pointercancel', clearPointer);
 dynamicCanvas.addEventListener('click', (e) => {
   const hit = hitTest(e.clientX, e.clientY);
-  if (!hit) return;
-  if (state.routeMode) routeToggleMoon(hit);
-  else showInfo(hit);
+  if (hit && hit.type === 'transport') showTransportInfo(hit.route);
+  else if (hit && hit.type === 'moon'){
+    if (!handleRouteSelection(hit.moon)) showInfo(hit.moon);
+    else if (!state.routeMode) showInfo(hit.moon);
+  } else if (!state.routeMode) {
+    showInfo(null);
+  }
 });
 
 window.addEventListener('resize', resize);
-
-// init
-loadingBox.classList.remove('hidden');
 resize();
 fitAll();
 updateMoneyBox();
 updateSimTimeBox();
-updateRouteUI();
 setSpeed(0);
-loadingBox.classList.add('hidden');
 requestAnimationFrame(render);
 </script>
 </body>
