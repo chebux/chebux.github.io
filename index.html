@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no" />
 <title>Saturn System Full Visual</title>
 <style>
+@import url("https://fonts.googleapis.com/css2?family=Onest:wght@400;600;700&display=swap");
 :root{
   --bg:#040507;
   --panel:rgba(8,10,14,.90);
@@ -22,7 +23,7 @@ html,body{
   padding:0;
   background:var(--bg);
   color:var(--text);
-  font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+  font-family:"Onest",system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
   height:100%;
   overflow:hidden;
 }
@@ -47,6 +48,36 @@ html,body{
   right:8px;
   z-index:30;
 }
+
+.hudLeft{
+  position:fixed;
+  top:max(8px, env(safe-area-inset-top));
+  left:8px;
+  z-index:30;
+}
+.hudBox{
+  min-height:36px;
+  display:flex;
+  align-items:center;
+  padding:0 12px;
+  border-radius:999px;
+  border:1px solid rgba(255,255,255,.14);
+  background:rgba(8,10,14,.78);
+  color:var(--text);
+  font-size:13px;
+  font-weight:700;
+  backdrop-filter:blur(8px);
+}
+.topbar{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+.timeBox{
+  font-variant-numeric:tabular-nums;
+  white-space:nowrap;
+}
+
 .iconBtn{
   width:36px;
   height:36px;
@@ -249,7 +280,12 @@ button.control.active{
   <canvas id="dynamicCanvas" class="layerCanvas"></canvas>
 </div>
 
+<div class="hudLeft">
+  <div class="hudBox" id="moneyBox">1000000</div>
+</div>
+
 <div class="topbar">
+  <div class="hudBox timeBox" id="timeBox">2701-04-01 00:00:00</div>
   <button type="button" id="infoBtn" class="iconBtn" aria-label="Информация">i</button>
 </div>
 
@@ -260,7 +296,7 @@ button.control.active{
     <div>Сатурн показан как простой объёмный шар без текстуры.</div>
     <div>Орбиты и кольца проецируются как эллипсы.</div>
     <div>Информационная панель находится по центру над управлением.</div>
-    <div>Названия спутников даны как русский + английский вариант.</div>
+    <div>Названия спутников даны как русский + английский вариант; для цифровых имён оставлена латиница.</div>
     <div>Если у объекта нет устойчивого русского имени, остаётся только латиница.</div>
   </div>
 </div>
@@ -270,8 +306,8 @@ button.control.active{
     <div class="grid oneRow">
       <button type="button" id="pauseBtn" class="control active">Пауза</button>
       <button type="button" id="realBtn" class="control">1 сек / сек</button>
+      <button type="button" id="minuteBtn" class="control">1 мин / сек</button>
       <button type="button" id="hourBtn" class="control">1 час / сек</button>
-      <button type="button" id="labelsBtn" class="control active">Подписи</button>
     </div>
   </div>
 </div>
@@ -312,7 +348,7 @@ const targetFPS = isMobile ? 30 : 60;
 const majorTailNames = new Set(['Titan','Rhea','Iapetus','Dione','Tethys','Enceladus','Mimas']);
 
 const ruMap = {
-  "Mimas":"Мимас","Enceladus":"Энцелад","Tethys":"Тефия","Dione":"Диона","Rhea":"Рея",
+  "Mimas":"Мимас","Enceladus":"Энцилад","Tethys":"Тефия","Dione":"Диона","Rhea":"Рея",
   "Titan":"Титан","Hyperion":"Гиперион","Iapetus":"Япет","Phoebe":"Феба","Janus":"Янус",
   "Epimetheus":"Эпиметей","Prometheus":"Прометей","Pandora":"Пандора","Atlas":"Атлас",
   "Pan":"Пан","Daphnis":"Дафнис","Aegaeon":"Эгеон","Methone":"Метона","Anthe":"Анте",
@@ -341,6 +377,8 @@ const scaleInfo = document.getElementById('scaleInfo');
 const iconCanvas = document.getElementById('moonIconCanvas');
 const ictx = iconCanvas.getContext('2d');
 const loadingBox = document.getElementById('loadingBox');
+const timeBox = document.getElementById('timeBox');
+const SIM_START_MS = Date.UTC(2701, 3, 1, 0, 0, 0);
 
 const state = {
   w:0,
@@ -353,7 +391,6 @@ const state = {
   kmPerPx:1,
   baseKmPerPx:1,
   speedMode:0,
-  showLabels:true,
   simSeconds:0,
   lastRenderTs:0,
   frameCount:0,
@@ -382,7 +419,7 @@ function getCSS(name){
   return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
 }
 function moonColor(m){
-  return m.diameter_km > 1000 ? getCSS('--purple') : getCSS('--text');
+  return m.diameter_km > 500 ? getCSS('--purple') : getCSS('--text');
 }
 function hash01(str){
   let h = 2166136261 >>> 0;
@@ -622,8 +659,8 @@ function getDetailLevel(){
 function getVisibleMoons(){
   const detail = getDetailLevel();
   let filtered;
-  if (detail === 'far') filtered = moons.filter(m => m.diameter_km >= 100);
-  else if (detail === 'medium') filtered = moons.filter(m => m.diameter_km >= 10);
+  if (detail === 'far') filtered = moons.filter(m => m.diameter_km >= 10);
+  else if (detail === 'medium') filtered = moons.filter(m => m.diameter_km >= 2);
   else filtered = moons.slice();
   state.visibleMoons = filtered;
   return filtered;
@@ -814,6 +851,15 @@ function drawTailOrbit(m, thetaNow){
   }
 }
 
+
+function drawSelectedOrbit(){
+  if (!state.selectedMoon) return;
+  const m = state.selectedMoon;
+  const segments = getDetailLevel() === 'close' ? 64 : 40;
+  const pts = buildProjectedOrbitPoints(m.sma_km, m.incRad, m.nodeRad, segments);
+  drawProjectedPath(dctx, pts, 'rgba(243,211,106,0.95)', 3);
+}
+
 function drawMoon(m, detail){
   if (isMobile && detail !== 'close' && m.diameter_km < 100) return;
 
@@ -841,7 +887,7 @@ function drawMoon(m, detail){
   dctx.fillStyle = moonColor(m);
   dctx.fillRect(Math.round(p.x - s / 2), Math.round(p.y - s / 2), s, s);
 
-  if (state.showLabels && state.selectedMoon && state.selectedMoon.name === m.name){
+  if (state.selectedMoon && state.selectedMoon.name === m.name){
     dctx.textAlign = 'center';
     dctx.fillStyle = '#ffffff';
     dctx.font = '10px system-ui,-apple-system,Segoe UI,Roboto,sans-serif';
@@ -943,6 +989,22 @@ function hitTest(x, y){
   return best;
 }
 
+
+function formatSimDateTime(){
+  const d = new Date(SIM_START_MS + Math.round(state.simSeconds * 1000));
+  const yyyy = d.getUTCFullYear();
+  const mm = String(d.getUTCMonth() + 1).padStart(2, '0');
+  const dd = String(d.getUTCDate()).padStart(2, '0');
+  const hh = String(d.getUTCHours()).padStart(2, '0');
+  const mi = String(d.getUTCMinutes()).padStart(2, '0');
+  const ss = String(d.getUTCSeconds()).padStart(2, '0');
+  return `${yyyy}-${mm}-${dd} ${hh}:${mi}:${ss}`;
+}
+
+function updateSimTimeBox(){
+  timeBox.textContent = formatSimDateTime();
+}
+
 function render(ts){
   if (!state.lastRenderTs) state.lastRenderTs = ts;
   const minFrame = 1000 / targetFPS;
@@ -957,7 +1019,9 @@ function render(ts){
   state.frameCount++;
 
   if (state.speedMode === 1) state.simSeconds += dt;
+  if (state.speedMode === 60) state.simSeconds += dt * 60;
   if (state.speedMode === 3600) state.simSeconds += dt * 3600;
+  updateSimTimeBox();
 
   const detail = getDetailLevel();
   if (state.staticDirty || detail !== state.lastDetailLevel){
@@ -968,6 +1032,7 @@ function render(ts){
   }
 
   dctx.clearRect(0, 0, state.w, state.h);
+  drawSelectedOrbit();
   for (const m of state.visibleMoons){
     drawMoon(m, detail);
   }
@@ -979,6 +1044,7 @@ function setSpeed(mode){
   state.speedMode = mode;
   document.getElementById('pauseBtn').classList.toggle('active', mode === 0);
   document.getElementById('realBtn').classList.toggle('active', mode === 1);
+  document.getElementById('minuteBtn').classList.toggle('active', mode === 60);
   document.getElementById('hourBtn').classList.toggle('active', mode === 3600);
 }
 
@@ -993,11 +1059,8 @@ function bindTap(id, fn){
 
 bindTap('pauseBtn', () => setSpeed(0));
 bindTap('realBtn', () => setSpeed(1));
+bindTap('minuteBtn', () => setSpeed(60));
 bindTap('hourBtn', () => setSpeed(3600));
-bindTap('labelsBtn', () => {
-  state.showLabels = !state.showLabels;
-  document.getElementById('labelsBtn').classList.toggle('active', state.showLabels);
-});
 bindTap('infoBtn', () => {
   infoSheet.classList.toggle('open');
 });
@@ -1081,6 +1144,7 @@ async function init(){
 
     resize();
     fitAll();
+    updateSimTimeBox();
     setSpeed(0);
     loadingBox.style.display = 'none';
     requestAnimationFrame(render);
