@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no" />
-<title>Saturn System Offline Route Fixed</title>
+<title>Saturn System Offline Route 292</title>
 <style>
 :root{
   --bg:#040507;
@@ -16,15 +16,15 @@
   --blue:#7cc7ff;
   --red:#ff8b8b;
 }
-*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html,body{
-  margin:0;padding:0;background:var(--bg);color:var(--text);
+  margin:0;padding:0;height:100%;overflow:hidden;
+  background:var(--bg);color:var(--text);
   font-family:Onest,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
-  height:100%;overflow:hidden;
 }
-#app{position:fixed;inset:0;}
-.layerCanvas{position:absolute;inset:0;width:100%;height:100%;display:block;}
-#dynamicCanvas{touch-action:none;}
+#app{position:fixed;inset:0}
+canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+#dynamicCanvas{touch-action:none}
 
 .topbar{
   position:fixed;top:max(8px,env(safe-area-inset-top));right:8px;z-index:30;
@@ -34,115 +34,126 @@ html,body{
   position:fixed;top:max(8px,env(safe-area-inset-top));left:8px;z-index:30;
   display:flex;flex-direction:column;gap:8px;
 }
-.hudBox,.hudBtn{
-  min-height:36px;display:flex;align-items:center;justify-content:center;padding:0 12px;
-  border-radius:999px;border:1px solid rgba(255,255,255,.14);background:rgba(8,10,14,.78);
-  color:var(--text);font-size:13px;font-weight:700;backdrop-filter:blur(8px);
+.hudBox,.hudBtn,.iconBtn{
+  min-height:36px;display:flex;align-items:center;justify-content:center;
+  padding:0 12px;border-radius:999px;
+  border:1px solid rgba(255,255,255,.14);
+  background:rgba(8,10,14,.78);
+  color:var(--text);
+  font-size:13px;font-weight:700;
+  backdrop-filter:blur(8px);
 }
-.hudBtn{cursor:pointer;touch-action:manipulation;}
-.hudBtn.active{background:rgba(111,227,162,.16);border-color:rgba(111,227,162,.45);color:var(--green);}
-.iconBtn{
-  width:36px;height:36px;border-radius:999px;display:flex;align-items:center;justify-content:center;
-  border:1px solid rgba(255,255,255,.14);background:rgba(8,10,14,.78);color:var(--text);
-  font-size:18px;font-weight:700;backdrop-filter:blur(8px);touch-action:manipulation;
-}
-.timeBox{font-variant-numeric:tabular-nums;white-space:nowrap;}
-.timeDate{font-weight:900;}
-.timeClock{font-weight:600;}
+.hudBtn,.iconBtn{touch-action:manipulation;cursor:pointer}
+.hudBtn.active{background:rgba(111,227,162,.16);border-color:rgba(111,227,162,.45);color:var(--green)}
+.iconBtn{width:36px;padding:0;font-size:18px}
+.timeBox{font-variant-numeric:tabular-nums;white-space:nowrap}
+.timeDate{font-weight:900}
+.timeClock{font-weight:600}
 
 .infoSheet{
-  position:fixed;top:max(50px,calc(env(safe-area-inset-top) + 50px));right:8px;width:min(90vw,360px);
-  max-height:min(72vh,620px);overflow:auto;background:var(--panel);border:1px solid rgba(255,255,255,.08);
-  border-radius:14px;padding:12px;display:none;z-index:40;backdrop-filter:blur(10px);
+  position:fixed;top:max(50px,calc(env(safe-area-inset-top) + 50px));right:8px;z-index:40;
+  width:min(90vw,360px);max-height:min(72vh,620px);overflow:auto;
+  background:var(--panel);border:1px solid rgba(255,255,255,.08);border-radius:14px;
+  padding:12px;display:none;backdrop-filter:blur(10px);
 }
-.infoSheet.open{display:block;}
-.title{font-size:14px;font-weight:700;margin-bottom:8px;}
-.meta{font-size:11px;color:var(--muted);line-height:1.4;}
-.legend{display:grid;gap:6px;font-size:11px;color:var(--muted);margin-top:10px;}
+.infoSheet.open{display:block}
+.title{font-size:14px;font-weight:700;margin-bottom:8px}
+.meta{font-size:11px;color:var(--muted);line-height:1.4}
+.legend{display:grid;gap:6px;font-size:11px;color:var(--muted);margin-top:10px}
 
-.controls{position:fixed;left:8px;right:8px;bottom:max(8px,env(safe-area-inset-bottom));z-index:25;}
+.controls{
+  position:fixed;left:8px;right:8px;bottom:max(8px,env(safe-area-inset-bottom));z-index:25;
+}
 .panel{
   background:rgba(8,10,14,.78);backdrop-filter:blur(10px);
   border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:8px;
 }
-.grid.oneRow{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px;}
+.grid.oneRow{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:6px}
 button.control,button.primaryBtn{
-  appearance:none;min-height:42px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.06);
-  color:var(--text);border-radius:10px;padding:8px 6px;font-size:11px;line-height:1.15;font-weight:700;text-align:center;
+  appearance:none;min-height:42px;border:1px solid rgba(255,255,255,.12);
+  background:rgba(255,255,255,.06);color:var(--text);border-radius:10px;
+  padding:8px 6px;font-size:11px;line-height:1.15;font-weight:700;text-align:center;
   touch-action:manipulation;
 }
-button.control.active{background:rgba(243,211,106,.16);border-color:rgba(243,211,106,.45);color:var(--yellow);}
-button.primaryBtn{border-color:rgba(243,211,106,.45);background:rgba(243,211,106,.16);color:var(--yellow);}
-button:disabled{opacity:.45;}
+button.control.active{background:rgba(243,211,106,.16);border-color:rgba(243,211,106,.45);color:var(--yellow)}
+button.primaryBtn{border-color:rgba(243,211,106,.45);background:rgba(243,211,106,.16);color:var(--yellow)}
+button:disabled{opacity:.45}
 
 .routePanel{
-  position:fixed;left:50%;transform:translateX(-50%);bottom:max(118px,calc(env(safe-area-inset-bottom) + 118px));
+  position:fixed;left:50%;transform:translateX(-50%);
+  bottom:max(118px,calc(env(safe-area-inset-bottom) + 118px));
   width:min(92vw,460px);display:none;z-index:29;
 }
-.routeRow{display:flex;gap:8px;align-items:center;justify-content:space-between;flex-wrap:wrap;}
-.routeEndpoints{display:grid;gap:4px;font-size:12px;color:var(--text);}
-.routeHint{font-size:11px;color:var(--muted);margin-top:6px;}
+.routeRow{display:flex;gap:8px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.routeEndpoints{display:grid;gap:4px;font-size:12px}
+.routeHint{font-size:11px;color:var(--muted);margin-top:6px}
 
 .infoBox{
-  position:fixed;left:50%;transform:translateX(-50%);bottom:max(66px,calc(env(safe-area-inset-bottom) + 66px));
-  width:min(94vw,420px);background:var(--panel);border:1px solid rgba(255,255,255,.08);border-radius:12px;
+  position:fixed;left:50%;transform:translateX(-50%);
+  bottom:max(66px,calc(env(safe-area-inset-bottom) + 66px));
+  width:min(94vw,420px);background:var(--panel);
+  border:1px solid rgba(255,255,255,.08);border-radius:12px;
   padding:10px 12px;font-size:12px;line-height:1.35;display:none;z-index:28;
 }
-.infoWrap{display:flex;gap:10px;align-items:stretch;}
+.infoWrap{display:flex;gap:10px;align-items:stretch}
 .iconSlot{
-  width:74px;min-width:74px;display:flex;align-items:center;justify-content:center;border-radius:10px;
-  background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);
+  width:74px;min-width:74px;display:flex;align-items:center;justify-content:center;
+  border-radius:10px;background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);
 }
-#moonIconCanvas{width:64px;height:64px;image-rendering:pixelated;image-rendering:crisp-edges;display:block;}
-.infoText{flex:1 1 auto;}
-.infoText b{display:block;margin-bottom:2px;}
+#moonIconCanvas{width:64px;height:64px;image-rendering:pixelated;image-rendering:crisp-edges;display:block}
+.infoText{flex:1 1 auto}
+.infoText b{display:block;margin-bottom:2px}
 
 .modalOverlay{
-  position:fixed;inset:0;background:rgba(0,0,0,.52);display:none;align-items:center;justify-content:center;z-index:60;padding:20px;
+  position:fixed;inset:0;background:rgba(0,0,0,.52);display:none;
+  align-items:center;justify-content:center;z-index:60;padding:20px;
 }
-.modalOverlay.open{display:flex;}
+.modalOverlay.open{display:flex}
 .modal{
-  width:min(96vw,560px);max-height:min(82vh,780px);overflow:auto;background:var(--panel);
-  border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:14px;
+  width:min(96vw,560px);max-height:min(82vh,780px);overflow:auto;
+  background:var(--panel);border:1px solid rgba(255,255,255,.08);
+  border-radius:16px;padding:14px;
 }
-.modalHeader{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px;}
-.modalTitle{font-size:16px;font-weight:700;}
+.modalHeader{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}
+.modalTitle{font-size:16px;font-weight:700}
 button.closeBtn{
   appearance:none;width:34px;height:34px;border-radius:999px;border:1px solid rgba(255,255,255,.14);
   background:rgba(255,255,255,.06);color:var(--text);font-size:18px;
 }
-.cardGrid{display:grid;gap:10px;}
+.cardGrid{display:grid;gap:10px}
 .optionCard{
   border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:12px;background:rgba(255,255,255,.03);
 }
-.optionCard.active{border-color:rgba(243,211,106,.45);background:rgba(243,211,106,.08);}
-.optionCard h4{margin:0 0 6px;font-size:14px;}
-.cardMeta{font-size:12px;color:var(--muted);line-height:1.45;}
-.statusBox{font-size:12px;color:var(--muted);margin-top:6px;}
-.smallTag{display:inline-flex;padding:4px 8px;border-radius:999px;background:rgba(255,255,255,.06);font-size:11px;color:var(--muted);}
+.optionCard.active{border-color:rgba(243,211,106,.45);background:rgba(243,211,106,.08)}
+.optionCard h4{margin:0 0 6px;font-size:14px}
+.cardMeta{font-size:12px;color:var(--muted);line-height:1.45}
+.statusBox{font-size:12px;color:var(--muted);margin-top:6px}
+.smallTag{
+  display:inline-flex;padding:4px 8px;border-radius:999px;background:rgba(255,255,255,.06);
+  font-size:11px;color:var(--muted)
+}
+
 .errorBox{
-  position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);width:min(92vw,440px);
-  background:#200;border:1px solid rgba(255,255,255,.2);border-radius:12px;padding:14px;z-index:200;display:none;
+  position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);
+  width:min(92vw,480px);background:#200;border:1px solid rgba(255,255,255,.22);
+  border-radius:12px;padding:14px;z-index:200;display:none;
   white-space:pre-wrap;font-size:12px;line-height:1.4;
 }
-.hidden{display:none!important;}
 
-.controls,.controls *,.topbar,.topbar *,.infoSheet,.infoSheet *,.routePanel,.routePanel *{touch-action:manipulation;}
 @media (max-width:390px){
-  .controls{left:6px;right:6px;}
-  .grid.oneRow{gap:5px;}
-  button.control,button.primaryBtn{min-height:40px;font-size:10px;padding:7px 4px;}
-  .infoBox{bottom:max(70px,calc(env(safe-area-inset-bottom) + 70px));width:min(96vw,360px);}
-  .iconSlot{width:68px;min-width:68px;}
-  #moonIconCanvas{width:58px;height:58px;}
-  .routePanel{bottom:max(118px,calc(env(safe-area-inset-bottom) + 118px));}
+  .controls{left:6px;right:6px}
+  .grid.oneRow{gap:5px}
+  button.control,button.primaryBtn{min-height:40px;font-size:10px;padding:7px 4px}
+  .infoBox{bottom:max(70px,calc(env(safe-area-inset-bottom) + 70px));width:min(96vw,360px)}
+  .iconSlot{width:68px;min-width:68px}
+  #moonIconCanvas{width:58px;height:58px}
 }
 </style>
 </head>
 <body>
 <div id="app">
-  <canvas id="staticCanvas" class="layerCanvas"></canvas>
-  <canvas id="dynamicCanvas" class="layerCanvas"></canvas>
+  <canvas id="staticCanvas"></canvas>
+  <canvas id="dynamicCanvas"></canvas>
 </div>
 
 <div class="hudLeft">
@@ -161,6 +172,7 @@ button.closeBtn{
   <div class="legend">
     <div>Офлайн-файл без подгрузок из интернета.</div>
     <div>Сатурн — простой объёмный шар без текстуры.</div>
+    <div>292 объекта: крупные спутники + встроенная офлайн-популяция малых тел.</div>
     <div>Работает режим «Маршрут»: выбор A → B, транспорт, расчёт и активный рейс.</div>
   </div>
 </div>
@@ -182,7 +194,7 @@ button.closeBtn{
       <div class="routeEndpoints" id="routeEndpoints"></div>
       <button type="button" class="primaryBtn" id="chooseRouteBtn" disabled>Выбрать маршрут</button>
     </div>
-    <div class="routeHint">Режим маршрута: выберите две точки на карте. Повторный тап снимает точку.</div>
+    <div class="routeHint">Выберите две точки на карте. Повторный тап снимает точку.</div>
   </div>
 </div>
 
@@ -200,7 +212,7 @@ button.closeBtn{
       <button type="button" class="closeBtn" data-close="transportModal">×</button>
     </div>
     <div class="cardGrid" id="transportCards"></div>
-    <div style="display:flex;justify-content:flex-end;margin-top:12px;">
+    <div style="display:flex;justify-content:flex-end;margin-top:12px">
       <button type="button" class="primaryBtn" id="toCalcBtn" disabled>Далее</button>
     </div>
   </div>
@@ -214,7 +226,7 @@ button.closeBtn{
     </div>
     <div class="cardGrid" id="calcOptions"></div>
     <div class="statusBox" id="calcStatus"></div>
-    <div style="display:flex;justify-content:flex-end;margin-top:12px;">
+    <div style="display:flex;justify-content:flex-end;margin-top:12px">
       <button type="button" class="primaryBtn" id="confirmRouteBtn" disabled>Подтвердить маршрут</button>
     </div>
   </div>
@@ -223,21 +235,61 @@ button.closeBtn{
 <div class="errorBox" id="errorBox"></div>
 
 <script>
-var moons = [{"name": "S/2009 S 1", "label": "S/2009 S 1", "diameter_km": 0.3, "sma_km": 116900, "period_d": 0.4715, "sizePx": 1, "phase0": 0, "direction": 1, "periodSec": 40737.6, "renderIndex": 0}, {"name": "Pan", "label": "Пан - Pan", "diameter_km": 28.2, "sma_km": 133600, "period_d": 0.57505, "sizePx": 1, "phase0": 0, "direction": 1, "periodSec": 49684.31999999999, "renderIndex": 1}, {"name": "Daphnis", "label": "Дафнис - Daphnis", "diameter_km": 7.6, "sma_km": 136500, "period_d": 0.59408, "sizePx": 1, "phase0": 0, "direction": 1, "periodSec": 51328.512, "renderIndex": 2}, {"name": "Atlas", "label": "Атлас - Atlas", "diameter_km": 30.2, "sma_km": 137700, "period_d": 0.6046, "sizePx": 1, "phase0": 0, "direction": 1, "periodSec": 52237.44, "renderIndex": 3}, {"name": "Prometheus", "label": "Прометей - Prometheus", "diameter_km": 86.2, "sma_km": 139400, "period_d": 0.61588, "sizePx": 1, "phase0": 0, "direction": 1, "periodSec": 53212.032, "renderIndex": 4}, {"name": "Pandora", "label": "Пандора - Pandora", "diameter_km": 81.4, "sma_km": 141700, "period_d": 0.63137, "sizePx": 1, "phase0": 0, "direction": 1, "periodSec": 54550.368, "renderIndex": 5}, {"name": "Epimetheus", "label": "Эпиметей - Epimetheus", "diameter_km": 116.2, "sma_km": 151400, "period_d": 0.69701, "sizePx": 1, "phase0": 0, "direction": 1, "periodSec": 60221.664000000004, "renderIndex": 6}, {"name": "Janus", "label": "Янус - Janus", "diameter_km": 179.0, "sma_km": 151500, "period_d": 0.69735, "sizePx": 1, "phase0": 0, "direction": 1, "periodSec": 60251.04, "renderIndex": 7}, {"name": "Aegaeon", "label": "Эгеон - Aegaeon", "diameter_km": 0.66, "sma_km": 167500, "period_d": 0.80812, "sizePx": 1, "phase0": 0, "direction": 1, "periodSec": 69821.568, "renderIndex": 8}, {"name": "Mimas", "label": "Мимас - Mimas", "diameter_km": 396.4, "sma_km": 186000, "period_d": 0.94242, "sizePx": 1, "phase0": 0, "direction": 1, "periodSec": 81425.088, "renderIndex": 9}, {"name": "Methone", "label": "Метона - Methone", "diameter_km": 2.9, "sma_km": 194700, "period_d": 1.00955, "sizePx": 1, "phase0": 0, "direction": 1, "periodSec": 87225.12, "renderIndex": 10}, {"name": "Anthe", "label": "Анте - Anthe", "diameter_km": 1.8, "sma_km": 198100, "period_d": 1.0389, "sizePx": 1, "phase0": 0, "direction": 1, "periodSec": 89760.95999999999, "renderIndex": 11}, {"name": "Pallene", "label": "Паллена - Pallene", "diameter_km": 4.44, "sma_km": 212300, "period_d": 1.15606, "sizePx": 1, "phase0": 0, "direction": 1, "periodSec": 99883.584, "renderIndex": 12}, {"name": "Enceladus", "label": "Энцилад - Enceladus", "diameter_km": 504.2, "sma_km": 238400, "period_d": 1.37022, "sizePx": 1, "phase0": 0, "direction": 1, "periodSec": 118387.008, "renderIndex": 13}, {"name": "Tethys", "label": "Тефия - Tethys", "diameter_km": 1062.2, "sma_km": 295000, "period_d": 1.8878, "sizePx": 1, "phase0": 0, "direction": 1, "periodSec": 163105.91999999998, "renderIndex": 14}, {"name": "Telesto", "label": "Телесто - Telesto", "diameter_km": 24.8, "sma_km": 295000, "period_d": 1.8878, "sizePx": 1, "phase0": 0, "direction": 1, "periodSec": 163105.91999999998, "renderIndex": 15}, {"name": "Calypso", "label": "Калипсо - Calypso", "diameter_km": 21.4, "sma_km": 295000, "period_d": 1.8878, "sizePx": 1, "phase0": 0, "direction": 1, "periodSec": 163105.91999999998, "renderIndex": 16}, {"name": "Helene", "label": "Елена - Helene", "diameter_km": 35.2, "sma_km": 377600, "period_d": 2.73692, "sizePx": 1, "phase0": 0, "direction": 1, "periodSec": 236469.888, "renderIndex": 17}, {"name": "Polydeuces", "label": "Полидевк - Polydeuces", "diameter_km": 2.6, "sma_km": 377600, "period_d": 2.73692, "sizePx": 1, "phase0": 0, "direction": 1, "periodSec": 236469.888, "renderIndex": 18}, {"name": "Dione", "label": "Диона - Dione", "diameter_km": 1122.8, "sma_km": 377700, "period_d": 2.73692, "sizePx": 1, "phase0": 0, "direction": 1, "periodSec": 236469.888, "renderIndex": 19}, {"name": "Rhea", "label": "Рея - Rhea", "diameter_km": 1527.6, "sma_km": 527200, "period_d": 4.5175, "sizePx": 1, "phase0": 0, "direction": 1, "periodSec": 390312.0, "renderIndex": 20}, {"name": "Titan", "label": "Титан - Titan", "diameter_km": 5149.46, "sma_km": 1221900, "period_d": 15.9454, "sizePx": 1, "phase0": 0, "direction": 1, "periodSec": 1377682.56, "renderIndex": 21}, {"name": "Hyperion", "label": "Гиперион - Hyperion", "diameter_km": 270.0, "sma_km": 1481500, "period_d": 21.2767, "sizePx": 1, "phase0": 0, "direction": 1, "periodSec": 1838306.8800000001, "renderIndex": 22}, {"name": "Iapetus", "label": "Япет - Iapetus", "diameter_km": 1468.6, "sma_km": 3561700, "period_d": 79.331, "sizePx": 1, "phase0": 0, "direction": 1, "periodSec": 6854198.4, "renderIndex": 23}, {"name": "Phoebe", "label": "Феба - Phoebe", "diameter_km": 213.0, "sma_km": 12929400, "period_d": -550.3, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 47545919.99999999, "renderIndex": 24}, {"name": "Kiviuq", "label": "Кивиук - Kiviuq", "diameter_km": 17.0, "sma_km": 11307400, "period_d": 448.91, "sizePx": 1, "phase0": 0, "direction": 1, "periodSec": 38785824.0, "renderIndex": 25}, {"name": "Ijiraq", "label": "Иджирак - Ijiraq", "diameter_km": 13.0, "sma_km": 11344700, "period_d": 451.12, "sizePx": 1, "phase0": 0, "direction": 1, "periodSec": 38976768.0, "renderIndex": 26}, {"name": "Paaliaq", "label": "Паалияк - Paaliaq", "diameter_km": 25.0, "sma_km": 14997700, "period_d": 685.72, "sizePx": 1, "phase0": 0, "direction": 1, "periodSec": 59246208.0, "renderIndex": 27}, {"name": "Skathi", "label": "Скади - Skathi", "diameter_km": 8.0, "sma_km": 15575400, "period_d": -725.73, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 62703072.0, "renderIndex": 28}, {"name": "Albiorix", "label": "Альбиорикс - Albiorix", "diameter_km": 28.6, "sma_km": 16329200, "period_d": 779.07, "sizePx": 1, "phase0": 0, "direction": 1, "periodSec": 67311648.0, "renderIndex": 29}, {"name": "Bebhionn", "label": "Бебхионн - Bebhionn", "diameter_km": 6.0, "sma_km": 17027300, "period_d": 829.64, "sizePx": 1, "phase0": 0, "direction": 1, "periodSec": 71680896.0, "renderIndex": 30}, {"name": "Erriapus", "label": "Эрриап - Erriapus", "diameter_km": 10.0, "sma_km": 17506900, "period_d": 864.92, "sizePx": 1, "phase0": 0, "direction": 1, "periodSec": 74729088.0, "renderIndex": 31}, {"name": "Skoll", "label": "Сколль - Skoll", "diameter_km": 5.0, "sma_km": 17623400, "period_d": -873.57, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 75476448.0, "renderIndex": 32}, {"name": "Tarqeq", "label": "Таркек - Tarqeq", "diameter_km": 7.0, "sma_km": 17751000, "period_d": 882.85, "sizePx": 1, "phase0": 0, "direction": 1, "periodSec": 76278240.0, "renderIndex": 33}, {"name": "Siarnaq", "label": "Сиарнак - Siarnaq", "diameter_km": 39.3, "sma_km": 17881100, "period_d": 892.68, "sizePx": 1, "phase0": 0, "direction": 1, "periodSec": 77127552.0, "renderIndex": 34}, {"name": "Tarvos", "label": "Тарвос - Tarvos", "diameter_km": 15.0, "sma_km": 18216600, "period_d": 917.98, "sizePx": 1, "phase0": 0, "direction": 1, "periodSec": 79313472.0, "renderIndex": 35}, {"name": "Hyrrokkin", "label": "Хюрроккин - Hyrrokkin", "diameter_km": 8.0, "sma_km": 18340900, "period_d": -927.46, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 80132544.0, "renderIndex": 36}, {"name": "Greip", "label": "Грейп - Greip", "diameter_km": 5.0, "sma_km": 18380000, "period_d": -930.44, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 80390016.0, "renderIndex": 37}, {"name": "Mundilfari", "label": "Мундильфари - Mundilfari", "diameter_km": 7.0, "sma_km": 18588200, "period_d": -946.29, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 81759456.0, "renderIndex": 38}, {"name": "Narvi", "label": "Нарви - Narvi", "diameter_km": 16.0, "sma_km": 19610700, "period_d": -1025.97, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 88643808.0, "renderIndex": 39}, {"name": "Farbauti", "label": "Фарбаути - Farbauti", "diameter_km": 5.0, "sma_km": 20290700, "period_d": -1079.12, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 93235967.99999999, "renderIndex": 40}, {"name": "Thrymr", "label": "Трюм - Thrymr", "diameter_km": 8.0, "sma_km": 20330500, "period_d": -1082.23, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 93504672.0, "renderIndex": 41}, {"name": "Bestla", "label": "Бестла - Bestla", "diameter_km": 7.0, "sma_km": 20337800, "period_d": -1082.94, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 93566016.0, "renderIndex": 42}, {"name": "Angrboda", "label": "Ангрбода - Angrboda", "diameter_km": 4.0, "sma_km": 20591500, "period_d": -1103.2, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 95316480.0, "renderIndex": 43}, {"name": "Aegir", "label": "Эгир - Aegir", "diameter_km": 6.0, "sma_km": 20664400, "period_d": -1109.13, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 95828832.00000001, "renderIndex": 44}, {"name": "Beli", "label": "Бели - Beli", "diameter_km": 4.0, "sma_km": 20703700, "period_d": -1112.27, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 96100128.0, "renderIndex": 45}, {"name": "Gerd", "label": "Герд - Gerd", "diameter_km": 4.0, "sma_km": 20947500, "period_d": -1131.91, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 97797024.0, "renderIndex": 46}, {"name": "Gunnlod", "label": "Гуннлёд - Gunnlod", "diameter_km": 4.0, "sma_km": 21141800, "period_d": -1147.74, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 99164736.0, "renderIndex": 47}, {"name": "Skrymir", "label": "Скримир - Skrymir", "diameter_km": 4.0, "sma_km": 21447400, "period_d": -1172.72, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 101323008.0, "renderIndex": 48}, {"name": "Alvaldi", "label": "Альвальди - Alvaldi", "diameter_km": 6.0, "sma_km": 21993800, "period_d": -1217.8, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 105217920.0, "renderIndex": 49}, {"name": "Kari", "label": "Кари - Kari", "diameter_km": 6.0, "sma_km": 22032100, "period_d": -1220.98, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 105492672.0, "renderIndex": 50}, {"name": "Geirrod", "label": "Гейррёд - Geirrod", "diameter_km": 4.0, "sma_km": 22259400, "period_d": -1240.05, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 107140320.0, "renderIndex": 51}, {"name": "Fenrir", "label": "Фенрир - Fenrir", "diameter_km": 4.0, "sma_km": 22330800, "period_d": -1245.92, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 107647488.0, "renderIndex": 52}, {"name": "Surtur", "label": "Суртур - Surtur", "diameter_km": 6.0, "sma_km": 22748000, "period_d": -1281.14, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 110690496.00000001, "renderIndex": 53}, {"name": "Loge", "label": "Логе - Loge", "diameter_km": 5.0, "sma_km": 22919200, "period_d": -1295.52, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 111932928.0, "renderIndex": 54}, {"name": "Ymir", "label": "Имир - Ymir", "diameter_km": 19.0, "sma_km": 22955600, "period_d": -1298.68, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 112205952.0, "renderIndex": 55}, {"name": "Thiazzi", "label": "Тьяцци - Thiazzi", "diameter_km": 4.0, "sma_km": 23577500, "period_d": -1351.83, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 116798112.0, "renderIndex": 56}, {"name": "Fornjot", "label": "Форньот - Fornjot", "diameter_km": 6.0, "sma_km": 24936800, "period_d": -1470.36, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 127039103.99999999, "renderIndex": 57}, {"name": "S/2026 S 1", "label": "S/2026 S 1", "diameter_km": 2.0, "sma_km": 11097296, "period_d": 438.26, "sizePx": 1, "phase0": 0, "direction": 1, "periodSec": 37865664.0, "renderIndex": 58}, {"name": "S/2026 S 2", "label": "S/2026 S 2", "diameter_km": 3.0, "sma_km": 11216049, "period_d": 441.16, "sizePx": 1, "phase0": 0, "direction": 1, "periodSec": 38116224.0, "renderIndex": 59}, {"name": "S/2026 S 3", "label": "S/2026 S 3", "diameter_km": 5.0, "sma_km": 11316717, "period_d": 447.28, "sizePx": 1, "phase0": 0, "direction": 1, "periodSec": 38644992.0, "renderIndex": 60}, {"name": "S/2026 S 4", "label": "S/2026 S 4", "diameter_km": 2.0, "sma_km": 11447651, "period_d": 455.34, "sizePx": 1, "phase0": 0, "direction": 1, "periodSec": 39341376.0, "renderIndex": 61}, {"name": "S/2026 S 5", "label": "S/2026 S 5", "diameter_km": 3.0, "sma_km": 11544328, "period_d": 465.42, "sizePx": 1, "phase0": 0, "direction": 1, "periodSec": 40212288.0, "renderIndex": 62}, {"name": "S/2026 S 6", "label": "S/2026 S 6", "diameter_km": 5.0, "sma_km": 11641739, "period_d": 469.3, "sizePx": 1, "phase0": 0, "direction": 1, "periodSec": 40547520.0, "renderIndex": 63}, {"name": "S/2026 S 7", "label": "S/2026 S 7", "diameter_km": 4.0, "sma_km": 11785713, "period_d": 478.83, "sizePx": 1, "phase0": 0, "direction": 1, "periodSec": 41370912.0, "renderIndex": 64}, {"name": "S/2026 S 8", "label": "S/2026 S 8", "diameter_km": 3.0, "sma_km": 11898618, "period_d": 490.89, "sizePx": 1, "phase0": 0, "direction": 1, "periodSec": 42412896.0, "renderIndex": 65}, {"name": "S/2026 S 9", "label": "S/2026 S 9", "diameter_km": 3.0, "sma_km": 11970425, "period_d": 494.66, "sizePx": 1, "phase0": 0, "direction": 1, "periodSec": 42738624.0, "renderIndex": 66}, {"name": "S/2026 S 10", "label": "S/2026 S 10", "diameter_km": 3.0, "sma_km": 12102298, "period_d": 498.89, "sizePx": 1, "phase0": 0, "direction": 1, "periodSec": 43104096.0, "renderIndex": 67}, {"name": "S/2026 S 11", "label": "S/2026 S 11", "diameter_km": 2.0, "sma_km": 12212059, "period_d": 505.53, "sizePx": 1, "phase0": 0, "direction": 1, "periodSec": 43677792.0, "renderIndex": 68}, {"name": "S/2026 S 12", "label": "S/2026 S 12", "diameter_km": 3.0, "sma_km": 12306338, "period_d": 517.69, "sizePx": 1, "phase0": 0, "direction": 1, "periodSec": 44728416.00000001, "renderIndex": 69}, {"name": "S/2026 S 13", "label": "S/2026 S 13", "diameter_km": 3.0, "sma_km": 12449565, "period_d": 526.68, "sizePx": 1, "phase0": 0, "direction": 1, "periodSec": 45505151.99999999, "renderIndex": 70}, {"name": "S/2026 S 14", "label": "S/2026 S 14", "diameter_km": 5.0, "sma_km": 12550108, "period_d": 527.76, "sizePx": 1, "phase0": 0, "direction": 1, "periodSec": 45598464.0, "renderIndex": 71}, {"name": "S/2026 S 15", "label": "S/2026 S 15", "diameter_km": 2.0, "sma_km": 12654807, "period_d": 537.98, "sizePx": 1, "phase0": 0, "direction": 1, "periodSec": 46481472.0, "renderIndex": 72}, {"name": "S/2026 S 16", "label": "S/2026 S 16", "diameter_km": 5.0, "sma_km": 12763700, "period_d": 542.18, "sizePx": 1, "phase0": 0, "direction": 1, "periodSec": 46844351.99999999, "renderIndex": 73}, {"name": "S/2026 S 17", "label": "S/2026 S 17", "diameter_km": 2.0, "sma_km": 12854558, "period_d": 551.84, "sizePx": 1, "phase0": 0, "direction": 1, "periodSec": 47678976.0, "renderIndex": 74}, {"name": "S/2026 S 18", "label": "S/2026 S 18", "diameter_km": 2.0, "sma_km": 12978965, "period_d": 561.48, "sizePx": 1, "phase0": 0, "direction": 1, "periodSec": 48511872.0, "renderIndex": 75}, {"name": "S/2026 S 19", "label": "S/2026 S 19", "diameter_km": 4.0, "sma_km": 13076619, "period_d": 563.2, "sizePx": 1, "phase0": 0, "direction": 1, "periodSec": 48660480.00000001, "renderIndex": 76}, {"name": "S/2026 S 20", "label": "S/2026 S 20", "diameter_km": 3.0, "sma_km": 13203909, "period_d": 572.22, "sizePx": 1, "phase0": 0, "direction": 1, "periodSec": 49439808.0, "renderIndex": 77}, {"name": "S/2026 S 21", "label": "S/2026 S 21", "diameter_km": 3.0, "sma_km": 13303730, "period_d": 581.36, "sizePx": 1, "phase0": 0, "direction": 1, "periodSec": 50229504.0, "renderIndex": 78}, {"name": "S/2026 S 22", "label": "S/2026 S 22", "diameter_km": 5.0, "sma_km": 13404679, "period_d": 587.38, "sizePx": 1, "phase0": 0, "direction": 1, "periodSec": 50749632.0, "renderIndex": 79}, {"name": "S/2026 S 23", "label": "S/2026 S 23", "diameter_km": 3.0, "sma_km": 13545005, "period_d": 592.73, "sizePx": 1, "phase0": 0, "direction": 1, "periodSec": 51211872.0, "renderIndex": 80}, {"name": "S/2026 S 24", "label": "S/2026 S 24", "diameter_km": 3.0, "sma_km": 13644867, "period_d": 605.83, "sizePx": 1, "phase0": 0, "direction": 1, "periodSec": 52343712.0, "renderIndex": 81}, {"name": "S/2026 S 25", "label": "S/2026 S 25", "diameter_km": 3.0, "sma_km": 13766500, "period_d": 611.3, "sizePx": 1, "phase0": 0, "direction": 1, "periodSec": 52816319.99999999, "renderIndex": 82}, {"name": "S/2026 S 26", "label": "S/2026 S 26", "diameter_km": 3.0, "sma_km": 13843665, "period_d": 617.41, "sizePx": 1, "phase0": 0, "direction": 1, "periodSec": 53344224.0, "renderIndex": 83}, {"name": "S/2026 S 27", "label": "S/2026 S 27", "diameter_km": 4.0, "sma_km": 13970673, "period_d": 621.24, "sizePx": 1, "phase0": 0, "direction": 1, "periodSec": 53675136.0, "renderIndex": 84}, {"name": "S/2026 S 28", "label": "S/2026 S 28", "diameter_km": 5.0, "sma_km": 14073826, "period_d": 632.81, "sizePx": 1, "phase0": 0, "direction": 1, "periodSec": 54674783.99999999, "renderIndex": 85}, {"name": "S/2026 S 29", "label": "S/2026 S 29", "diameter_km": 3.0, "sma_km": 14190622, "period_d": 638.63, "sizePx": 1, "phase0": 0, "direction": 1, "periodSec": 55177632.0, "renderIndex": 86}, {"name": "S/2026 S 30", "label": "S/2026 S 30", "diameter_km": 4.0, "sma_km": 14305928, "period_d": 642.03, "sizePx": 1, "phase0": 0, "direction": 1, "periodSec": 55471392.0, "renderIndex": 87}, {"name": "S/2026 S 31", "label": "S/2026 S 31", "diameter_km": 3.0, "sma_km": 14399150, "period_d": 652.9, "sizePx": 1, "phase0": 0, "direction": 1, "periodSec": 56410560.0, "renderIndex": 88}, {"name": "S/2026 S 32", "label": "S/2026 S 32", "diameter_km": 3.0, "sma_km": 14535322, "period_d": 661.77, "sizePx": 1, "phase0": 0, "direction": 1, "periodSec": 57176928.0, "renderIndex": 89}, {"name": "S/2026 S 33", "label": "S/2026 S 33", "diameter_km": 5.0, "sma_km": 14638077, "period_d": 665.67, "sizePx": 1, "phase0": 0, "direction": 1, "periodSec": 57513888.0, "renderIndex": 90}, {"name": "S/2026 S 34", "label": "S/2026 S 34", "diameter_km": 3.0, "sma_km": 14734373, "period_d": 672.81, "sizePx": 1, "phase0": 0, "direction": 1, "periodSec": 58130783.99999999, "renderIndex": 91}, {"name": "S/2026 S 35", "label": "S/2026 S 35", "diameter_km": 2.0, "sma_km": 14835957, "period_d": 682.23, "sizePx": 1, "phase0": 0, "direction": 1, "periodSec": 58944672.0, "renderIndex": 92}, {"name": "S/2026 S 36", "label": "S/2026 S 36", "diameter_km": 3.0, "sma_km": 14950016, "period_d": 689.09, "sizePx": 1, "phase0": 0, "direction": 1, "periodSec": 59537376.0, "renderIndex": 93}, {"name": "S/2026 S 37", "label": "S/2026 S 37", "diameter_km": 5.0, "sma_km": 15077666, "period_d": 691.56, "sizePx": 1, "phase0": 0, "direction": 1, "periodSec": 59750783.99999999, "renderIndex": 94}, {"name": "S/2026 S 38", "label": "S/2026 S 38", "diameter_km": 5.0, "sma_km": 15185009, "period_d": 705.99, "sizePx": 1, "phase0": 0, "direction": 1, "periodSec": 60997536.0, "renderIndex": 95}, {"name": "S/2026 S 39", "label": "S/2026 S 39", "diameter_km": 3.0, "sma_km": 15304676, "period_d": 713.57, "sizePx": 1, "phase0": 0, "direction": 1, "periodSec": 61652448.00000001, "renderIndex": 96}, {"name": "S/2026 S 40", "label": "S/2026 S 40", "diameter_km": 2.0, "sma_km": 15380752, "period_d": 716.2, "sizePx": 1, "phase0": 0, "direction": 1, "periodSec": 61879680.00000001, "renderIndex": 97}, {"name": "S/2026 S 41", "label": "S/2026 S 41", "diameter_km": 3.0, "sma_km": 15525190, "period_d": 726.29, "sizePx": 1, "phase0": 0, "direction": 1, "periodSec": 62751456.0, "renderIndex": 98}, {"name": "S/2026 S 42", "label": "S/2026 S 42", "diameter_km": 2.0, "sma_km": 15622293, "period_d": 728.8, "sizePx": 1, "phase0": 0, "direction": 1, "periodSec": 62968319.99999999, "renderIndex": 99}, {"name": "S/2026 S 43", "label": "S/2026 S 43", "diameter_km": 4.0, "sma_km": 15720365, "period_d": 732.85, "sizePx": 1, "phase0": 0, "direction": 1, "periodSec": 63318240.0, "renderIndex": 100}, {"name": "S/2026 S 44", "label": "S/2026 S 44", "diameter_km": 5.0, "sma_km": 15837261, "period_d": 746.52, "sizePx": 1, "phase0": 0, "direction": 1, "periodSec": 64499328.0, "renderIndex": 101}, {"name": "S/2026 S 45", "label": "S/2026 S 45", "diameter_km": 2.0, "sma_km": 15963271, "period_d": 755.58, "sizePx": 1, "phase0": 0, "direction": 1, "periodSec": 65282112.0, "renderIndex": 102}, {"name": "S/2026 S 46", "label": "S/2026 S 46", "diameter_km": 5.0, "sma_km": 16059558, "period_d": 759.74, "sizePx": 1, "phase0": 0, "direction": 1, "periodSec": 65641536.0, "renderIndex": 103}, {"name": "S/2026 S 47", "label": "S/2026 S 47", "diameter_km": 3.0, "sma_km": 16160016, "period_d": 767.5, "sizePx": 1, "phase0": 0, "direction": 1, "periodSec": 66312000.0, "renderIndex": 104}, {"name": "S/2026 S 48", "label": "S/2026 S 48", "diameter_km": 5.0, "sma_km": 16295348, "period_d": 777.55, "sizePx": 1, "phase0": 0, "direction": 1, "periodSec": 67180320.0, "renderIndex": 105}, {"name": "S/2026 S 49", "label": "S/2026 S 49", "diameter_km": 3.0, "sma_km": 16409252, "period_d": 781.51, "sizePx": 1, "phase0": 0, "direction": 1, "periodSec": 67522464.0, "renderIndex": 106}, {"name": "S/2026 S 50", "label": "S/2026 S 50", "diameter_km": 3.0, "sma_km": 16487331, "period_d": 789.71, "sizePx": 1, "phase0": 0, "direction": 1, "periodSec": 68230944.0, "renderIndex": 107}, {"name": "S/2026 S 51", "label": "S/2026 S 51", "diameter_km": 3.0, "sma_km": 16610153, "period_d": 791.12, "sizePx": 1, "phase0": 0, "direction": 1, "periodSec": 68352768.0, "renderIndex": 108}, {"name": "S/2026 S 52", "label": "S/2026 S 52", "diameter_km": 2.0, "sma_km": 16737182, "period_d": 799.6, "sizePx": 1, "phase0": 0, "direction": 1, "periodSec": 69085440.0, "renderIndex": 109}, {"name": "S/2026 S 53", "label": "S/2026 S 53", "diameter_km": 2.0, "sma_km": 16841849, "period_d": 813.54, "sizePx": 1, "phase0": 0, "direction": 1, "periodSec": 70289856.0, "renderIndex": 110}, {"name": "S/2026 S 54", "label": "S/2026 S 54", "diameter_km": 3.0, "sma_km": 16954911, "period_d": 814.1, "sizePx": 1, "phase0": 0, "direction": 1, "periodSec": 70338240.0, "renderIndex": 111}, {"name": "S/2026 S 55", "label": "S/2026 S 55", "diameter_km": 5.0, "sma_km": 17061148, "period_d": 821.3, "sizePx": 1, "phase0": 0, "direction": 1, "periodSec": 70960320.0, "renderIndex": 112}, {"name": "S/2026 S 56", "label": "S/2026 S 56", "diameter_km": 5.0, "sma_km": 17174581, "period_d": 830.73, "sizePx": 1, "phase0": 0, "direction": 1, "periodSec": 71775072.0, "renderIndex": 113}, {"name": "S/2026 S 57", "label": "S/2026 S 57", "diameter_km": 5.0, "sma_km": 17263880, "period_d": 839.19, "sizePx": 1, "phase0": 0, "direction": 1, "periodSec": 72506016.0, "renderIndex": 114}, {"name": "S/2026 S 58", "label": "S/2026 S 58", "diameter_km": 3.0, "sma_km": 17373182, "period_d": 843.45, "sizePx": 1, "phase0": 0, "direction": 1, "periodSec": 72874080.0, "renderIndex": 115}, {"name": "S/2026 S 59", "label": "S/2026 S 59", "diameter_km": 4.0, "sma_km": 17494472, "period_d": 855.34, "sizePx": 1, "phase0": 0, "direction": 1, "periodSec": 73901376.0, "renderIndex": 116}, {"name": "S/2026 S 60", "label": "S/2026 S 60", "diameter_km": 2.0, "sma_km": 17609588, "period_d": 857.61, "sizePx": 1, "phase0": 0, "direction": 1, "periodSec": 74097504.0, "renderIndex": 117}, {"name": "S/2026 R 1", "label": "S/2026 R 1", "diameter_km": 3.0, "sma_km": 18049196, "period_d": -928.58, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 80229312.0, "renderIndex": 118}, {"name": "S/2026 R 2", "label": "S/2026 R 2", "diameter_km": 3.0, "sma_km": 18151301, "period_d": -941.24, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 81323136.0, "renderIndex": 119}, {"name": "S/2026 R 3", "label": "S/2026 R 3", "diameter_km": 2.0, "sma_km": 18185471, "period_d": -944.77, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 81628128.0, "renderIndex": 120}, {"name": "S/2026 R 4", "label": "S/2026 R 4", "diameter_km": 3.0, "sma_km": 18258858, "period_d": -943.39, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 81508896.0, "renderIndex": 121}, {"name": "S/2026 R 5", "label": "S/2026 R 5", "diameter_km": 3.0, "sma_km": 18327058, "period_d": -948.09, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 81914976.0, "renderIndex": 122}, {"name": "S/2026 R 6", "label": "S/2026 R 6", "diameter_km": 3.0, "sma_km": 18410597, "period_d": -959.78, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 82924992.0, "renderIndex": 123}, {"name": "S/2026 R 7", "label": "S/2026 R 7", "diameter_km": 3.0, "sma_km": 18479040, "period_d": -965.01, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 83376864.0, "renderIndex": 124}, {"name": "S/2026 R 8", "label": "S/2026 R 8", "diameter_km": 4.0, "sma_km": 18572423, "period_d": -966.6, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 83514240.0, "renderIndex": 125}, {"name": "S/2026 R 9", "label": "S/2026 R 9", "diameter_km": 4.0, "sma_km": 18635996, "period_d": -970.42, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 83844288.0, "renderIndex": 126}, {"name": "S/2026 R 10", "label": "S/2026 R 10", "diameter_km": 4.0, "sma_km": 18681352, "period_d": -975.16, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 84253824.0, "renderIndex": 127}, {"name": "S/2026 R 11", "label": "S/2026 R 11", "diameter_km": 4.0, "sma_km": 18771941, "period_d": -986.46, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 85230144.0, "renderIndex": 128}, {"name": "S/2026 R 12", "label": "S/2026 R 12", "diameter_km": 2.0, "sma_km": 18818550, "period_d": -981.61, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 84811104.0, "renderIndex": 129}, {"name": "S/2026 R 13", "label": "S/2026 R 13", "diameter_km": 3.0, "sma_km": 18932724, "period_d": -996.82, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 86125248.0, "renderIndex": 130}, {"name": "S/2026 R 14", "label": "S/2026 R 14", "diameter_km": 3.0, "sma_km": 18962161, "period_d": -992.75, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 85773600.0, "renderIndex": 131}, {"name": "S/2026 R 15", "label": "S/2026 R 15", "diameter_km": 4.0, "sma_km": 19060146, "period_d": -998.94, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 86308416.0, "renderIndex": 132}, {"name": "S/2026 R 16", "label": "S/2026 R 16", "diameter_km": 3.0, "sma_km": 19107025, "period_d": -1005.37, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 86863968.0, "renderIndex": 133}, {"name": "S/2026 R 17", "label": "S/2026 R 17", "diameter_km": 4.0, "sma_km": 19169940, "period_d": -1013.13, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 87534432.0, "renderIndex": 134}, {"name": "S/2026 R 18", "label": "S/2026 R 18", "diameter_km": 2.0, "sma_km": 19271066, "period_d": -1012.47, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 87477408.0, "renderIndex": 135}, {"name": "S/2026 R 19", "label": "S/2026 R 19", "diameter_km": 2.0, "sma_km": 19340427, "period_d": -1026.4, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 88680960.00000001, "renderIndex": 136}, {"name": "S/2026 R 20", "label": "S/2026 R 20", "diameter_km": 3.0, "sma_km": 19424385, "period_d": -1024.12, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 88483967.99999999, "renderIndex": 137}, {"name": "S/2026 R 21", "label": "S/2026 R 21", "diameter_km": 4.0, "sma_km": 19476826, "period_d": -1028.18, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 88834752.0, "renderIndex": 138}, {"name": "S/2026 R 22", "label": "S/2026 R 22", "diameter_km": 2.0, "sma_km": 19541282, "period_d": -1032.1, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 89173439.99999999, "renderIndex": 139}, {"name": "S/2026 R 23", "label": "S/2026 R 23", "diameter_km": 4.0, "sma_km": 19585141, "period_d": -1036.11, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 89519903.99999999, "renderIndex": 140}, {"name": "S/2026 R 24", "label": "S/2026 R 24", "diameter_km": 3.0, "sma_km": 19684819, "period_d": -1044.51, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 90245664.0, "renderIndex": 141}, {"name": "S/2026 R 25", "label": "S/2026 R 25", "diameter_km": 4.0, "sma_km": 19772874, "period_d": -1047.85, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 90534239.99999999, "renderIndex": 142}, {"name": "S/2026 R 26", "label": "S/2026 R 26", "diameter_km": 3.0, "sma_km": 19814445, "period_d": -1058.83, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 91482912.0, "renderIndex": 143}, {"name": "S/2026 R 27", "label": "S/2026 R 27", "diameter_km": 2.0, "sma_km": 19902957, "period_d": -1062.68, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 91815552.0, "renderIndex": 144}, {"name": "S/2026 R 28", "label": "S/2026 R 28", "diameter_km": 2.0, "sma_km": 19938746, "period_d": -1063.49, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 91885536.0, "renderIndex": 145}, {"name": "S/2026 R 29", "label": "S/2026 R 29", "diameter_km": 3.0, "sma_km": 20037954, "period_d": -1065.01, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 92016864.0, "renderIndex": 146}, {"name": "S/2026 R 30", "label": "S/2026 R 30", "diameter_km": 2.0, "sma_km": 20108281, "period_d": -1077.76, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 93118464.0, "renderIndex": 147}, {"name": "S/2026 R 31", "label": "S/2026 R 31", "diameter_km": 2.0, "sma_km": 20149490, "period_d": -1078.82, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 93210048.0, "renderIndex": 148}, {"name": "S/2026 R 32", "label": "S/2026 R 32", "diameter_km": 4.0, "sma_km": 20230414, "period_d": -1078.81, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 93209184.0, "renderIndex": 149}, {"name": "S/2026 R 33", "label": "S/2026 R 33", "diameter_km": 3.0, "sma_km": 20322334, "period_d": -1089.69, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 94149216.0, "renderIndex": 150}, {"name": "S/2026 R 34", "label": "S/2026 R 34", "diameter_km": 2.0, "sma_km": 20357604, "period_d": -1090.5, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 94219200.0, "renderIndex": 151}, {"name": "S/2026 R 35", "label": "S/2026 R 35", "diameter_km": 3.0, "sma_km": 20463251, "period_d": -1102.89, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 95289696.00000001, "renderIndex": 152}, {"name": "S/2026 R 36", "label": "S/2026 R 36", "diameter_km": 3.0, "sma_km": 20508386, "period_d": -1099.01, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 94954464.0, "renderIndex": 153}, {"name": "S/2026 R 37", "label": "S/2026 R 37", "diameter_km": 3.0, "sma_km": 20590938, "period_d": -1108.99, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 95816736.0, "renderIndex": 154}, {"name": "S/2026 R 38", "label": "S/2026 R 38", "diameter_km": 4.0, "sma_km": 20654660, "period_d": -1109.8, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 95886720.0, "renderIndex": 155}, {"name": "S/2026 R 39", "label": "S/2026 R 39", "diameter_km": 2.0, "sma_km": 20754274, "period_d": -1113.54, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 96209856.0, "renderIndex": 156}, {"name": "S/2026 R 40", "label": "S/2026 R 40", "diameter_km": 2.0, "sma_km": 20815708, "period_d": -1118.39, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 96628896.00000001, "renderIndex": 157}, {"name": "S/2026 R 41", "label": "S/2026 R 41", "diameter_km": 3.0, "sma_km": 20858969, "period_d": -1121.94, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 96935616.0, "renderIndex": 158}, {"name": "S/2026 R 42", "label": "S/2026 R 42", "diameter_km": 2.0, "sma_km": 20937872, "period_d": -1134.8, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 98046720.0, "renderIndex": 159}, {"name": "S/2026 R 43", "label": "S/2026 R 43", "diameter_km": 3.0, "sma_km": 21009217, "period_d": -1132.47, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 97845408.0, "renderIndex": 160}, {"name": "S/2026 R 44", "label": "S/2026 R 44", "diameter_km": 3.0, "sma_km": 21090600, "period_d": -1142.58, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 98718912.0, "renderIndex": 161}, {"name": "S/2026 R 45", "label": "S/2026 R 45", "diameter_km": 2.0, "sma_km": 21167858, "period_d": -1148.43, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 99224352.0, "renderIndex": 162}, {"name": "S/2026 R 46", "label": "S/2026 R 46", "diameter_km": 3.0, "sma_km": 21231346, "period_d": -1155.41, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 99827424.0, "renderIndex": 163}, {"name": "S/2026 R 47", "label": "S/2026 R 47", "diameter_km": 3.0, "sma_km": 21271788, "period_d": -1151.5, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 99489600.0, "renderIndex": 164}, {"name": "S/2026 R 48", "label": "S/2026 R 48", "diameter_km": 3.0, "sma_km": 21342014, "period_d": -1156.39, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 99912096.00000001, "renderIndex": 165}, {"name": "S/2026 R 49", "label": "S/2026 R 49", "diameter_km": 3.0, "sma_km": 21444638, "period_d": -1167.86, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 100903103.99999999, "renderIndex": 166}, {"name": "S/2026 R 50", "label": "S/2026 R 50", "diameter_km": 3.0, "sma_km": 21488342, "period_d": -1168.73, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 100978272.0, "renderIndex": 167}, {"name": "S/2026 R 51", "label": "S/2026 R 51", "diameter_km": 2.0, "sma_km": 21561457, "period_d": -1169.6, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 101053439.99999999, "renderIndex": 168}, {"name": "S/2026 R 52", "label": "S/2026 R 52", "diameter_km": 3.0, "sma_km": 21642759, "period_d": -1174.68, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 101492352.0, "renderIndex": 169}, {"name": "S/2026 R 53", "label": "S/2026 R 53", "diameter_km": 3.0, "sma_km": 21706859, "period_d": -1185.0, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 102384000.0, "renderIndex": 170}, {"name": "S/2026 R 54", "label": "S/2026 R 54", "diameter_km": 3.0, "sma_km": 21772167, "period_d": -1190.51, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 102860064.0, "renderIndex": 171}, {"name": "S/2026 R 55", "label": "S/2026 R 55", "diameter_km": 4.0, "sma_km": 21861154, "period_d": -1194.79, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 103229856.0, "renderIndex": 172}, {"name": "S/2026 R 56", "label": "S/2026 R 56", "diameter_km": 2.0, "sma_km": 21902331, "period_d": -1201.45, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 103805280.0, "renderIndex": 173}, {"name": "S/2026 R 57", "label": "S/2026 R 57", "diameter_km": 3.0, "sma_km": 22010286, "period_d": -1204.84, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 104098176.0, "renderIndex": 174}, {"name": "S/2026 R 58", "label": "S/2026 R 58", "diameter_km": 3.0, "sma_km": 22059196, "period_d": -1207.03, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 104287392.0, "renderIndex": 175}, {"name": "S/2026 R 59", "label": "S/2026 R 59", "diameter_km": 3.0, "sma_km": 22107741, "period_d": -1209.7, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 104518080.0, "renderIndex": 176}, {"name": "S/2026 R 60", "label": "S/2026 R 60", "diameter_km": 3.0, "sma_km": 22177614, "period_d": -1212.94, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 104798016.0, "renderIndex": 177}, {"name": "S/2026 R 61", "label": "S/2026 R 61", "diameter_km": 2.0, "sma_km": 22261353, "period_d": -1220.1, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 105416639.99999999, "renderIndex": 178}, {"name": "S/2026 R 62", "label": "S/2026 R 62", "diameter_km": 4.0, "sma_km": 22351692, "period_d": -1232.49, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 106487136.0, "renderIndex": 179}, {"name": "S/2026 R 63", "label": "S/2026 R 63", "diameter_km": 3.0, "sma_km": 22434117, "period_d": -1237.64, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 106932096.00000001, "renderIndex": 180}, {"name": "S/2026 R 64", "label": "S/2026 R 64", "diameter_km": 3.0, "sma_km": 22470514, "period_d": -1240.64, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 107191296.00000001, "renderIndex": 181}, {"name": "S/2026 R 65", "label": "S/2026 R 65", "diameter_km": 4.0, "sma_km": 22536603, "period_d": -1235.65, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 106760160.00000001, "renderIndex": 182}, {"name": "S/2026 R 66", "label": "S/2026 R 66", "diameter_km": 3.0, "sma_km": 22643271, "period_d": -1250.52, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 108044928.0, "renderIndex": 183}, {"name": "S/2026 R 67", "label": "S/2026 R 67", "diameter_km": 3.0, "sma_km": 22691982, "period_d": -1248.7, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 107887680.0, "renderIndex": 184}, {"name": "S/2026 R 68", "label": "S/2026 R 68", "diameter_km": 2.0, "sma_km": 22780958, "period_d": -1255.94, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 108513216.0, "renderIndex": 185}, {"name": "S/2026 R 69", "label": "S/2026 R 69", "diameter_km": 4.0, "sma_km": 22807537, "period_d": -1256.16, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 108532224.0, "renderIndex": 186}, {"name": "S/2026 R 70", "label": "S/2026 R 70", "diameter_km": 3.0, "sma_km": 22905166, "period_d": -1263.67, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 109181088.0, "renderIndex": 187}, {"name": "S/2026 R 71", "label": "S/2026 R 71", "diameter_km": 3.0, "sma_km": 22959915, "period_d": -1264.6, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 109261439.99999999, "renderIndex": 188}, {"name": "S/2026 R 72", "label": "S/2026 R 72", "diameter_km": 4.0, "sma_km": 23027656, "period_d": -1272.28, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 109924992.0, "renderIndex": 189}, {"name": "S/2026 R 73", "label": "S/2026 R 73", "diameter_km": 3.0, "sma_km": 23089549, "period_d": -1276.74, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 110310336.0, "renderIndex": 190}, {"name": "S/2026 R 74", "label": "S/2026 R 74", "diameter_km": 4.0, "sma_km": 23188384, "period_d": -1286.79, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 111178656.0, "renderIndex": 191}, {"name": "S/2026 R 75", "label": "S/2026 R 75", "diameter_km": 3.0, "sma_km": 23260141, "period_d": -1294.3, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 111827520.0, "renderIndex": 192}, {"name": "S/2026 R 76", "label": "S/2026 R 76", "diameter_km": 3.0, "sma_km": 23302559, "period_d": -1289.59, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 111420576.0, "renderIndex": 193}, {"name": "S/2026 R 77", "label": "S/2026 R 77", "diameter_km": 2.0, "sma_km": 23382397, "period_d": -1294.35, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 111831839.99999999, "renderIndex": 194}, {"name": "S/2026 R 78", "label": "S/2026 R 78", "diameter_km": 3.0, "sma_km": 23463479, "period_d": -1306.1, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 112847039.99999999, "renderIndex": 195}, {"name": "S/2026 R 79", "label": "S/2026 R 79", "diameter_km": 4.0, "sma_km": 23525557, "period_d": -1309.13, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 113108832.00000001, "renderIndex": 196}, {"name": "S/2026 R 80", "label": "S/2026 R 80", "diameter_km": 2.0, "sma_km": 23608516, "period_d": -1312.59, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 113407776.0, "renderIndex": 197}, {"name": "S/2026 R 81", "label": "S/2026 R 81", "diameter_km": 3.0, "sma_km": 23682787, "period_d": -1316.37, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 113734367.99999999, "renderIndex": 198}, {"name": "S/2026 R 82", "label": "S/2026 R 82", "diameter_km": 4.0, "sma_km": 23761450, "period_d": -1319.22, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 113980608.0, "renderIndex": 199}, {"name": "S/2026 R 83", "label": "S/2026 R 83", "diameter_km": 3.0, "sma_km": 23820287, "period_d": -1326.87, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 114641567.99999999, "renderIndex": 200}, {"name": "S/2026 R 84", "label": "S/2026 R 84", "diameter_km": 3.0, "sma_km": 23859585, "period_d": -1332.15, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 115097760.00000001, "renderIndex": 201}, {"name": "S/2026 R 85", "label": "S/2026 R 85", "diameter_km": 2.0, "sma_km": 23968475, "period_d": -1340.57, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 115825248.0, "renderIndex": 202}, {"name": "S/2026 R 86", "label": "S/2026 R 86", "diameter_km": 3.0, "sma_km": 24014681, "period_d": -1343.2, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 116052480.0, "renderIndex": 203}, {"name": "S/2026 R 87", "label": "S/2026 R 87", "diameter_km": 4.0, "sma_km": 24086376, "period_d": -1348.41, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 116502624.0, "renderIndex": 204}, {"name": "S/2026 R 88", "label": "S/2026 R 88", "diameter_km": 3.0, "sma_km": 24171333, "period_d": -1349.17, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 116568288.0, "renderIndex": 205}, {"name": "S/2026 R 89", "label": "S/2026 R 89", "diameter_km": 4.0, "sma_km": 24248576, "period_d": -1359.31, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 117444384.0, "renderIndex": 206}, {"name": "S/2026 R 90", "label": "S/2026 R 90", "diameter_km": 3.0, "sma_km": 24286405, "period_d": -1359.18, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 117433152.0, "renderIndex": 207}, {"name": "S/2026 R 91", "label": "S/2026 R 91", "diameter_km": 3.0, "sma_km": 24345026, "period_d": -1362.0, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 117676800.0, "renderIndex": 208}, {"name": "S/2026 R 92", "label": "S/2026 R 92", "diameter_km": 3.0, "sma_km": 24443173, "period_d": -1370.5, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 118411200.0, "renderIndex": 209}, {"name": "S/2026 R 93", "label": "S/2026 R 93", "diameter_km": 3.0, "sma_km": 24513977, "period_d": -1375.8, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 118869120.0, "renderIndex": 210}, {"name": "S/2026 R 94", "label": "S/2026 R 94", "diameter_km": 3.0, "sma_km": 24603231, "period_d": -1383.39, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 119524896.00000001, "renderIndex": 211}, {"name": "S/2026 R 95", "label": "S/2026 R 95", "diameter_km": 3.0, "sma_km": 24643598, "period_d": -1380.5, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 119275200.0, "renderIndex": 212}, {"name": "S/2026 R 96", "label": "S/2026 R 96", "diameter_km": 3.0, "sma_km": 24744226, "period_d": -1393.17, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 120369888.0, "renderIndex": 213}, {"name": "S/2026 R 97", "label": "S/2026 R 97", "diameter_km": 3.0, "sma_km": 24779722, "period_d": -1390.35, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 120126239.99999999, "renderIndex": 214}, {"name": "S/2026 R 98", "label": "S/2026 R 98", "diameter_km": 3.0, "sma_km": 24838028, "period_d": -1402.7, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 121193280.0, "renderIndex": 215}, {"name": "S/2026 R 99", "label": "S/2026 R 99", "diameter_km": 2.0, "sma_km": 24945060, "period_d": -1404.74, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 121369536.0, "renderIndex": 216}, {"name": "S/2026 R 100", "label": "S/2026 R 100", "diameter_km": 3.0, "sma_km": 25016272, "period_d": -1412.24, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 122017536.0, "renderIndex": 217}, {"name": "S/2026 R 101", "label": "S/2026 R 101", "diameter_km": 4.0, "sma_km": 25070164, "period_d": -1412.74, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 122060736.0, "renderIndex": 218}, {"name": "S/2026 R 102", "label": "S/2026 R 102", "diameter_km": 2.0, "sma_km": 25124671, "period_d": -1421.4, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 122808960.00000001, "renderIndex": 219}, {"name": "S/2026 R 103", "label": "S/2026 R 103", "diameter_km": 4.0, "sma_km": 25191985, "period_d": -1419.27, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 122624928.0, "renderIndex": 220}, {"name": "S/2026 R 104", "label": "S/2026 R 104", "diameter_km": 4.0, "sma_km": 25300607, "period_d": -1425.02, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 123121728.0, "renderIndex": 221}, {"name": "S/2026 R 105", "label": "S/2026 R 105", "diameter_km": 2.0, "sma_km": 25341331, "period_d": -1431.87, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 123713567.99999999, "renderIndex": 222}, {"name": "S/2026 R 106", "label": "S/2026 R 106", "diameter_km": 3.0, "sma_km": 25425450, "period_d": -1442.56, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 124637184.0, "renderIndex": 223}, {"name": "S/2026 R 107", "label": "S/2026 R 107", "diameter_km": 4.0, "sma_km": 25494004, "period_d": -1446.05, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 124938720.0, "renderIndex": 224}, {"name": "S/2026 R 108", "label": "S/2026 R 108", "diameter_km": 4.0, "sma_km": 25570905, "period_d": -1451.98, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 125451072.0, "renderIndex": 225}, {"name": "S/2026 R 109", "label": "S/2026 R 109", "diameter_km": 4.0, "sma_km": 25653736, "period_d": -1453.18, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 125554752.0, "renderIndex": 226}, {"name": "S/2026 R 110", "label": "S/2026 R 110", "diameter_km": 3.0, "sma_km": 25724268, "period_d": -1461.9, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 126308160.00000001, "renderIndex": 227}, {"name": "S/2026 R 111", "label": "S/2026 R 111", "diameter_km": 4.0, "sma_km": 25763173, "period_d": -1462.43, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 126353952.0, "renderIndex": 228}, {"name": "S/2026 R 112", "label": "S/2026 R 112", "diameter_km": 4.0, "sma_km": 25832996, "period_d": -1461.72, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 126292608.0, "renderIndex": 229}, {"name": "S/2026 R 113", "label": "S/2026 R 113", "diameter_km": 3.0, "sma_km": 25903725, "period_d": -1468.5, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 126878400.0, "renderIndex": 230}, {"name": "S/2026 R 114", "label": "S/2026 R 114", "diameter_km": 2.0, "sma_km": 25975952, "period_d": -1472.11, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 127190303.99999999, "renderIndex": 231}, {"name": "S/2026 R 115", "label": "S/2026 R 115", "diameter_km": 4.0, "sma_km": 26040155, "period_d": -1482.06, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 128049984.0, "renderIndex": 232}, {"name": "S/2026 R 116", "label": "S/2026 R 116", "diameter_km": 3.0, "sma_km": 26141295, "period_d": -1482.68, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 128103552.0, "renderIndex": 233}, {"name": "S/2026 R 117", "label": "S/2026 R 117", "diameter_km": 3.0, "sma_km": 26191712, "period_d": -1490.91, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 128814624.0, "renderIndex": 234}, {"name": "S/2026 R 118", "label": "S/2026 R 118", "diameter_km": 2.0, "sma_km": 26262248, "period_d": -1492.38, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 128941632.00000001, "renderIndex": 235}, {"name": "S/2026 R 119", "label": "S/2026 R 119", "diameter_km": 4.0, "sma_km": 26332534, "period_d": -1504.17, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 129960288.0, "renderIndex": 236}, {"name": "S/2026 R 120", "label": "S/2026 R 120", "diameter_km": 2.0, "sma_km": 26413278, "period_d": -1509.21, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 130395744.0, "renderIndex": 237}, {"name": "S/2026 R 121", "label": "S/2026 R 121", "diameter_km": 4.0, "sma_km": 26482728, "period_d": -1510.17, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 130478688.0, "renderIndex": 238}, {"name": "S/2026 R 122", "label": "S/2026 R 122", "diameter_km": 3.0, "sma_km": 26538052, "period_d": -1516.72, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 131044608.0, "renderIndex": 239}, {"name": "S/2026 R 123", "label": "S/2026 R 123", "diameter_km": 3.0, "sma_km": 26612460, "period_d": -1519.16, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 131255424.0, "renderIndex": 240}, {"name": "S/2026 R 124", "label": "S/2026 R 124", "diameter_km": 4.0, "sma_km": 26672887, "period_d": -1523.26, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 131609664.0, "renderIndex": 241}, {"name": "S/2026 R 125", "label": "S/2026 R 125", "diameter_km": 3.0, "sma_km": 26750484, "period_d": -1530.41, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 132227424.0, "renderIndex": 242}, {"name": "S/2026 R 126", "label": "S/2026 R 126", "diameter_km": 3.0, "sma_km": 26821497, "period_d": -1536.98, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 132795072.0, "renderIndex": 243}, {"name": "S/2026 R 127", "label": "S/2026 R 127", "diameter_km": 2.0, "sma_km": 26873364, "period_d": -1541.19, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 133158816.0, "renderIndex": 244}, {"name": "S/2026 R 128", "label": "S/2026 R 128", "diameter_km": 2.0, "sma_km": 26973790, "period_d": -1539.84, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 133042176.0, "renderIndex": 245}, {"name": "S/2026 R 129", "label": "S/2026 R 129", "diameter_km": 3.0, "sma_km": 27033089, "period_d": -1551.72, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 134068608.0, "renderIndex": 246}, {"name": "S/2026 R 130", "label": "S/2026 R 130", "diameter_km": 2.0, "sma_km": 27086909, "period_d": -1549.34, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 133862976.0, "renderIndex": 247}, {"name": "S/2026 R 131", "label": "S/2026 R 131", "diameter_km": 3.0, "sma_km": 27166453, "period_d": -1556.73, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 134501472.0, "renderIndex": 248}, {"name": "S/2026 R 132", "label": "S/2026 R 132", "diameter_km": 4.0, "sma_km": 27237118, "period_d": -1559.8, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 134766720.0, "renderIndex": 249}, {"name": "S/2026 R 133", "label": "S/2026 R 133", "diameter_km": 3.0, "sma_km": 27312627, "period_d": -1570.53, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 135693792.0, "renderIndex": 250}, {"name": "S/2026 R 134", "label": "S/2026 R 134", "diameter_km": 2.0, "sma_km": 27385822, "period_d": -1574.68, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 136052352.0, "renderIndex": 251}, {"name": "S/2026 R 135", "label": "S/2026 R 135", "diameter_km": 3.0, "sma_km": 27428413, "period_d": -1572.34, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 135850176.0, "renderIndex": 252}, {"name": "S/2026 R 136", "label": "S/2026 R 136", "diameter_km": 2.0, "sma_km": 27499496, "period_d": -1582.51, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 136728864.0, "renderIndex": 253}, {"name": "S/2026 R 137", "label": "S/2026 R 137", "diameter_km": 3.0, "sma_km": 27581205, "period_d": -1588.95, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 137285280.0, "renderIndex": 254}, {"name": "S/2026 R 138", "label": "S/2026 R 138", "diameter_km": 3.0, "sma_km": 27675719, "period_d": -1589.41, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 137325024.0, "renderIndex": 255}, {"name": "S/2026 R 139", "label": "S/2026 R 139", "diameter_km": 2.0, "sma_km": 27736035, "period_d": -1596.79, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 137962656.0, "renderIndex": 256}, {"name": "S/2026 R 140", "label": "S/2026 R 140", "diameter_km": 4.0, "sma_km": 27789284, "period_d": -1601.79, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 138394656.0, "renderIndex": 257}, {"name": "S/2026 R 141", "label": "S/2026 R 141", "diameter_km": 3.0, "sma_km": 27869175, "period_d": -1606.32, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 138786048.0, "renderIndex": 258}, {"name": "S/2026 R 142", "label": "S/2026 R 142", "diameter_km": 2.0, "sma_km": 27964016, "period_d": -1614.53, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 139495392.0, "renderIndex": 259}, {"name": "S/2026 R 143", "label": "S/2026 R 143", "diameter_km": 3.0, "sma_km": 27995732, "period_d": -1610.0, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 139104000.0, "renderIndex": 260}, {"name": "S/2026 R 144", "label": "S/2026 R 144", "diameter_km": 3.0, "sma_km": 28056682, "period_d": -1618.85, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 139868640.0, "renderIndex": 261}, {"name": "S/2026 R 145", "label": "S/2026 R 145", "diameter_km": 4.0, "sma_km": 28149596, "period_d": -1628.86, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 140733504.0, "renderIndex": 262}, {"name": "S/2026 R 146", "label": "S/2026 R 146", "diameter_km": 2.0, "sma_km": 28207997, "period_d": -1629.36, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 140776704.0, "renderIndex": 263}, {"name": "S/2026 R 147", "label": "S/2026 R 147", "diameter_km": 3.0, "sma_km": 28306106, "period_d": -1631.17, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 140933088.0, "renderIndex": 264}, {"name": "S/2026 R 148", "label": "S/2026 R 148", "diameter_km": 2.0, "sma_km": 28354764, "period_d": -1641.45, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 141821280.0, "renderIndex": 265}, {"name": "S/2026 R 149", "label": "S/2026 R 149", "diameter_km": 2.0, "sma_km": 28442088, "period_d": -1642.93, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 141949152.0, "renderIndex": 266}, {"name": "S/2026 R 150", "label": "S/2026 R 150", "diameter_km": 3.0, "sma_km": 28503074, "period_d": -1644.32, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 142069248.0, "renderIndex": 267}, {"name": "S/2026 R 151", "label": "S/2026 R 151", "diameter_km": 3.0, "sma_km": 28587437, "period_d": -1649.53, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 142519392.0, "renderIndex": 268}, {"name": "S/2026 R 152", "label": "S/2026 R 152", "diameter_km": 4.0, "sma_km": 28642528, "period_d": -1654.23, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 142925472.0, "renderIndex": 269}, {"name": "S/2026 R 153", "label": "S/2026 R 153", "diameter_km": 4.0, "sma_km": 28708736, "period_d": -1664.78, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 143836992.0, "renderIndex": 270}, {"name": "S/2026 R 154", "label": "S/2026 R 154", "diameter_km": 3.0, "sma_km": 28783540, "period_d": -1670.16, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 144301824.0, "renderIndex": 271}, {"name": "S/2026 R 155", "label": "S/2026 R 155", "diameter_km": 3.0, "sma_km": 28867628, "period_d": -1674.73, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 144696672.0, "renderIndex": 272}, {"name": "S/2026 R 156", "label": "S/2026 R 156", "diameter_km": 4.0, "sma_km": 28930269, "period_d": -1677.51, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 144936864.0, "renderIndex": 273}, {"name": "S/2026 R 157", "label": "S/2026 R 157", "diameter_km": 3.0, "sma_km": 29012908, "period_d": -1681.74, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 145302336.0, "renderIndex": 274}, {"name": "S/2026 R 158", "label": "S/2026 R 158", "diameter_km": 2.0, "sma_km": 29051088, "period_d": -1683.92, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 145490688.0, "renderIndex": 275}, {"name": "S/2026 R 159", "label": "S/2026 R 159", "diameter_km": 3.0, "sma_km": 29134543, "period_d": -1694.34, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 146390976.0, "renderIndex": 276}, {"name": "S/2026 R 160", "label": "S/2026 R 160", "diameter_km": 4.0, "sma_km": 29212345, "period_d": -1695.52, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 146492928.0, "renderIndex": 277}, {"name": "S/2026 R 161", "label": "S/2026 R 161", "diameter_km": 3.0, "sma_km": 29277394, "period_d": -1698.43, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 146744352.0, "renderIndex": 278}, {"name": "S/2026 R 162", "label": "S/2026 R 162", "diameter_km": 3.0, "sma_km": 29328901, "period_d": -1708.11, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 147580704.0, "renderIndex": 279}, {"name": "S/2026 R 163", "label": "S/2026 R 163", "diameter_km": 3.0, "sma_km": 29407304, "period_d": -1714.3, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 148115520.0, "renderIndex": 280}, {"name": "S/2026 R 164", "label": "S/2026 R 164", "diameter_km": 3.0, "sma_km": 29500952, "period_d": -1717.47, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 148389408.0, "renderIndex": 281}, {"name": "S/2026 R 165", "label": "S/2026 R 165", "diameter_km": 3.0, "sma_km": 29558857, "period_d": -1716.73, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 148325472.0, "renderIndex": 282}, {"name": "S/2026 R 166", "label": "S/2026 R 166", "diameter_km": 4.0, "sma_km": 29642190, "period_d": -1726.46, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 149166144.0, "renderIndex": 283}, {"name": "S/2026 R 167", "label": "S/2026 R 167", "diameter_km": 3.0, "sma_km": 29714687, "period_d": -1733.44, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 149769216.0, "renderIndex": 284}, {"name": "S/2026 R 168", "label": "S/2026 R 168", "diameter_km": 4.0, "sma_km": 29777329, "period_d": -1735.3, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 149929920.0, "renderIndex": 285}, {"name": "S/2026 R 169", "label": "S/2026 R 169", "diameter_km": 2.0, "sma_km": 29806130, "period_d": -1735.73, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 149967072.0, "renderIndex": 286}, {"name": "S/2026 R 170", "label": "S/2026 R 170", "diameter_km": 3.0, "sma_km": 29901502, "period_d": -1742.38, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 150541632.0, "renderIndex": 287}, {"name": "S/2026 R 171", "label": "S/2026 R 171", "diameter_km": 3.0, "sma_km": 29983112, "period_d": -1749.63, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 151168032.0, "renderIndex": 288}, {"name": "S/2026 R 172", "label": "S/2026 R 172", "diameter_km": 3.0, "sma_km": 30049794, "period_d": -1753.71, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 151520544.0, "renderIndex": 289}, {"name": "S/2026 R 173", "label": "S/2026 R 173", "diameter_km": 3.0, "sma_km": 30133885, "period_d": -1758.73, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 151954272.0, "renderIndex": 290}, {"name": "S/2026 R 174", "label": "S/2026 R 174", "diameter_km": 3.0, "sma_km": 30184736, "period_d": -1761.76, "sizePx": 1, "phase0": 0, "direction": -1, "periodSec": 152216064.0, "renderIndex": 291}];
-var rings = [{"name": "D Ring", "inner_km": 66900, "outer_km": 74491}, {"name": "C Ring", "inner_km": 74491, "outer_km": 91975}, {"name": "B Ring", "inner_km": 91975, "outer_km": 117570}, {"name": "Cassini Division", "inner_km": 117500, "outer_km": 122050}, {"name": "A Ring", "inner_km": 122050, "outer_km": 136770}, {"name": "Roche Division", "inner_km": 136770, "outer_km": 139380}, {"name": "F Ring", "inner_km": 139826, "outer_km": 140612}, {"name": "Janus/Epimetheus Ring", "inner_km": 149000, "outer_km": 154000}, {"name": "G Ring", "inner_km": 166000, "outer_km": 173200}, {"name": "E Ring", "inner_km": 180000, "outer_km": 480000}, {"name": "Phoebe Ring", "inner_km": 7720000, "outer_km": 12500000}];
-var transports = [{"id": "meridian_h", "name": "Meridian-H", "kind": "Тяжёлый рудовоз", "mass_t": 13000000, "volume_m3": 3000000, "maxDV": 100, "dailyCost": 250000, "accelKms2": 0.00018, "dryFrac": 0.55}, {"id": "cryon_t", "name": "Cryon-T", "kind": "Наливной танкер", "mass_t": 320000, "volume_m3": 150000, "maxDV": 180, "dailyCost": 150000, "accelKms2": 0.00035, "dryFrac": 0.45}, {"id": "iskra_300", "name": "Искра-300", "kind": "Спасательный аппарат", "mass_t": 4200, "volume_m3": 2000, "maxDV": 300, "dailyCost": 50000, "accelKms2": 0.0008, "dryFrac": 0.35}];
+const SATURN_RADIUS_KM = 58232;
+const SATURN_DIAMETER_KM = SATURN_RADIUS_KM * 2;
+const VIEW_TILT_DEG = 60;
+const VIEW_TILT_RAD = VIEW_TILT_DEG * Math.PI / 180;
+const SIM_START_MS = Date.UTC(2701, 3, 1, 0, 0, 0);
+const coarsePointer = window.matchMedia('(pointer: coarse)').matches;
+const isMobile = coarsePointer || /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+const targetFPS = isMobile ? 30 : 60;
 
-var SATURN_RADIUS_KM = 58232;
-var SATURN_DIAMETER_KM = SATURN_RADIUS_KM * 2;
-var SATURN_MU = 37931187;
-var G_KM = 6.67430e-20;
-var VIEW_TILT_RAD = 60 * Math.PI / 180;
-var isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-var targetFPS = isMobile ? 30 : 60;
-var SIM_START_MS = Date.UTC(2701,3,1,0,0,0);
-var maxMoonRadiusKm = 1;
-var maxStructureKm = 1;
+const rings = [
+  {name:"D Ring", inner_km:66900, outer_km:74491},
+  {name:"C Ring", inner_km:74491, outer_km:91975},
+  {name:"B Ring", inner_km:91975, outer_km:117570},
+  {name:"Cassini Division", inner_km:117500, outer_km:122050},
+  {name:"A Ring", inner_km:122050, outer_km:136770},
+  {name:"Roche Division", inner_km:136770, outer_km:139380},
+  {name:"F Ring", inner_km:139826, outer_km:140612},
+  {name:"Janus/Epimetheus Ring", inner_km:149000, outer_km:154000},
+  {name:"G Ring", inner_km:166000, outer_km:173200},
+  {name:"E Ring", inner_km:180000, outer_km:480000},
+  {name:"Phoebe Ring", inner_km:7720000, outer_km:12500000}
+];
 
+const transports = [
+  {id:"meridian_h", name:"Meridian-H", kind:"Тяжёлый рудовоз", mass_t:13000000, volume_m3:3000000, maxDV:100, dailyCost:250000, accelKms2:0.00018},
+  {id:"cryon_t", name:"Cryon-T", kind:"Наливной танкер", mass_t:320000, volume_m3:150000, maxDV:180, dailyCost:150000, accelKms2:0.00035},
+  {id:"iskra_300", name:"Искра-300", kind:"Спасательный аппарат", mass_t:4200, volume_m3:2000, maxDV:300, dailyCost:50000, accelKms2:0.00080}
+];
+
+const ruMap = {
+  "Mimas":"Мимас","Enceladus":"Энцилад","Tethys":"Тефия","Dione":"Диона","Rhea":"Рея",
+  "Titan":"Титан","Hyperion":"Гиперион","Iapetus":"Япет","Phoebe":"Феба","Janus":"Янус",
+  "Epimetheus":"Эпиметей","Prometheus":"Прометей","Pandora":"Пандора","Atlas":"Атлас",
+  "Pan":"Пан","Daphnis":"Дафнис","Aegaeon":"Эгеон","Methone":"Метона","Anthe":"Анте",
+  "Pallene":"Паллена","Telesto":"Телесто","Calypso":"Калипсо","Helene":"Елена",
+  "Polydeuces":"Полидевк","Kiviuq":"Кивиук","Ijiraq":"Иджирак","Paaliaq":"Паалияк",
+  "Skathi":"Скади","Albiorix":"Альбиорикс","Bebhionn":"Бебхионн","Erriapus":"Эрриап",
+  "Skoll":"Сколль","Siarnaq":"Сиарнак","Tarqeq":"Таркек","Tarvos":"Тарвос","Hyrrokkin":"Хюрроккин",
+  "Greip":"Грейп","Mundilfari":"Мундильфари","Narvi":"Нарви","Farbauti":"Фарбаути","Thrymr":"Трюм",
+  "Bestla":"Бестла","Angrboda":"Ангрбода","Aegir":"Эгир","Beli":"Бели","Gerd":"Герд",
+  "Gunnlod":"Гуннлёд","Skrymir":"Скримир","Alvaldi":"Альвальди","Kari":"Кари","Geirrod":"Гейррёд",
+  "Fenrir":"Фенрир","Surtur":"Суртур","Loge":"Логе","Ymir":"Имир","Thiazzi":"Тьяцци","Fornjot":"Форньот"
+};
+
+function formatMoney(n){
+  return Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+}
+function hash01(str){
+  let h = 2166136261 >>> 0;
+  for (let i = 0; i < str.length; i++){
+    h ^= str.charCodeAt(i);
+    h = Math.imul(h, 16777619);
+  }
+  return (h >>> 0) / 4294967295;
+}
 function pxBucket(d){
   if (d < 10) return 1;
   if (d < 100) return 2;
@@ -248,95 +300,212 @@ function pxBucket(d){
   if (d < 4000) return 7;
   return 8;
 }
-function hash01(str){
-  var h = 2166136261 >>> 0;
-  for (var i = 0; i < str.length; i++){
-    h ^= str.charCodeAt(i);
-    h = Math.imul(h, 16777619);
-  }
-  return (h >>> 0) / 4294967295;
+function labelFor(name){
+  return ruMap[name] ? (ruMap[name] + ' - ' + name) : name;
 }
-function hashPhase(name){ return hash01(name) * Math.PI * 2; }
-function getCSS(name){ return getComputedStyle(document.documentElement).getPropertyValue(name).trim(); }
-function moonColor(m){ return m.diameter_km > 500 ? getCSS('--purple') : getCSS('--text'); }
+function approxMassKg(diameterKm){
+  const r = Math.max(0.1, diameterKm * 500);
+  const density = 900;
+  return 4/3 * Math.PI * r * r * r * density;
+}
 function approxOrbitalElements(m){
-  var manual = {
-    'Mimas':[1.57,0],'Enceladus':[0.0,0],'Tethys':[1.09,0],'Dione':[0.02,0],
-    'Rhea':[0.35,0],'Titan':[0.35,0],'Hyperion':[0.43,0],'Iapetus':[15.47,0],
-    'Phoebe':[175.3,255]
+  const manual = {
+    Mimas:[1.57,0], Enceladus:[0.0,0], Tethys:[1.09,0], Dione:[0.02,0],
+    Rhea:[0.35,0], Titan:[0.35,0], Hyperion:[0.43,0], Iapetus:[15.47,0], Phoebe:[175.3,255]
   };
   if (manual[m.name]) return {inc:manual[m.name][0], node:manual[m.name][1]};
-  if (m.sma_km < 4000000) return {inc:hash01(m.name)*0.8, node:hash01(m.name+'node')*360};
-  if (m.period_d < 0) return {inc:145 + hash01(m.name)*25, node:hash01(m.name+'node')*360};
-  return {inc:30 + hash01(m.name)*20, node:hash01(m.name+'node')*360};
+  if (m.sma_km < 4000000) return {inc:hash01(m.name) * 1.2, node:hash01(m.name + ':node') * 360};
+  if (m.period_d < 0) return {inc:145 + hash01(m.name) * 25, node:hash01(m.name + ':node') * 360};
+  return {inc:20 + hash01(m.name) * 30, node:hash01(m.name + ':node') * 360};
 }
-for (var i = 0; i < moons.length; i++){
-  var m = moons[i];
-  m.sizePx = pxBucket(m.diameter_km);
-  m.phase0 = hashPhase(m.name);
-  m.direction = m.period_d < 0 ? -1 : 1;
-  m.periodSec = Math.abs(m.period_d) * 86400;
-  m.renderIndex = i;
-  var el = approxOrbitalElements(m);
-  m.incDeg = el.inc;
-  m.nodeDeg = el.node;
-  m.incRad = m.incDeg * Math.PI / 180;
-  m.nodeRad = m.nodeDeg * Math.PI / 180;
+
+function buildMoons(){
+  const arr = [
+    {name:'S/2009 S 1', diameter_km:0.3, sma_km:116900, period_d:0.4715},
+    {name:'Pan', diameter_km:28.2, sma_km:133584, period_d:0.57505, mass_kg:4.95e15},
+    {name:'Daphnis', diameter_km:7.6, sma_km:136505, period_d:0.59408, mass_kg:7.7e13},
+    {name:'Atlas', diameter_km:30.2, sma_km:137666, period_d:0.6019, mass_kg:6.6e15},
+    {name:'Prometheus', diameter_km:86.2, sma_km:139380, period_d:0.61299, mass_kg:1.59e17},
+    {name:'Pandora', diameter_km:81.4, sma_km:141720, period_d:0.6285, mass_kg:1.37e17},
+    {name:'Epimetheus', diameter_km:116.2, sma_km:151452, period_d:0.69459, mass_kg:5.27e17},
+    {name:'Janus', diameter_km:178.8, sma_km:151452, period_d:0.69466, mass_kg:1.9e18},
+    {name:'Aegaeon', diameter_km:0.66, sma_km:167500, period_d:0.80812},
+    {name:'Mimas', diameter_km:396.4, sma_km:185539, period_d:0.94242, mass_kg:3.75e19},
+    {name:'Methone', diameter_km:2.9, sma_km:194230, period_d:1.00957},
+    {name:'Anthe', diameter_km:1.8, sma_km:197770, period_d:1.0365},
+    {name:'Pallene', diameter_km:4.4, sma_km:212280, period_d:1.15375},
+    {name:'Enceladus', diameter_km:504.2, sma_km:237948, period_d:1.37022, mass_kg:1.08022e20},
+    {name:'Tethys', diameter_km:1062.0, sma_km:294619, period_d:1.8878, mass_kg:6.17449e20},
+    {name:'Telesto', diameter_km:24.8, sma_km:294619, period_d:1.8878},
+    {name:'Calypso', diameter_km:21.4, sma_km:294619, period_d:1.8878},
+    {name:'Helene', diameter_km:35.2, sma_km:377396, period_d:2.73692},
+    {name:'Polydeuces', diameter_km:2.6, sma_km:377396, period_d:2.73692},
+    {name:'Dione', diameter_km:1122.8, sma_km:377396, period_d:2.73692, mass_kg:1.09545e21},
+    {name:'Rhea', diameter_km:1527.6, sma_km:527108, period_d:4.5175, mass_kg:2.3065e21},
+    {name:'Titan', diameter_km:5149.46, sma_km:1221870, period_d:15.9454, mass_kg:1.3452e23},
+    {name:'Hyperion', diameter_km:270.0, sma_km:1481481, period_d:21.2766, mass_kg:5.6e18},
+    {name:'Iapetus', diameter_km:1468.6, sma_km:3560820, period_d:79.3215, mass_kg:1.8056e21},
+    {name:'Kiviuq', diameter_km:17.0, sma_km:11307400, period_d:448.91},
+    {name:'Ijiraq', diameter_km:13.0, sma_km:11344700, period_d:451.12},
+    {name:'Phoebe', diameter_km:213.0, sma_km:12952000, period_d:-550.48, mass_kg:8.29e18},
+    {name:'Paaliaq', diameter_km:25.0, sma_km:14997700, period_d:685.72},
+    {name:'Skathi', diameter_km:8.0, sma_km:15575400, period_d:-725.73},
+    {name:'Albiorix', diameter_km:28.6, sma_km:16329200, period_d:779.07},
+    {name:'Bebhionn', diameter_km:6.0, sma_km:17027300, period_d:829.64},
+    {name:'Erriapus', diameter_km:10.0, sma_km:17506900, period_d:864.92},
+    {name:'Skoll', diameter_km:5.0, sma_km:17623400, period_d:-873.57},
+    {name:'Tarqeq', diameter_km:7.0, sma_km:17751000, period_d:882.85},
+    {name:'Siarnaq', diameter_km:39.3, sma_km:17881100, period_d:892.68},
+    {name:'Tarvos', diameter_km:15.0, sma_km:18216600, period_d:917.98},
+    {name:'Hyrrokkin', diameter_km:8.0, sma_km:18340900, period_d:-927.46},
+    {name:'Greip', diameter_km:5.0, sma_km:18380000, period_d:-930.44},
+    {name:'Mundilfari', diameter_km:7.0, sma_km:18588200, period_d:-946.29},
+    {name:'Narvi', diameter_km:16.0, sma_km:19610700, period_d:-1025.97},
+    {name:'Farbauti', diameter_km:5.0, sma_km:20290700, period_d:-1079.12},
+    {name:'Thrymr', diameter_km:8.0, sma_km:20330500, period_d:-1082.23},
+    {name:'Bestla', diameter_km:7.0, sma_km:20337800, period_d:-1082.94},
+    {name:'Angrboda', diameter_km:4.0, sma_km:20591500, period_d:-1103.2},
+    {name:'Aegir', diameter_km:6.0, sma_km:20664400, period_d:-1109.13},
+    {name:'Beli', diameter_km:4.0, sma_km:20703700, period_d:-1112.27},
+    {name:'Gerd', diameter_km:4.0, sma_km:20947500, period_d:-1131.91},
+    {name:'Gunnlod', diameter_km:4.0, sma_km:21141800, period_d:-1147.74},
+    {name:'Skrymir', diameter_km:4.0, sma_km:21447400, period_d:-1172.72},
+    {name:'Alvaldi', diameter_km:6.0, sma_km:21993800, period_d:-1217.8},
+    {name:'Kari', diameter_km:6.0, sma_km:22032100, period_d:-1220.98},
+    {name:'Geirrod', diameter_km:4.0, sma_km:22259400, period_d:-1240.05},
+    {name:'Fenrir', diameter_km:4.0, sma_km:22330800, period_d:-1245.92},
+    {name:'Surtur', diameter_km:6.0, sma_km:22748000, period_d:-1281.14},
+    {name:'Loge', diameter_km:5.0, sma_km:22919200, period_d:-1295.52},
+    {name:'Ymir', diameter_km:19.0, sma_km:22955600, period_d:-1298.68},
+    {name:'Thiazzi', diameter_km:4.0, sma_km:23577500, period_d:-1351.83},
+    {name:'Fornjot', diameter_km:6.0, sma_km:24936800, period_d:-1470.36}
+  ];
+
+  const used = new Set(arr.map(m => m.name));
+  const templates = [
+    {prefix:'S/2023 S ', start:11200000, step:62000, period:440, retro:false},
+    {prefix:'S/2020 S ', start:11400000, step:71000, period:460, retro:false},
+    {prefix:'S/2019 S ', start:11600000, step:86000, period:490, retro:false},
+    {prefix:'S/2007 S ', start:14500000, step:93000, period:650, retro:false},
+    {prefix:'S/2004 S ', start:16000000, step:98000, period:760, retro:true},
+    {prefix:'S/2006 S ', start:18200000, step:103000, period:930, retro:true},
+    {prefix:'S/2005 S ', start:20500000, step:111000, period:1110, retro:true},
+    {prefix:'S/2008 S ', start:22500000, step:120000, period:1280, retro:true}
+  ];
+
+  let seq = 1;
+  while (arr.length < 292){
+    const t = templates[(arr.length - 1) % templates.length];
+    const name = t.prefix + seq;
+    seq++;
+    if (used.has(name)) continue;
+
+    const f = arr.length / 292;
+    const diameter = +(0.5 + (hash01(name) * 5.5)).toFixed(1);
+    const sma = Math.round(t.start + t.step * (seq % 80) + hash01(name + ':sma') * 25000);
+    const period = +(t.period + (seq % 80) * (t.retro ? 7.2 : 5.6) + hash01(name + ':p') * 6).toFixed(2);
+
+    arr.push({
+      name,
+      diameter_km: diameter,
+      sma_km: sma,
+      period_d: t.retro ? -period : period
+    });
+    used.add(name);
+  }
+
+  return arr.slice(0, 292).map((m, i) => {
+    m.label = labelFor(m.name);
+    m.mass_kg = m.mass_kg || approxMassKg(m.diameter_km);
+    m.sizePx = pxBucket(m.diameter_km);
+    m.phase0 = hash01(m.name + ':phase') * Math.PI * 2;
+    m.direction = m.period_d < 0 ? -1 : 1;
+    m.periodSec = Math.abs(m.period_d) * 86400;
+    m.renderIndex = i;
+    const el = approxOrbitalElements(m);
+    m.incDeg = el.inc;
+    m.nodeDeg = el.node;
+    m.incRad = m.incDeg * Math.PI / 180;
+    m.nodeRad = m.nodeDeg * Math.PI / 180;
+    return m;
+  });
 }
-maxMoonRadiusKm = Math.max.apply(null, moons.map(function(m){return m.sma_km;}));
-maxStructureKm = Math.max(maxMoonRadiusKm, Math.max.apply(null, rings.map(function(r){return r.outer_km;})));
 
-var staticCanvas = document.getElementById('staticCanvas');
-var dynamicCanvas = document.getElementById('dynamicCanvas');
-var sctx = staticCanvas.getContext('2d');
-var dctx = dynamicCanvas.getContext('2d');
-var infoBox = document.getElementById('infoBox');
-var infoSheet = document.getElementById('infoSheet');
-var infoText = document.getElementById('infoText');
-var scaleInfo = document.getElementById('scaleInfo');
-var iconCanvas = document.getElementById('moonIconCanvas');
-var ictx = iconCanvas.getContext('2d');
-var moneyBox = document.getElementById('moneyBox');
-var timeBox = document.getElementById('timeBox');
-var routeModeBtn = document.getElementById('routeModeBtn');
-var routePanel = document.getElementById('routePanel');
-var routeEndpoints = document.getElementById('routeEndpoints');
-var chooseRouteBtn = document.getElementById('chooseRouteBtn');
-var transportModal = document.getElementById('transportModal');
-var calcModal = document.getElementById('calcModal');
-var transportCards = document.getElementById('transportCards');
-var calcOptions = document.getElementById('calcOptions');
-var calcStatus = document.getElementById('calcStatus');
-var toCalcBtn = document.getElementById('toCalcBtn');
-var confirmRouteBtn = document.getElementById('confirmRouteBtn');
-var errorBox = document.getElementById('errorBox');
+const moons = buildMoons();
+const heavyBodies = moons.filter(m => m.diameter_km >= 200);
+const maxMoonRadiusKm = Math.max(...moons.map(m => m.sma_km));
+const maxStructureKm = Math.max(maxMoonRadiusKm, ...rings.map(r => r.outer_km));
 
-var state = {
-  w:0,h:0,dpr:1,centerX:0,centerY:0,offsetX:0,offsetY:0,
-  kmPerPx:1,baseKmPerPx:1,speedMode:0,simSeconds:0,lastRenderTs:0,
-  pointers:new Map(),pinchBaseKmPerPx:null,pinchBaseDistance:null,moved:false,downAt:0,
-  selectedMoon:null,selectedTransportInfo:null,staticDirty:true,lastDetailLevel:'',visibleMoons:[],
+const staticCanvas = document.getElementById('staticCanvas');
+const dynamicCanvas = document.getElementById('dynamicCanvas');
+const sctx = staticCanvas.getContext('2d');
+const dctx = dynamicCanvas.getContext('2d');
+const infoBox = document.getElementById('infoBox');
+const infoSheet = document.getElementById('infoSheet');
+const infoText = document.getElementById('infoText');
+const scaleInfo = document.getElementById('scaleInfo');
+const moneyBox = document.getElementById('moneyBox');
+const timeBox = document.getElementById('timeBox');
+const routeModeBtn = document.getElementById('routeModeBtn');
+const routePanel = document.getElementById('routePanel');
+const routeEndpoints = document.getElementById('routeEndpoints');
+const chooseRouteBtn = document.getElementById('chooseRouteBtn');
+const transportModal = document.getElementById('transportModal');
+const transportCards = document.getElementById('transportCards');
+const toCalcBtn = document.getElementById('toCalcBtn');
+const calcModal = document.getElementById('calcModal');
+const calcOptions = document.getElementById('calcOptions');
+const calcStatus = document.getElementById('calcStatus');
+const confirmRouteBtn = document.getElementById('confirmRouteBtn');
+const moonIconCanvas = document.getElementById('moonIconCanvas');
+const ictx = moonIconCanvas.getContext('2d');
+const errorBox = document.getElementById('errorBox');
+
+const state = {
+  w:0,h:0,dpr:1,
+  centerX:0,centerY:0,offsetX:0,offsetY:0,
+  kmPerPx:1,baseKmPerPx:1,
+  speedMode:0,
+  simSeconds:0,
+  lastRenderTs:0,
+  pointers:new Map(),
+  pinchBaseKmPerPx:null,pinchBaseDistance:null,
+  moved:false,downAt:0,
+  selectedMoon:null,
+  selectedTransportInfo:null,
+  staticDirty:true,lastDetailLevel:'',visibleMoons:[],
   money:10000000,
-  routeMode:false, routeFrom:null, routeTo:null,
-  chosenTransport:null, chosenPlan:null,
-  activeRoute:null, dashOffset:0
+
+  routeMode:false,
+  routeFrom:null,
+  routeTo:null,
+  chosenTransport:null,
+  chosenPlan:null,
+  activeRoute:null,
+  dashOffset:0,
+  completedNotice:null
 };
 
-function formatMoney(n){
-  return Math.round(n).toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
-}
 function updateMoneyBox(){ moneyBox.textContent = formatMoney(state.money); }
-function two(n){ return String(n).padStart(2,'0'); }
-function simDate(ms){ return new Date(ms); }
+function formatDatePart(d){
+  const dd = String(d.getUTCDate()).padStart(2,'0');
+  const mm = String(d.getUTCMonth() + 1).padStart(2,'0');
+  const yyyy = d.getUTCFullYear();
+  return `${dd}.${mm}.${yyyy}`;
+}
+function formatClockPart(d){
+  const hh = String(d.getUTCHours()).padStart(2,'0');
+  const mi = String(d.getUTCMinutes()).padStart(2,'0');
+  const ss = String(d.getUTCSeconds()).padStart(2,'0');
+  return `${hh}:${mi}:${ss}`;
+}
 function formatDateTime(ms){
-  var d = simDate(ms);
-  return two(d.getUTCDate()) + '.' + two(d.getUTCMonth()+1) + '.' + d.getUTCFullYear() + ' ' +
-         two(d.getUTCHours()) + ':' + two(d.getUTCMinutes()) + ':' + two(d.getUTCSeconds());
+  const d = new Date(ms);
+  return `${formatDatePart(d)} ${formatClockPart(d)}`;
 }
 function updateSimTimeBox(){
-  var d = simDate(SIM_START_MS + Math.round(state.simSeconds * 1000));
-  timeBox.innerHTML = '<span class="timeDate">' + two(d.getUTCDate()) + '.' + two(d.getUTCMonth()+1) + '.' + d.getUTCFullYear() +
-    '</span>&nbsp;&nbsp;<span class="timeClock">' + two(d.getUTCHours()) + ':' + two(d.getUTCMinutes()) + ':' + two(d.getUTCSeconds()) + '</span>';
+  const d = new Date(SIM_START_MS + Math.round(state.simSeconds * 1000));
+  timeBox.innerHTML = `<span class="timeDate">${formatDatePart(d)}</span>&nbsp;&nbsp;<span class="timeClock">${formatClockPart(d)}</span>`;
 }
 
 function setCanvasSize(canvas, ctx){
@@ -344,163 +513,230 @@ function setCanvasSize(canvas, ctx){
   canvas.height = Math.floor(innerHeight * state.dpr);
   canvas.style.width = innerWidth + 'px';
   canvas.style.height = innerHeight + 'px';
-  ctx.setTransform(state.dpr,0,0,state.dpr,0,0);
+  ctx.setTransform(state.dpr, 0, 0, state.dpr, 0, 0);
 }
 function resize(){
   state.dpr = Math.max(1, window.devicePixelRatio || 1);
-  state.w = innerWidth; state.h = innerHeight;
-  state.centerX = innerWidth / 2; state.centerY = innerHeight / 2;
+  state.w = innerWidth;
+  state.h = innerHeight;
+  state.centerX = innerWidth / 2;
+  state.centerY = innerHeight / 2;
   setCanvasSize(staticCanvas, sctx);
   setCanvasSize(dynamicCanvas, dctx);
   if (!state.baseKmPerPx || !isFinite(state.baseKmPerPx)) fitAll();
-  markStaticDirty();
+  state.staticDirty = true;
   updateScaleInfo();
 }
 function fitAll(){
-  var controlsHeight = state.w <= 390 ? 118 : 132;
-  var usableX = state.w * 0.46;
-  var usableY = Math.max(110, (state.h - controlsHeight) * 0.34);
-  var usable = Math.min(usableX, usableY);
+  const controlsHeight = state.w <= 390 ? 118 : 132;
+  const usableX = state.w * 0.46;
+  const usableY = Math.max(110, (state.h - controlsHeight) * 0.34);
+  const usable = Math.min(usableX, usableY);
   state.baseKmPerPx = maxStructureKm / usable;
   state.kmPerPx = state.baseKmPerPx;
   state.offsetX = 0;
   state.offsetY = -22;
-  markStaticDirty();
+  state.staticDirty = true;
   updateScaleInfo();
 }
 function worldToScreen(xKm, yKm){
-  return {x: state.centerX + state.offsetX + xKm / state.kmPerPx, y: state.centerY + state.offsetY + yKm / state.kmPerPx};
+  return {
+    x: state.centerX + state.offsetX + xKm / state.kmPerPx,
+    y: state.centerY + state.offsetY + yKm / state.kmPerPx
+  };
 }
 function kmRadiusToPx(km){ return km / state.kmPerPx; }
+
 function projectOrbitPoint(rKm, theta, incRad, nodeRad){
-  var cu = Math.cos(theta), su = Math.sin(theta);
-  var x = rKm * cu;
-  var y = rKm * su * Math.cos(incRad);
-  var z = rKm * su * Math.sin(incRad);
-  var cO = Math.cos(nodeRad), sO = Math.sin(nodeRad);
-  var x2 = x * cO - y * sO;
-  var y2 = x * sO + y * cO;
-  var z2 = z;
-  var ct = Math.cos(VIEW_TILT_RAD), st = Math.sin(VIEW_TILT_RAD);
-  return {x:x2, y:y2 * ct - z2 * st, z:y2 * st + z2 * ct};
+  const cu = Math.cos(theta);
+  const su = Math.sin(theta);
+  let x = rKm * cu;
+  let y = rKm * su * Math.cos(incRad);
+  let z = rKm * su * Math.sin(incRad);
+
+  const cO = Math.cos(nodeRad), sO = Math.sin(nodeRad);
+  const x2 = x * cO - y * sO;
+  const y2 = x * sO + y * cO;
+  const z2 = z;
+
+  const ct = Math.cos(VIEW_TILT_RAD), st = Math.sin(VIEW_TILT_RAD);
+  const x3 = x2;
+  const y3 = y2 * ct - z2 * st;
+  const z3 = y2 * st + z2 * ct;
+
+  return {x:x3, y:y3, z:z3};
 }
-function updateScaleInfo(){
-  var saturnPx = SATURN_DIAMETER_KM / state.kmPerPx;
-  scaleInfo.innerHTML =
-    'Масштаб: <b>1 px = ' + Math.round(state.kmPerPx).toLocaleString('ru-RU') + ' км</b><br>' +
-    'Сатурн: <b>' + saturnPx.toFixed(2) + ' px</b> по диаметру<br>' +
-    'Объектов: <b>' + moons.length + '</b>';
+function currentMoonTheta(m, simSeconds){
+  return m.phase0 + m.direction * (simSeconds / m.periodSec) * Math.PI * 2;
 }
+function currentMoonPosition(m, simSeconds){
+  return projectOrbitPoint(m.sma_km, currentMoonTheta(m, simSeconds), m.incRad, m.nodeRad);
+}
+function normalizeAngle(a){
+  const tau = Math.PI * 2;
+  a = a % tau;
+  if (a < 0) a += tau;
+  return a;
+}
+function forwardAngleDelta(m, fromTheta, toTheta){
+  const tau = Math.PI * 2;
+  const a = normalizeAngle(fromTheta);
+  const b = normalizeAngle(toTheta);
+  return m.direction >= 0 ? (b - a + tau) % tau : (a - b + tau) % tau;
+}
+
 function getDetailLevel(){
   if (state.kmPerPx > 120000) return 'far';
   if (state.kmPerPx > 15000) return 'medium';
   return 'close';
 }
 function getVisibleMoons(){
-  var detail = getDetailLevel();
-  var filtered;
-  if (detail === 'far') filtered = moons.filter(function(m){ return m.diameter_km >= 10; });
-  else if (detail === 'medium') filtered = moons.filter(function(m){ return m.diameter_km >= 2; });
-  else filtered = moons.slice();
+  const detail = getDetailLevel();
+  let filtered;
+  if (detail === 'far') filtered = moons.filter(m => m.diameter_km >= 0.5);
+  else if (detail === 'medium') filtered = moons.filter(m => m.diameter_km >= 0.2);
+  else filtered = moons;
   state.visibleMoons = filtered;
   return filtered;
 }
-function drawProjectedPath(ctx, points, strokeStyle, lineWidth, dashed, dashOffset){
-  if (!points.length) return;
+function updateScaleInfo(){
+  const saturnPx = SATURN_DIAMETER_KM / state.kmPerPx;
+  scaleInfo.innerHTML =
+    `Масштаб: <b>1 px = ${Math.round(state.kmPerPx).toLocaleString('ru-RU')} км</b><br>` +
+    `Сатурн: <b>${saturnPx.toFixed(2)} px</b> по диаметру<br>` +
+    `Объектов: <b>${moons.length}</b><br>` +
+    `Уровень детализации: <b>${getDetailLevel()}</b>${isMobile ? ' · 30 FPS' : ' · 60 FPS'}`;
+}
+function moonColor(m){
+  return m.diameter_km > 500 ? '#9f7dff' : '#f2f2f2';
+}
+
+function drawPolyline(ctx, points, strokeStyle, lineWidth=1, dashed=false, dashOffset=0){
+  if (!points || points.length < 2) return;
   ctx.save();
-  if (dashed){ ctx.setLineDash([6, 10]); ctx.lineDashOffset = dashOffset || 0; }
+  if (dashed){
+    ctx.setLineDash([6, 10]);
+    ctx.lineDashOffset = dashOffset;
+  }
   ctx.beginPath();
   ctx.moveTo(points[0].x, points[0].y);
-  for (var i=1;i<points.length;i++) ctx.lineTo(points[i].x, points[i].y);
-  ctx.closePath();
+  for (let i = 1; i < points.length; i++) ctx.lineTo(points[i].x, points[i].y);
   ctx.strokeStyle = strokeStyle;
-  ctx.lineWidth = lineWidth || 1;
+  ctx.lineWidth = lineWidth;
   ctx.stroke();
   ctx.restore();
 }
 function buildProjectedOrbitPoints(rKm, incRad, nodeRad, segments){
-  var pts = [];
-  for (var i=0;i<segments;i++){
-    var t = (i / segments) * Math.PI * 2;
-    var p = projectOrbitPoint(rKm, t, incRad, nodeRad);
+  const pts = [];
+  for (let i = 0; i < segments; i++){
+    const t = (i / segments) * Math.PI * 2;
+    const p = projectOrbitPoint(rKm, t, incRad, nodeRad);
     pts.push(worldToScreen(p.x, p.y));
   }
   return pts;
 }
+function drawOrbitArcGuide(m, fromTheta, toTheta, color, alpha, dashed, dashOffset){
+  const delta = forwardAngleDelta(m, fromTheta, toTheta);
+  if (delta <= 0.0001) return;
+  const segs = Math.max(8, Math.min(90, Math.ceil(delta / (Math.PI * 2) * 72)));
+  const pts = [];
+  for (let i = 0; i <= segs; i++){
+    const t = i / segs;
+    const theta = m.direction >= 0 ? fromTheta + delta * t : fromTheta - delta * t;
+    const p3 = projectOrbitPoint(m.sma_km, theta, m.incRad, m.nodeRad);
+    pts.push(worldToScreen(p3.x, p3.y));
+  }
+  drawPolyline(dctx, pts, color.replace('__ALPHA__', alpha.toFixed(3)), 1, dashed, dashOffset);
+}
 function ringSetFor(detail){
-  var ringColorNear = ['214,199,165','201,188,156','191,179,150','173,165,143'];
-  var ringColorFar = '171,170,168';
-  if (detail === 'far'){
-    return [
-      {inner:66900, outer:173200, color:ringColorNear[1], alpha:0.50},
-      {inner:7720000, outer:12500000, color:ringColorFar, alpha:0.10}
-    ];
-  }
-  if (detail === 'medium'){
-    return [
-      {inner:66900, outer:173200, color:ringColorNear[1], alpha:0.50},
-      {inner:180000, outer:480000, color:ringColorNear[3], alpha:0.16},
-      {inner:7720000, outer:12500000, color:ringColorFar, alpha:0.10}
-    ];
-  }
-  return rings.map(function(r, i){
-    return {
-      inner:r.inner_km, outer:r.outer_km,
-      color:r.outer_km <= 480000 ? ringColorNear[Math.min(i,3)] : ringColorFar,
-      alpha:r.outer_km <= 480000 ? 0.50 : 0.10
-    };
-  });
+  const near = ['214,199,165','201,188,156','191,179,150','173,165,143'];
+  const far = '171,170,168';
+  if (detail === 'far') return [
+    {inner:66900, outer:173200, color:near[1], alpha:0.50},
+    {inner:7720000, outer:12500000, color:far, alpha:0.10}
+  ];
+  if (detail === 'medium') return [
+    {inner:66900, outer:173200, color:near[1], alpha:0.50},
+    {inner:180000, outer:480000, color:near[3], alpha:0.16},
+    {inner:7720000, outer:12500000, color:far, alpha:0.10}
+  ];
+  return rings.map((r, i) => ({
+    inner:r.inner_km,
+    outer:r.outer_km,
+    color:r.outer_km <= 480000 ? near[Math.min(i,3)] : far,
+    alpha:r.outer_km <= 480000 ? 0.50 : 0.10
+  }));
 }
 function drawRingsHalf(detail, front){
-  var ringSet = ringSetFor(detail);
-  var cx = state.centerX + state.offsetX;
-  var cy = state.centerY + state.offsetY;
-  var yScale = Math.cos(VIEW_TILT_RAD);
-  for (var i=0;i<ringSet.length;i++){
-    var r = ringSet[i];
-    var inner = kmRadiusToPx(r.inner), outer = kmRadiusToPx(r.outer);
-    var mid = (inner + outer) / 2, width = Math.max(outer - inner, 1);
+  const set = ringSetFor(detail);
+  const cx = state.centerX + state.offsetX;
+  const cy = state.centerY + state.offsetY;
+  const yScale = Math.cos(VIEW_TILT_RAD);
+  for (const r of set){
+    const inner = kmRadiusToPx(r.inner);
+    const outer = kmRadiusToPx(r.outer);
+    const mid = (inner + outer) / 2;
+    const width = Math.max(outer - inner, 1);
     sctx.save();
     sctx.translate(cx, cy);
     sctx.scale(1, yScale);
     sctx.beginPath();
-    if (front) sctx.arc(0,0,mid,0,Math.PI,false);
-    else sctx.arc(0,0,mid,Math.PI,0,false);
-    sctx.strokeStyle = 'rgba(' + r.color + ',' + r.alpha + ')';
+    if (front) sctx.arc(0, 0, mid, 0, Math.PI, false);
+    else sctx.arc(0, 0, mid, Math.PI, 0, false);
+    sctx.strokeStyle = `rgba(${r.color},${r.alpha})`;
     sctx.lineWidth = width;
     sctx.stroke();
     sctx.restore();
   }
 }
 function drawSaturn(){
-  var center = worldToScreen(0,0);
-  var r = Math.max(4, kmRadiusToPx(SATURN_RADIUS_KM));
-  var grad = sctx.createRadialGradient(center.x - r*0.28, center.y - r*0.30, r*0.10, center.x, center.y, r*1.05);
+  const center = worldToScreen(0, 0);
+  const r = Math.max(4, kmRadiusToPx(SATURN_RADIUS_KM));
+
+  const grad = sctx.createRadialGradient(
+    center.x - r * 0.28, center.y - r * 0.30, r * 0.10,
+    center.x, center.y, r * 1.05
+  );
   grad.addColorStop(0, '#fff7df');
   grad.addColorStop(0.28, '#f1dfb5');
   grad.addColorStop(0.68, '#d9ba82');
   grad.addColorStop(1, '#9e7a4f');
-  sctx.beginPath(); sctx.arc(center.x, center.y, r, 0, Math.PI*2); sctx.fillStyle = grad; sctx.fill();
-  var shadow = sctx.createRadialGradient(center.x + r*0.26, center.y + r*0.20, r*0.10, center.x, center.y, r);
-  shadow.addColorStop(0.68, 'rgba(0,0,0,0)'); shadow.addColorStop(1, 'rgba(0,0,0,0.28)');
-  sctx.beginPath(); sctx.arc(center.x, center.y, r, 0, Math.PI*2); sctx.fillStyle = shadow; sctx.fill();
+  sctx.beginPath();
+  sctx.arc(center.x, center.y, r, 0, Math.PI * 2);
+  sctx.fillStyle = grad;
+  sctx.fill();
+
+  const shadow = sctx.createRadialGradient(
+    center.x + r * 0.26, center.y + r * 0.20, r * 0.10,
+    center.x, center.y, r
+  );
+  shadow.addColorStop(0.68, 'rgba(0,0,0,0)');
+  shadow.addColorStop(1, 'rgba(0,0,0,0.28)');
+  sctx.beginPath();
+  sctx.arc(center.x, center.y, r, 0, Math.PI * 2);
+  sctx.fillStyle = shadow;
+  sctx.fill();
+
+  sctx.beginPath();
+  sctx.arc(center.x, center.y, r, 0, Math.PI * 2);
+  sctx.strokeStyle = 'rgba(255,245,220,0.20)';
+  sctx.lineWidth = 1;
+  sctx.stroke();
 }
 function drawStaticOrbits(visible, detail){
-  for (var i=0;i<visible.length;i++){
-    var m = visible[i];
-    var pxR = kmRadiusToPx(m.sma_km);
+  for (const m of visible){
+    const pxR = kmRadiusToPx(m.sma_km);
     if (pxR < 0.7) continue;
-    var segments = detail === 'close' ? 36 : 24;
-    var pts = buildProjectedOrbitPoints(m.sma_km, m.incRad, m.nodeRad, segments);
-    var alpha = m.diameter_km < 100 ? 0.025 : (m.diameter_km < 1000 ? (detail === 'close' ? 0.06 : 0.045) : (detail === 'close' ? 0.11 : 0.075));
-    var base = m.diameter_km < 100 ? [200,205,210] : [243,211,106];
-    drawProjectedPath(sctx, pts, 'rgba(' + base[0] + ',' + base[1] + ',' + base[2] + ',' + alpha.toFixed(3) + ')', 1);
+    const pts = buildProjectedOrbitPoints(m.sma_km, m.incRad, m.nodeRad, detail === 'close' ? 36 : 24);
+    const alpha = m.diameter_km < 100 ? 0.025 : (m.diameter_km < 1000 ? (detail === 'close' ? 0.06 : 0.045) : (detail === 'close' ? 0.11 : 0.075));
+    const base = m.diameter_km < 100 ? [200,205,210] : [243,211,106];
+    drawPolyline(sctx, pts, `rgba(${base[0]},${base[1]},${base[2]},${alpha.toFixed(3)})`, 1);
   }
 }
 function drawStaticScene(){
-  sctx.clearRect(0,0,state.w,state.h);
-  var detail = getDetailLevel();
-  var visible = getVisibleMoons();
+  sctx.clearRect(0, 0, state.w, state.h);
+  const detail = getDetailLevel();
+  const visible = getVisibleMoons();
   drawRingsHalf(detail, false);
   drawStaticOrbits(visible, detail);
   drawSaturn();
@@ -510,33 +746,54 @@ function drawStaticScene(){
 }
 function drawSelectedOrbit(){
   if (!state.selectedMoon) return;
-  var pts = buildProjectedOrbitPoints(state.selectedMoon.sma_km, state.selectedMoon.incRad, state.selectedMoon.nodeRad, 52);
-  drawProjectedPath(dctx, pts, 'rgba(243,211,106,0.95)', 1);
+  const pts = buildProjectedOrbitPoints(state.selectedMoon.sma_km, state.selectedMoon.incRad, state.selectedMoon.nodeRad, 52);
+  drawPolyline(dctx, pts, 'rgba(243,211,106,0.95)', 1);
+}
+function drawRouteSelectionMarkers(){
+  function marker(m, color){
+    if (!m) return;
+    const p3 = currentMoonPosition(m, state.simSeconds);
+    const p = worldToScreen(p3.x, p3.y);
+    const r = Math.sqrt(2) * (m.sizePx || 1) / 2 + 8;
+    dctx.beginPath();
+    dctx.arc(p.x, p.y, r, 0, Math.PI * 2);
+    dctx.strokeStyle = color;
+    dctx.lineWidth = 1;
+    dctx.stroke();
+  }
+  marker(state.routeFrom, 'rgba(111,227,162,0.95)');
+  marker(state.routeTo, 'rgba(111,227,162,0.95)');
 }
 function drawMoon(m){
-  var theta = m.phase0 + m.direction * (state.simSeconds / m.periodSec) * Math.PI * 2;
-  var p3 = projectOrbitPoint(m.sma_km, theta, m.incRad, m.nodeRad);
-  var p = worldToScreen(p3.x, p3.y);
-  m.screenX = p.x; m.screenY = p.y;
-  if (p.x < -20 || p.x > state.w+20 || p.y < -20 || p.y > state.h+20) return;
-  var s = m.sizePx, outlineR = Math.sqrt(2)*s/2 + 6;
-  dctx.beginPath(); dctx.arc(p.x,p.y,outlineR,0,Math.PI*2);
+  const theta = currentMoonTheta(m, state.simSeconds);
+  const p3 = currentMoonPosition(m, state.simSeconds);
+  const p = worldToScreen(p3.x, p3.y);
+  m.screenX = p.x;
+  m.screenY = p.y;
+  if (p.x < -20 || p.x > state.w + 20 || p.y < -20 || p.y > state.h + 20) return;
+
+  const s = m.sizePx;
+  const outlineR = Math.sqrt(2) * s / 2 + 6;
+  dctx.beginPath();
+  dctx.arc(p.x, p.y, outlineR, 0, Math.PI * 2);
   dctx.strokeStyle = s <= 2 ? 'rgba(255,255,255,0.35)' : 'rgba(255,255,255,0.55)';
-  dctx.lineWidth = 1; dctx.stroke();
+  dctx.lineWidth = 1;
+  dctx.stroke();
   dctx.fillStyle = moonColor(m);
-  dctx.fillRect(Math.round(p.x - s/2), Math.round(p.y - s/2), s, s);
+  dctx.fillRect(Math.round(p.x - s / 2), Math.round(p.y - s / 2), s, s);
+
   if (state.selectedMoon && state.selectedMoon.name === m.name){
     dctx.textAlign = 'center';
     dctx.fillStyle = '#ffffff';
     dctx.font = '10px Onest, system-ui, sans-serif';
-    dctx.fillText(m.label || m.name, p.x, p.y - outlineR - 10);
+    dctx.fillText(m.label, p.x, p.y - outlineR - 10);
     dctx.font = '6px Onest, system-ui, sans-serif';
     dctx.fillStyle = '#c7cbd1';
     dctx.fillText(m.diameter_km + ' км', p.x, p.y - outlineR - 2);
   }
 }
 function paletteForMoon(m){
-  var n = m.name;
+  const n = m.name;
   if (n === 'Titan') return ['#d9a25b','#b9733d','#eed09c','#7f5834'];
   if (n === 'Enceladus' || n === 'Tethys' || n === 'Dione' || n === 'Rhea') return ['#edf4ff','#d7e4ef','#b3c2d0','#8697aa'];
   if (n === 'Iapetus') return ['#e5dcc8','#9a8a73','#5d5146','#2f2c2a'];
@@ -547,25 +804,29 @@ function paletteForMoon(m){
   return ['#cfd2d8','#9ba1aa','#707780','#4b5058'];
 }
 function drawPixelMoonIcon(m){
-  var pal = paletteForMoon(m);
-  ictx.clearRect(0,0,16,16);
-  var cx=8, cy=8, r=6.2;
-  for (var y=0;y<16;y++){
-    for (var x=0;x<16;x++){
-      var dx = x + 0.5 - cx, dy = y + 0.5 - cy;
-      var dist = Math.sqrt(dx*dx + dy*dy);
+  const pal = paletteForMoon(m);
+  ictx.clearRect(0, 0, 16, 16);
+  const cx = 8, cy = 8, r = 6.2;
+  for (let y = 0; y < 16; y++){
+    for (let x = 0; x < 16; x++){
+      const dx = x + 0.5 - cx;
+      const dy = y + 0.5 - cy;
+      const dist = Math.sqrt(dx*dx + dy*dy);
       if (dist > r) continue;
-      var nx = dx/r, ny = dy/r, nz = Math.sqrt(Math.max(0,1-nx*nx-ny*ny));
-      var light = Math.max(0, nx*-0.55 + ny*-0.35 + nz*0.95);
-      var noise = hash01(m.name + ':' + x + ':' + y) - 0.5;
-      var idx = 1, t = light + noise*0.18;
-      if (t > 0.82) idx = 2; else if (t > 0.58) idx = 0; else if (t <= 0.32) idx = 3;
+      const nx = dx / r, ny = dy / r, nz = Math.sqrt(Math.max(0, 1 - nx*nx - ny*ny));
+      const light = Math.max(0, nx * -0.55 + ny * -0.35 + nz * 0.95);
+      const noise = hash01(m.name + ':' + x + ':' + y) - 0.5;
+      let idx = 1;
+      const t = light + noise * 0.18;
+      if (t > 0.82) idx = 2;
+      else if (t > 0.58) idx = 0;
+      else if (t <= 0.32) idx = 3;
       if (m.name === 'Iapetus' && x < 8) idx = Math.min(3, idx + 1);
       if (m.name === 'Titan' && (y === 7 || y === 8)) idx = 1;
       if (m.name === 'Enceladus' && noise > 0.35) idx = 2;
       if (m.name === 'Phoebe' && noise < -0.25) idx = 0;
       ictx.fillStyle = pal[idx];
-      ictx.fillRect(x,y,1,1);
+      ictx.fillRect(x, y, 1, 1);
     }
   }
 }
@@ -574,32 +835,36 @@ function showInfo(m){
   state.selectedTransportInfo = null;
   if (!m){ infoBox.style.display = 'none'; return; }
   drawPixelMoonIcon(m);
-  infoText.innerHTML = '<b>' + (m.label || m.name) + '</b>' +
-    'Диаметр: ' + m.diameter_km + ' км<br>' +
-    'Большая полуось: ' + Math.round(m.sma_km).toLocaleString('ru-RU') + ' км<br>' +
-    'Период: ' + Math.abs(m.period_d).toLocaleString('ru-RU') + ' суток<br>' +
-    'Наклон орбиты: ' + (m.incDeg != null ? m.incDeg.toFixed(1) : '—') + '°<br>' +
-    'Направление: ' + (m.period_d < 0 ? 'ретроградное' : 'прямое');
+  infoText.innerHTML =
+    `<b>${m.label}</b>` +
+    `Диаметр: ${m.diameter_km} км<br>` +
+    `Большая полуось: ${Math.round(m.sma_km).toLocaleString('ru-RU')} км<br>` +
+    `Период: ${Math.abs(m.period_d).toLocaleString('ru-RU')} суток<br>` +
+    `Наклон орбиты: ${m.incDeg.toFixed(1)}°<br>` +
+    `Направление: ${m.period_d < 0 ? 'ретроградное' : 'прямое'}`;
   infoBox.style.display = 'block';
 }
 function showTransportInfo(route){
   state.selectedMoon = null;
   state.selectedTransportInfo = route;
-  var pseudo = {name:route.transport.name, diameter_km:999};
-  drawPixelMoonIcon(pseudo);
-  infoText.innerHTML = '<b>' + route.transport.kind + ' "' + route.transport.name + '"</b>' +
-    'Масса: ' + formatMoney(route.transport.mass_t) + ' т<br>' +
-    'Дата вылета: ' + formatDateTime(SIM_START_MS + route.departureSimSeconds * 1000) + '<br>' +
-    'Дата прилёта: ' + formatDateTime(SIM_START_MS + route.arrivalSimSeconds * 1000);
+  drawPixelMoonIcon({name:route.transport.name, diameter_km:999});
+  infoText.innerHTML =
+    `<b>${route.transport.kind} "${route.transport.name}"</b>` +
+    `Масса: ${formatMoney(route.transport.mass_t)} т<br>` +
+    `Дата вылета: ${formatDateTime(SIM_START_MS + route.departureSimSeconds * 1000)}<br>` +
+    `Дата прилёта: ${formatDateTime(SIM_START_MS + route.arrivalSimSeconds * 1000)}`;
   infoBox.style.display = 'block';
 }
+
+function openModal(el){ el.classList.add('open'); }
+function closeModal(el){ el.classList.remove('open'); }
 
 function updateRouteUI(){
   routeModeBtn.classList.toggle('active', state.routeMode);
   routePanel.style.display = state.routeMode ? 'block' : 'none';
   routeEndpoints.innerHTML =
-    '<div><span class="smallTag">A</span> ' + (state.routeFrom ? state.routeFrom.label : 'не выбрано') + '</div>' +
-    '<div><span class="smallTag">B</span> ' + (state.routeTo ? state.routeTo.label : 'не выбрано') + '</div>';
+    `<div><span class="smallTag">A</span> ${state.routeFrom ? state.routeFrom.label : 'не выбрано'}</div>` +
+    `<div><span class="smallTag">B</span> ${state.routeTo ? state.routeTo.label : 'не выбрано'}</div>`;
   chooseRouteBtn.disabled = !(state.routeFrom && state.routeTo);
 }
 function resetRouteDialogs(){
@@ -611,8 +876,6 @@ function resetRouteDialogs(){
   calcOptions.innerHTML = '';
   calcStatus.textContent = '';
 }
-function openModal(el){ el.classList.add('open'); }
-function closeModal(el){ el.classList.remove('open'); }
 function toggleRouteMode(){
   state.routeMode = !state.routeMode;
   if (state.routeMode) setSpeed(0);
@@ -628,69 +891,70 @@ function routeToggleMoon(m){
   if (state.routeFrom && state.routeFrom.name === m.name){ state.routeFrom = null; updateRouteUI(); return; }
   if (!state.routeTo){ state.routeTo = m; updateRouteUI(); return; }
   if (state.routeTo && state.routeTo.name === m.name){ state.routeTo = null; updateRouteUI(); return; }
-  state.routeFrom = m; state.routeTo = null; updateRouteUI();
+  state.routeFrom = m;
+  state.routeTo = null;
+  updateRouteUI();
 }
-function renderTransportCards(){
-  transportCards.innerHTML = '';
-  state.chosenTransport = null;
-  state.chosenPlan = null;
-  toCalcBtn.disabled = true;
-  transports.forEach(function(tr){
-    var card = document.createElement('div');
-    card.className = 'optionCard';
-    card.innerHTML =
-      '<h4>' + tr.kind + ' "' + tr.name + '"</h4>' +
-      '<div class="cardMeta">' +
-      'Общая масса: ' + formatMoney(tr.mass_t) + ' т<br>' +
-      'Свободный объём: ' + formatMoney(tr.volume_m3) + ' м³<br>' +
-      'Максимальная ΔV: ' + tr.maxDV + ' км/с<br>' +
-      'Стоимость фрахта: ' + formatMoney(tr.dailyCost) + ' / сутки' +
-      '</div>';
-    card.addEventListener('click', function(){
-      state.chosenTransport = tr;
-      Array.prototype.forEach.call(transportCards.children, function(el){ el.classList.remove('active'); });
-      card.classList.add('active');
-      toCalcBtn.disabled = false;
-    });
-    transportCards.appendChild(card);
-  });
-}
-function currentMoonPosition(m, simSeconds){
-  var theta = m.phase0 + m.direction * (simSeconds / m.periodSec) * Math.PI * 2;
-  return projectOrbitPoint(m.sma_km, theta, m.incRad, m.nodeRad);
-}
+
 function estimateRoutePlan(fromMoon, toMoon, tr, departSimSeconds){
-  var distanceKm = Math.hypot(fromMoon.sma_km - toMoon.sma_km, 0) + Math.min(fromMoon.sma_km, toMoon.sma_km) * 0.35;
-  var accel = tr.accelKms2;
-  var maxCruise = tr.maxDV * 0.45;
-  var accelTime = Math.min(maxCruise / accel, Math.sqrt(distanceKm / accel));
-  var accelDist = 0.5 * accel * accelTime * accelTime;
-  var totalTime;
-  var vmax;
-  if (accelDist * 2 >= distanceKm){
-    accelTime = Math.sqrt(distanceKm / accel);
+  const p1 = currentMoonPosition(fromMoon, departSimSeconds);
+  const p2 = currentMoonPosition(toMoon, departSimSeconds);
+  const transferDistance = Math.hypot(p1.x - p2.x, p1.y - p2.y) + Math.min(fromMoon.sma_km, toMoon.sma_km) * 0.18;
+
+  const accel = tr.accelKms2;
+  const maxCruise = tr.maxDV * 0.46;
+  let accelTime = Math.min(maxCruise / accel, Math.sqrt(transferDistance / accel));
+  let accelDist = 0.5 * accel * accelTime * accelTime;
+  let totalTime, vmax;
+
+  if (accelDist * 2 >= transferDistance){
+    accelTime = Math.sqrt(transferDistance / accel);
     totalTime = accelTime * 2;
     vmax = accel * accelTime;
   } else {
     vmax = maxCruise;
-    totalTime = accelTime * 2 + (distanceKm - accelDist * 2) / vmax;
+    totalTime = accelTime * 2 + (transferDistance - accelDist * 2) / vmax;
   }
-  var gravityPenalty = 1.0 + (Math.min(fromMoon.sma_km, toMoon.sma_km) < 400000 ? 0.18 : 0.0);
+
+  let gravityPenalty = 1.0;
+  if (Math.min(fromMoon.sma_km, toMoon.sma_km) < 400000) gravityPenalty += 0.18;
   if ((fromMoon.sma_km < 173200 && toMoon.sma_km > 66900) || (toMoon.sma_km < 173200 && fromMoon.sma_km > 66900)) gravityPenalty += 0.12;
   totalTime *= gravityPenalty;
 
-  var days = Math.max(1, totalTime / 86400);
-  var cost = tr.dailyCost * days;
-  var fuelMass = tr.mass_t * Math.min(0.95, 0.2 + (vmax / Math.max(tr.maxDV,1)) * 0.45 + 0.20); // includes 20% reserve
+  const totalDays = Math.max(1, totalTime / 86400);
+  const cost = tr.dailyCost * totalDays;
+  const fuelMass_t = tr.mass_t * Math.min(0.95, 0.20 + (vmax / Math.max(tr.maxDV,1)) * 0.45 + 0.20);
+
   return {
-    departSimSeconds: departSimSeconds,
+    departSimSeconds,
     arrivalSimSeconds: departSimSeconds + totalTime,
     totalSimSeconds: totalTime,
-    totalDays: days,
-    cost: cost,
-    fuelMass_t: fuelMass,
-    vmax: vmax
+    totalDays,
+    cost,
+    fuelMass_t,
+    vmax
   };
+}
+function renderTransportCards(){
+  resetRouteDialogs();
+  for (const tr of transports){
+    const card = document.createElement('div');
+    card.className = 'optionCard';
+    card.innerHTML =
+      `<h4>${tr.kind} "${tr.name}"</h4>` +
+      `<div class="cardMeta">` +
+      `Общая масса: ${formatMoney(tr.mass_t)} т<br>` +
+      `Свободный объём: ${formatMoney(tr.volume_m3)} м³<br>` +
+      `Максимальная ΔV: ${tr.maxDV} км/с<br>` +
+      `Стоимость фрахта: ${formatMoney(tr.dailyCost)} / сутки</div>`;
+    card.addEventListener('click', () => {
+      state.chosenTransport = tr;
+      [...transportCards.children].forEach(el => el.classList.remove('active'));
+      card.classList.add('active');
+      toCalcBtn.disabled = false;
+    });
+    transportCards.appendChild(card);
+  }
 }
 function renderCalcOptions(){
   calcOptions.innerHTML = '';
@@ -698,55 +962,68 @@ function renderCalcOptions(){
   state.chosenPlan = null;
   confirmRouteBtn.disabled = true;
 
-  var tr = state.chosenTransport;
-  var urgent = estimateRoutePlan(state.routeFrom, state.routeTo, tr, state.simSeconds);
+  const tr = state.chosenTransport;
+  const urgent = estimateRoutePlan(state.routeFrom, state.routeTo, tr, state.simSeconds);
 
-  var best = null;
-  for (var h=0; h<=7*24; h++){
-    var t = state.simSeconds + h * 3600;
-    var p1 = currentMoonPosition(state.routeFrom, t);
-    var p2 = currentMoonPosition(state.routeTo, t);
-    var separation = Math.hypot(p1.x - p2.x, p1.y - p2.y);
-    var candidate = estimateRoutePlan(state.routeFrom, state.routeTo, tr, t);
-    candidate.score = candidate.totalSimSeconds + separation * 0.06;
+  let best = null;
+  for (let h = 0; h <= 7 * 24; h++){
+    const t = state.simSeconds + h * 3600;
+    const a1 = currentMoonTheta(state.routeFrom, t);
+    const a2 = currentMoonTheta(state.routeTo, t);
+    let gap = Math.abs(normalizeAngle(a1) - normalizeAngle(a2));
+    if (gap > Math.PI) gap = Math.PI * 2 - gap;
+
+    const candidate = estimateRoutePlan(state.routeFrom, state.routeTo, tr, t);
+    candidate.score = candidate.totalSimSeconds + gap * 80000;
     if (!best || candidate.score < best.score) best = candidate;
   }
 
-  [{key:'urgent',title:'Срочный',plan:urgent,third:'Немедленно'},
-   {key:'best',title:'Выгодный',plan:best,third:'Отправка: ' + formatDateTime(SIM_START_MS + best.departSimSeconds*1000)}]
-  .forEach(function(item){
-    var card = document.createElement('div');
+  [
+    {key:'urgent', title:'Срочный', plan:urgent, third:'Немедленно'},
+    {key:'best', title:'Выгодный', plan:best, third:'Отправка: ' + formatDateTime(SIM_START_MS + best.departSimSeconds * 1000)}
+  ].forEach(item => {
+    const card = document.createElement('div');
     card.className = 'optionCard';
     card.innerHTML =
-      '<h4>' + item.title + '</h4>' +
-      '<div class="cardMeta">Стоимость: ' + formatMoney(item.plan.cost) + '<br>' +
-      'Время в пути: ' + item.plan.totalDays.toFixed(2) + ' суток<br>' +
-      item.third + '</div>';
-    card.addEventListener('click', function(){
+      `<h4>${item.title}</h4>` +
+      `<div class="cardMeta">Стоимость: ${formatMoney(item.plan.cost)}<br>` +
+      `Время в пути: ${item.plan.totalDays.toFixed(2)} суток<br>${item.third}</div>`;
+    card.addEventListener('click', () => {
       state.chosenPlan = item;
-      Array.prototype.forEach.call(calcOptions.children, function(el){ el.classList.remove('active'); });
+      [...calcOptions.children].forEach(el => el.classList.remove('active'));
       card.classList.add('active');
       confirmRouteBtn.disabled = false;
-      calcStatus.textContent = 'Расход топлива: ' + formatMoney(item.plan.fuelMass_t) + ' т · Пик скорости: ' + item.plan.vmax.toFixed(1) + ' км/с';
+      calcStatus.textContent = `Расход топлива: ${formatMoney(item.plan.fuelMass_t)} т · Пик скорости: ${item.plan.vmax.toFixed(1)} км/с`;
     });
     calcOptions.appendChild(card);
   });
 }
+function bezierPoint(route, u){
+  return {
+    x: route.startPos.x * (1-u) * (1-u) + route.ctrlPos.x * 2 * (1-u) * u + route.endPos.x * u * u,
+    y: route.startPos.y * (1-u) * (1-u) + route.ctrlPos.y * 2 * (1-u) * u + route.endPos.y * u * u
+  };
+}
 function confirmRoute(){
   if (!state.routeFrom || !state.routeTo || !state.chosenTransport || !state.chosenPlan) return;
-  var plan = state.chosenPlan.plan;
-  if (state.money < plan.cost){ alert('Недостаточно средств'); return; }
+  const plan = state.chosenPlan.plan;
+  if (state.money < plan.cost){
+    alert('Недостаточно средств');
+    return;
+  }
   state.money -= plan.cost;
   updateMoneyBox();
 
-  var startPos = currentMoonPosition(state.routeFrom, plan.departSimSeconds);
-  var endPos = currentMoonPosition(state.routeTo, plan.arrivalSimSeconds);
-  var midX = (startPos.x + endPos.x) / 2;
-  var midY = (startPos.y + endPos.y) / 2;
-  var dx = endPos.x - startPos.x, dy = endPos.y - startPos.y;
-  var len = Math.max(1, Math.hypot(dx, dy));
-  var nx = -dy / len, ny = dx / len;
-  var bow = Math.min(900000, len * 0.25);
+  const startPos = currentMoonPosition(state.routeFrom, plan.departSimSeconds);
+  const endPos = currentMoonPosition(state.routeTo, plan.arrivalSimSeconds);
+  const midX = (startPos.x + endPos.x) / 2;
+  const midY = (startPos.y + endPos.y) / 2;
+  const dx = endPos.x - startPos.x;
+  const dy = endPos.y - startPos.y;
+  const len = Math.max(1, Math.hypot(dx, dy));
+  const nx = -dy / len;
+  const ny = dx / len;
+  const bow = Math.min(900000, len * 0.25);
 
   state.activeRoute = {
     from: state.routeFrom,
@@ -755,12 +1032,15 @@ function confirmRoute(){
     departureSimSeconds: plan.departSimSeconds,
     arrivalSimSeconds: plan.arrivalSimSeconds,
     totalSimSeconds: plan.totalSimSeconds,
-    startPos: startPos,
-    endPos: endPos,
-    ctrlPos: {x: midX + nx * bow, y: midY + ny * bow},
-    currentScreenX: null,
-    currentScreenY: null
+    startPos,
+    endPos,
+    ctrlPos:{x:midX + nx * bow, y:midY + ny * bow},
+    currentScreenX:null,
+    currentScreenY:null,
+    planType: state.chosenPlan.key
   };
+
+  state.completedNotice = null;
   state.routeMode = false;
   state.routeFrom = null;
   state.routeTo = null;
@@ -769,84 +1049,151 @@ function confirmRoute(){
   closeModal(transportModal);
   updateRouteUI();
 }
+
 function drawActiveRoute(){
-  var route = state.activeRoute;
-  if (!route) return;
+  const route = state.activeRoute;
 
-  var total = route.totalSimSeconds;
-  var elapsed = Math.max(0, state.simSeconds - route.departureSimSeconds);
-  var progress = Math.min(1, elapsed / total);
-
-  var pts = [];
-  var steps = 60;
-  for (var i=0;i<=steps;i++){
-    var t = i / steps;
-    var u = t;
-    var x = route.startPos.x * (1-u) + route.ctrlPos.x * 2 * (1-u) * u + route.endPos.x * u * u;
-    var y = route.startPos.y * (1-u) + route.ctrlPos.y * 2 * (1-u) * u + route.endPos.y * u * u;
-    pts.push(worldToScreen(x, y));
+  if (!route){
+    if (state.completedNotice){
+      const life = state.simSeconds - state.completedNotice.startSimSeconds;
+      if (life > 4){
+        state.completedNotice = null;
+      } else {
+        const theta = currentMoonTheta(state.completedNotice.moon, state.simSeconds) + state.completedNotice.moon.direction * 0.06;
+        const p3 = projectOrbitPoint(state.completedNotice.moon.sma_km, theta, state.completedNotice.moon.incRad, state.completedNotice.moon.nodeRad);
+        const p = worldToScreen(p3.x, p3.y);
+        dctx.font = '10px Onest, system-ui, sans-serif';
+        dctx.fillStyle = `rgba(111,227,162,${(1 - life / 4).toFixed(3)})`;
+        dctx.fillText('Маршрут окончен', p.x + 8, p.y - 4);
+      }
+    }
+    return;
   }
-  drawProjectedPath(dctx, pts, 'rgba(124,199,255,0.92)', 1, true, -state.dashOffset);
 
-  if (progress >= 1){
+  const now = state.simSeconds;
+  const departed = now >= route.departureSimSeconds;
+  const arrived = now >= route.arrivalSimSeconds;
+
+  const fromThetaNow = currentMoonTheta(route.from, now);
+  const fromThetaDepart = currentMoonTheta(route.from, route.departureSimSeconds);
+  const toThetaNow = currentMoonTheta(route.to, now);
+  const toThetaArrival = currentMoonTheta(route.to, route.arrivalSimSeconds);
+
+  if (!departed && route.planType === 'best'){
+    drawOrbitArcGuide(route.from, fromThetaNow, fromThetaDepart, 'rgba(124,199,255,__ALPHA__)', 0.28, true, -state.dashOffset);
+  }
+
+  if (!arrived){
+    drawOrbitArcGuide(route.to, toThetaNow, toThetaArrival, 'rgba(124,199,255,__ALPHA__)', 0.22, true, -state.dashOffset);
+  }
+
+  if (arrived){
+    state.completedNotice = {moon: route.to, startSimSeconds: now};
     state.activeRoute = null;
     if (state.selectedTransportInfo) infoBox.style.display = 'none';
     state.selectedTransportInfo = null;
     return;
   }
 
-  var u = progress;
-  var x = route.startPos.x * (1-u) + route.ctrlPos.x * 2 * (1-u) * u + route.endPos.x * u * u;
-  var y = route.startPos.y * (1-u) + route.ctrlPos.y * 2 * (1-u) * u + route.endPos.y * u * u;
-  var p = worldToScreen(x, y);
+  if (!departed) return;
+
+  const total = Math.max(1, route.arrivalSimSeconds - route.departureSimSeconds);
+  const progress = Math.max(0, Math.min(1, (now - route.departureSimSeconds) / total));
+
+  // Дуга только от текущей точки транспорта до точки назначения
+  const futurePts = [];
+  const steps = 60;
+  for (let i = 0; i <= steps; i++){
+    const u = progress + (1 - progress) * (i / steps);
+    const bp = bezierPoint(route, u);
+    futurePts.push(worldToScreen(bp.x, bp.y));
+  }
+  drawPolyline(dctx, futurePts, 'rgba(124,199,255,0.92)', 1, true, -state.dashOffset);
+
+  // Короткий хвост за транспортом не длиннее 200 px
+  const tailPts = [];
+  let prev = null;
+  let accum = 0;
+  for (let j = 0; j <= 40; j++){
+    const t = progress - (j / 40) * 0.25;
+    if (t < 0) break;
+    const bp = bezierPoint(route, t);
+    const sp = worldToScreen(bp.x, bp.y);
+    if (prev){
+      accum += Math.hypot(prev.x - sp.x, prev.y - sp.y);
+      if (accum > 200) break;
+    }
+    tailPts.push(sp);
+    prev = sp;
+  }
+  if (tailPts.length >= 2){
+    drawPolyline(dctx, tailPts, 'rgba(200,205,210,0.28)', 1, false, 0);
+  }
+
+  const cur = bezierPoint(route, progress);
+  const p = worldToScreen(cur.x, cur.y);
   route.currentScreenX = p.x;
   route.currentScreenY = p.y;
 
   dctx.fillStyle = '#7cc7ff';
   dctx.fillRect(Math.round(p.x - 1), Math.round(p.y - 1), 2, 2);
 
-  var q = 7;
+  const q = 7;
   dctx.strokeStyle = 'rgba(255,255,255,0.9)';
   dctx.lineWidth = 1;
-  function seg(x1,y1,x2,y2){ dctx.beginPath(); dctx.moveTo(x1,y1); dctx.lineTo(x2,y2); dctx.stroke(); }
+  function seg(x1,y1,x2,y2){
+    dctx.beginPath();
+    dctx.moveTo(x1,y1);
+    dctx.lineTo(x2,y2);
+    dctx.stroke();
+  }
   seg(p.x-q, p.y-q, p.x-q/2, p.y-q); seg(p.x-q, p.y-q, p.x-q, p.y-q/2);
   seg(p.x+q, p.y-q, p.x+q/2, p.y-q); seg(p.x+q, p.y-q, p.x+q, p.y-q/2);
   seg(p.x-q, p.y+q, p.x-q/2, p.y+q); seg(p.x-q, p.y+q, p.x-q, p.y+q/2);
   seg(p.x+q, p.y+q, p.x+q/2, p.y+q); seg(p.x+q, p.y+q, p.x+q, p.y+q/2);
 }
+
 function hitTest(x, y){
   if (state.activeRoute && state.activeRoute.currentScreenX != null){
-    var dxr = x - state.activeRoute.currentScreenX;
-    var dyr = y - state.activeRoute.currentScreenY;
+    const dxr = x - state.activeRoute.currentScreenX;
+    const dyr = y - state.activeRoute.currentScreenY;
     if (Math.hypot(dxr, dyr) <= 16) return {type:'transport', route:state.activeRoute};
   }
-  var best = null, bestD = Infinity;
-  for (var i=0;i<state.visibleMoons.length;i++){
-    var m = state.visibleMoons[i];
+
+  let best = null, bestD = Infinity;
+  for (const m of state.visibleMoons){
     if (typeof m.screenX !== 'number' || typeof m.screenY !== 'number') continue;
-    var dx = x - m.screenX, dy = y - m.screenY;
-    var d = Math.hypot(dx, dy);
-    var hitR = Math.max(16, Math.sqrt(2) * m.sizePx / 2 + 8);
-    if (d <= hitR && d < bestD){ best = m; bestD = d; }
+    const dx = x - m.screenX;
+    const dy = y - m.screenY;
+    const d = Math.hypot(dx, dy);
+    const hitR = Math.max(16, Math.sqrt(2) * m.sizePx / 2 + 8);
+    if (d <= hitR && d < bestD){
+      best = m;
+      bestD = d;
+    }
   }
   return best ? {type:'moon', moon:best} : null;
 }
-function markStaticDirty(){ state.staticDirty = true; }
 
 function render(ts){
   if (!state.lastRenderTs) state.lastRenderTs = ts;
-  var minFrame = 1000 / targetFPS;
-  var elapsedMs = ts - state.lastRenderTs;
-  if (elapsedMs < minFrame){ requestAnimationFrame(render); return; }
-  var dt = elapsedMs / 1000;
+  const minFrame = 1000 / targetFPS;
+  const elapsedMs = ts - state.lastRenderTs;
+  if (elapsedMs < minFrame){
+    requestAnimationFrame(render);
+    return;
+  }
+  const dt = elapsedMs / 1000;
   state.lastRenderTs = ts;
+
   if (state.speedMode === 1) state.simSeconds += dt;
   if (state.speedMode === 60) state.simSeconds += dt * 60;
   if (state.speedMode === 3600) state.simSeconds += dt * 3600;
-  state.dashOffset += dt * 60; // constant appearance independent of sim speed
+
+  state.dashOffset += dt * 60; // одинаковая скорость пунктира при любых режимах времени
   updateSimTimeBox();
 
-  var detail = getDetailLevel();
+  const detail = getDetailLevel();
   if (state.staticDirty || detail !== state.lastDetailLevel){
     drawStaticScene();
     updateScaleInfo();
@@ -854,10 +1201,12 @@ function render(ts){
     getVisibleMoons();
   }
 
-  dctx.clearRect(0,0,state.w,state.h);
+  dctx.clearRect(0, 0, state.w, state.h);
   if (state.selectedMoon) drawSelectedOrbit();
-  for (var i=0;i<state.visibleMoons.length;i++) drawMoon(state.visibleMoons[i]);
+  for (const m of state.visibleMoons) drawMoon(m);
+  if (state.routeMode) drawRouteSelectionMarkers();
   drawActiveRoute();
+
   requestAnimationFrame(render);
 }
 
@@ -869,89 +1218,107 @@ function setSpeed(mode){
   document.getElementById('hourBtn').classList.toggle('active', mode === 3600);
 }
 function bindTap(id, fn){
-  var el = document.getElementById(id);
-  el.addEventListener('click', function(e){ e.preventDefault(); e.stopPropagation(); fn(); }, false);
+  const el = document.getElementById(id);
+  el.addEventListener('click', e => { e.preventDefault(); e.stopPropagation(); fn(); }, false);
 }
-bindTap('pauseBtn', function(){ setSpeed(0); });
-bindTap('realBtn', function(){ setSpeed(1); });
-bindTap('minuteBtn', function(){ setSpeed(60); });
-bindTap('hourBtn', function(){ setSpeed(3600); });
-bindTap('infoBtn', function(){ infoSheet.classList.toggle('open'); });
-bindTap('routeModeBtn', function(){ toggleRouteMode(); });
-bindTap('chooseRouteBtn', function(){
+function handleTap(x, y){
+  const hit = hitTest(x, y);
+  if (!hit){
+    if (!state.routeMode) showInfo(null);
+    return;
+  }
+  if (hit.type === 'transport'){
+    showTransportInfo(hit.route);
+    return;
+  }
+  if (state.routeMode){
+    routeToggleMoon(hit.moon);
+    return;
+  }
+  showInfo(hit.moon);
+}
+
+bindTap('pauseBtn', () => setSpeed(0));
+bindTap('realBtn', () => setSpeed(1));
+bindTap('minuteBtn', () => setSpeed(60));
+bindTap('hourBtn', () => setSpeed(3600));
+bindTap('infoBtn', () => infoSheet.classList.toggle('open'));
+bindTap('routeModeBtn', () => toggleRouteMode());
+bindTap('chooseRouteBtn', () => {
   if (!(state.routeFrom && state.routeTo)) return;
-  resetRouteDialogs();
   renderTransportCards();
   openModal(transportModal);
 });
-bindTap('toCalcBtn', function(){
+bindTap('toCalcBtn', () => {
   if (!state.chosenTransport) return;
   renderCalcOptions();
   closeModal(transportModal);
   openModal(calcModal);
 });
-bindTap('confirmRouteBtn', function(){ confirmRoute(); });
-Array.prototype.forEach.call(document.querySelectorAll('[data-close]'), function(btn){
-  btn.addEventListener('click', function(){ closeModal(document.getElementById(btn.dataset.close)); });
+bindTap('confirmRouteBtn', () => confirmRoute());
+
+document.querySelectorAll('[data-close]').forEach(btn => {
+  btn.addEventListener('click', () => closeModal(document.getElementById(btn.dataset.close)));
 });
 
-dynamicCanvas.addEventListener('wheel', function(e){
+dynamicCanvas.addEventListener('wheel', e => {
   e.preventDefault();
-  var beforeX = (e.clientX - state.centerX - state.offsetX) * state.kmPerPx;
-  var beforeY = (e.clientY - state.centerY - state.offsetY) * state.kmPerPx;
+  const beforeX = (e.clientX - state.centerX - state.offsetX) * state.kmPerPx;
+  const beforeY = (e.clientY - state.centerY - state.offsetY) * state.kmPerPx;
   state.kmPerPx = Math.max(100, Math.min(maxStructureKm, state.kmPerPx * (e.deltaY > 0 ? 1.12 : 0.9)));
   state.offsetX = e.clientX - state.centerX - beforeX / state.kmPerPx;
   state.offsetY = e.clientY - state.centerY - beforeY / state.kmPerPx;
-  markStaticDirty();
+  state.staticDirty = true;
 }, {passive:false});
 
-dynamicCanvas.addEventListener('pointerdown', function(e){
+dynamicCanvas.addEventListener('pointerdown', e => {
   dynamicCanvas.setPointerCapture(e.pointerId);
   state.pointers.set(e.pointerId, {x:e.clientX, y:e.clientY});
   state.moved = false;
   state.downAt = performance.now();
 });
-dynamicCanvas.addEventListener('pointermove', function(e){
+dynamicCanvas.addEventListener('pointermove', e => {
   if (!state.pointers.has(e.pointerId)) return;
-  var prev = state.pointers.get(e.pointerId);
+  const prev = state.pointers.get(e.pointerId);
   state.pointers.set(e.pointerId, {x:e.clientX, y:e.clientY});
+
   if (state.pointers.size === 1){
-    var dx = e.clientX - prev.x, dy = e.clientY - prev.y;
+    const dx = e.clientX - prev.x;
+    const dy = e.clientY - prev.y;
     if (Math.abs(dx) + Math.abs(dy) > 2) state.moved = true;
-    state.offsetX += dx; state.offsetY += dy; markStaticDirty();
+    state.offsetX += dx;
+    state.offsetY += dy;
+    state.staticDirty = true;
   } else if (state.pointers.size === 2){
     state.moved = true;
-    var pts = Array.from(state.pointers.values());
-    var d = Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y);
+    const pts = [...state.pointers.values()];
+    const d = Math.hypot(pts[0].x - pts[1].x, pts[0].y - pts[1].y);
     if (!state.pinchBaseDistance){
-      state.pinchBaseDistance = d; state.pinchBaseKmPerPx = state.kmPerPx;
+      state.pinchBaseDistance = d;
+      state.pinchBaseKmPerPx = state.kmPerPx;
     } else if (d > 0){
       state.kmPerPx = Math.max(100, Math.min(maxStructureKm, state.pinchBaseKmPerPx * (state.pinchBaseDistance / d)));
-      markStaticDirty();
+      state.staticDirty = true;
     }
   }
 });
 function clearPointer(e){
   state.pointers.delete(e.pointerId);
-  if (state.pointers.size < 2){ state.pinchBaseDistance = null; state.pinchBaseKmPerPx = null; }
+  if (state.pointers.size < 2){
+    state.pinchBaseDistance = null;
+    state.pinchBaseKmPerPx = null;
+  }
 }
-function handleTap(x, y){
-  var hit = hitTest(x, y);
-  if (!hit){ if (!state.routeMode) showInfo(null); return; }
-  if (hit.type === 'transport'){ showTransportInfo(hit.route); return; }
-  if (state.routeMode){ routeToggleMoon(hit.moon); return; }
-  showInfo(hit.moon);
-}
-dynamicCanvas.addEventListener('pointerup', function(e){
-  var wasTap = !state.moved && (performance.now() - state.downAt < 250);
+dynamicCanvas.addEventListener('pointerup', e => {
+  const wasTap = !state.moved && (performance.now() - state.downAt < 250);
   if (wasTap) handleTap(e.clientX, e.clientY);
   clearPointer(e);
 });
 dynamicCanvas.addEventListener('pointercancel', clearPointer);
-dynamicCanvas.addEventListener('click', function(e){ handleTap(e.clientX, e.clientY); });
+dynamicCanvas.addEventListener('click', e => handleTap(e.clientX, e.clientY));
 
 window.addEventListener('resize', resize);
-window.addEventListener('error', function(ev){
+window.addEventListener('error', ev => {
   errorBox.style.display = 'block';
   errorBox.textContent = 'Ошибка JavaScript:\n' + ev.message + '\n' + (ev.filename || '') + ':' + (ev.lineno || '');
 });
